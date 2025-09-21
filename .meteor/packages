@@ -46,6 +46,7 @@ modules@0.7.9
 
 # rest API
 nimble:restivus
+simple:json-routes
 
 # testing
 xolvio:cleaner
