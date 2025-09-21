@@ -3,6 +3,7 @@
 
 import { assert } from 'meteor/practicalmeteor:chai'
 import { Meteor } from 'meteor/meteor'
+import { Accounts } from 'meteor/accounts-base'
 
 import { Topograms } from '/imports/api/collections.js'
 import { createTopogram } from '/imports/endpoints/topograms.js'
@@ -28,6 +29,33 @@ if (Meteor.isServer) {
         res.on('end', () => resolve({ statusCode: res.statusCode, body }))
       })
       req.on('error', reject)
+      req.end()
+    })
+  }
+
+  function httpRequest(method, rawUrl, { headers = {}, json } = {}) {
+    const url = urlLib.parse(rawUrl)
+    const payload = json ? JSON.stringify(json) : null
+    const opts = {
+      hostname: url.hostname,
+      port: url.port || 80,
+      path: url.path,
+      method,
+      headers: {
+        Accept: 'application/json',
+        ...(payload ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) } : {}),
+        ...headers
+      }
+    }
+    return new Promise((resolve, reject) => {
+      const req = http.request(opts, (res) => {
+        let body = ''
+        res.setEncoding('utf8')
+        res.on('data', chunk => { body += chunk })
+        res.on('end', () => resolve({ statusCode: res.statusCode, body }))
+      })
+      req.on('error', reject)
+      if (payload) req.write(payload)
       req.end()
     })
   }
@@ -61,6 +89,25 @@ if (Meteor.isServer) {
     it('GET /api/topograms requires auth (401)', function (done) {
       httpGet(`${base}/api/topograms`).then(({ statusCode }) => {
         assert.equal(statusCode, 401)
+        done()
+      }).catch(done)
+    })
+
+    it('POST /api/topograms should work with auth (201)', function (done) {
+      const email = `user${Date.now()}@test.local`
+      const password = 'pass1234'
+      const userId = Accounts.createUser({ email, password })
+      const stamped = Accounts._generateStampedLoginToken()
+      Accounts._insertLoginToken(userId, stamped)
+      const token = stamped.token
+
+      httpRequest('POST', `${base}/api/topograms`, {
+        headers: { 'X-User-Id': userId, 'X-Auth-Token': token },
+        json: { title: 'from-test' }
+      }).then(({ statusCode, body }) => {
+        assert.equal(statusCode, 201)
+        // body may be wrapped; just ensure it's JSON parseable
+        try { JSON.parse(body) } catch (e) { assert.fail('Response not JSON') }
         done()
       }).catch(done)
     })
