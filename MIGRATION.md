@@ -75,8 +75,8 @@ Phase 1: Remove hard legacy constraints on 1.4.4.6 (new prep branch)
    - Keep routes and handlers equivalent; leave old code in comments for reference.
 
 2) Tabular replacement/upgrade
-   - Option A: Upgrade to `aldeed:tabular@2.x` if compatible.
-   - Option B: Replace with npm DataTables or a minimal list/table built with Blaze (or React) if usage is simple.
+  - Audit result (2025-09-21): No occurrences of `Tabular.Table`, `new Tabular.Table`, or tabular templates/helpers were found under `imports/` or `client/`. The package appears unused.
+  - Action: Removed `aldeed:tabular@=1.4.1` from `.meteor/packages` in branch `chore/m3-prep-phase1`. If any hidden/legacy references surface, re-introduce via a scoped upgrade or replace with a small Blaze/React table.
 
 3) babrahams packages
    - `editable-text`: replace inline editing with a small Blaze helper or React component.

@@ -19,7 +19,6 @@ check@1.2.4
 reactive-var@1.0.11
 
 # UI
-aldeed:tabular@=1.4.1
 mobile-experience@1.0.4
 blaze-html-templates
 spacebars
@@ -30,6 +29,7 @@ fourseven:scss
 
 # js libs
 sergeyt:typeahead
+http
 
 # db
 accounts-password@1.3.4

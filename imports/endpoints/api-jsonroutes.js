@@ -82,7 +82,9 @@ export function setupJsonApi() {
 
   // Topograms collection (subset)
   JsonRoutes.add('POST', `${apiPath}/topograms`, (req, res) => {
-    const result = createTopogram({ title: (req.body && req.body.title) || '', userId: requireAuth(req) })
+    const userId = requireAuth(req)
+    if (!userId) return JsonRoutes.sendResult(res, { code: 401, data: { error: 'Unauthorized' } })
+    const result = createTopogram({ title: (req.body && req.body.title) || '', userId })
     if (result && result.body && result.body.status === 'error') {
       JsonRoutes.sendResult(res, { code: 400, data: result })
       return
@@ -91,6 +93,7 @@ export function setupJsonApi() {
   })
 
   JsonRoutes.add('GET', `${apiPath}/topograms`, (req, res) => {
+    if (!requireAuth(req)) return JsonRoutes.sendResult(res, { code: 401, data: { error: 'Unauthorized' } })
     const data = Topograms.find().fetch()
     JsonRoutes.sendResult(res, { data: buildSuccessAnswer({ statusCode: 200, data }) })
   })
@@ -102,6 +105,7 @@ export function setupJsonApi() {
   })
 
   JsonRoutes.add('POST', `${apiPath}/topograms/:_id/public`, (req, res) => {
+    if (!requireAuth(req)) return JsonRoutes.sendResult(res, { code: 401, data: { error: 'Unauthorized' } })
     const { _id } = req.params
     togglePublicTopogram({ topogramId: _id })
     const data = Topograms.findOne(_id)
