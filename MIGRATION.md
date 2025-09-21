@@ -73,10 +73,38 @@ Phase 1: Remove hard legacy constraints on 1.4.4.6 (new prep branch)
 1) RESTivus replacement
    - Replace Restivus endpoints with `simple:json-routes` (JsonRoutes) or native `webapp` handlers.
    - Keep routes and handlers equivalent; leave old code in comments for reference.
+  - 2025-09-21: Implemented a feature-flagged JsonRoutes scaffold (default remains Restivus). Enable with `USE_JSONROUTES=1` or `Meteor.settings.public.useJsonRoutes = true`.
+  - Added minimal server tests for `/api`, `/api/topogramsPublic`, and a protected route auth check; added an authenticated POST `/api/topograms` test using `X-User-Id` and `X-Auth-Token` headers.
+  - Refactored tests to avoid the deprecated `request` library (which pulled in `tough-cookie`/`psl` causing syntax errors). Switched to Node's built-in `http` client.
 
 2) Tabular replacement/upgrade
   - Audit result (2025-09-21): No occurrences of `Tabular.Table`, `new Tabular.Table`, or tabular templates/helpers were found under `imports/` or `client/`. The package appears unused.
   - Action: Removed `aldeed:tabular@=1.4.1` from `.meteor/packages` in branch `chore/m3-prep-phase1`. If any hidden/legacy references surface, re-introduce via a scoped upgrade or replace with a small Blaze/React table.
+
+Run syntax (dev/test) on 1.4.4.6
+
+Server with external Mongo and JsonRoutes enabled:
+
+```sh
+USE_JSONROUTES=1 \
+MONGO_URL=mongodb://localhost:27017/Bandstour_results_meteor \
+ROOT_URL=http://localhost:3000 \
+meteor --port 3000
+```
+
+Full-app server tests (headless), against external Mongo:
+
+```sh
+USE_JSONROUTES=1 \
+MONGO_URL=mongodb://localhost:27017/Bandstour_results_meteor \
+ROOT_URL=http://localhost:3010 \
+meteor test --once --full-app --driver-package dispatch:mocha --port 3010
+```
+
+Notes:
+- Internal Meteor Mongo can fail on this legacy stack; always pass `MONGO_URL` to use the external container.
+- JsonRoutes tests live under `imports/endpoints/` and are loaded via `tests/jsonroutes-loader.app-test.js` to ensure discovery by the Meteor 1.4 test harness.
+- Legacy `api.app-test.js` is skipped (describe.skip) to avoid `request` dependency issues.
 
 3) babrahams packages
    - `editable-text`: replace inline editing with a small Blaze helper or React component.
