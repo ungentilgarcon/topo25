@@ -48,8 +48,10 @@ modules@0.7.9
 nimble:restivus
 
 # testing
-xolvio:cleaner
-practicalmeteor:chai
+# NOTE: test-only packages can cause slow downloads/hangs on old Meteor toolchains.
+# Temporarily disabled for local run; re-enable when running tests.
+# xolvio:cleaner
+# practicalmeteor:chai
 
 
 react-template-helper
@@ -61,5 +63,5 @@ dburles:collection-helpers
 mdg:validated-method
 ecmascript@0.6.3
 shell-server
-practicalmeteor:mocha
-dispatch:mocha
+# practicalmeteor:mocha
+# dispatch:mocha

@@ -26,12 +26,12 @@ class TopogramList extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { anonymousOnly : false ,
+    this.state = {
+      anonymousOnly : false,
       currentValue : null,
       pageTopos : 1,
       order : null,
       direction : true,
-
     }
   }
 
@@ -61,7 +61,8 @@ class TopogramList extends React.Component {
         pageTopos :valuepageTopos
       })
 
-    }}
+    }
+  }
 
     handlePageTopoDown = (pageTopos,numbTopopages) => {
       if (pageTopos > 1) {
@@ -70,20 +71,32 @@ class TopogramList extends React.Component {
         this.setState({
           pageTopos :valuepageTopos
         })
-      }}
+      }
+    }
 
 
 
-      handleNewRequest = ({value, text, topogram}, index) => {
-        //const {selectElement} = this.props
-        //console.log("VALUE",value)
-        //console.log("TEXT",text)
-        //console.log("topogram",topogram)
+      handleNewRequest = (chosenRequest, index) => {
+        // Prefer resolving by id when available (value carries _id)
+        let id = null
+        if (chosenRequest && typeof chosenRequest === 'object') {
+          id = chosenRequest.value || (chosenRequest.topogram && chosenRequest.topogram._id)
+        }
+        if (!id && typeof chosenRequest === 'string') {
+          // If user pressed enter on free text, do a title match fallback
+          const query = chosenRequest.toLowerCase()
+          const match = (this.props.topograms || []).find(n =>
+            n && typeof n.title === 'string' && n.title.toLowerCase().indexOf(query) !== -1
+          )
+          if (match) id = match._id
+        }
 
-        const {win} = window.open(`/topograms/${topogram._id}`, '_blank');
+        if (!id) {
+          console.warn('No topogram resolved for selection', { chosenRequest, index })
+          return
+        }
 
-
-
+        window.open(`/topograms/${id}`, '_blank')
       }
 
 
@@ -103,8 +116,8 @@ class TopogramList extends React.Component {
         .sort( (a, b) => b.createdAt - a.createdAt)
         .map( n => (
           {
-            value : n.title.substr(0, 20),
-            text : n.title.substr(0, 20),
+            value : n._id,
+            text : n.title && typeof n.title === 'string' ? n.title.substr(0, 60) : '',
             topogram : n
           }
         ))
@@ -130,8 +143,7 @@ class TopogramList extends React.Component {
 
         ))
 
-        const   numbTopopages = Math.ceil(topogramItems.length/128)
-        export { numbTopopages}
+  const   numbTopopages = Math.ceil(topogramItems.length/128)
 
         return (
           <div style={{backgroundColor:'#D6EBE6',color: '#000  !important'}}>
@@ -192,12 +204,12 @@ class TopogramList extends React.Component {
                     style={{backgroundColor: "#aa8dc6 !important"}}
                     label="previous"
                     primary={true}
-                    onClick={() => this.handlePageTopoDown(numbTopopages)}
+                    onClick={() => this.handlePageTopoDown(this.state.pageTopos, numbTopopages)}
                     />
                   <RaisedButton
                     label="next"
                     primary={true}
-                    onClick={() => this.handlePageTopoUp({pageTopos},numbTopopages)}
+                    onClick={() => this.handlePageTopoUp(this.state.pageTopos, numbTopopages)}
                     />
                   <p>{this.state.pageTopos}/{numbTopopages} </p>
                 </div>

@@ -126,24 +126,23 @@ export default class SidePanel extends React.Component {
             :
             null
         }
+
         {
           panelName === 'edit' ?
-          <PanelSettings
-            geoMapVisible={geoMapVisible}
-            hasCharts={hasCharts}
-            hasTimeInfo={hasTimeInfo}
-            hasGeoInfo={hasGeoInfo}
-            authorIsLoggedIn={authorIsLoggedIn}
-            topogramId={topogram._id}
-            topogramTitle={topogram.title}
-            topogramIsPublic={topogram.sharedPublic}
-            router={router}
+            <PanelSettings
+              geoMapVisible={geoMapVisible}
+              hasCharts={hasCharts}
+              hasTimeInfo={hasTimeInfo}
+              hasGeoInfo={hasGeoInfo}
+              authorIsLoggedIn={authorIsLoggedIn}
+              topogramId={topogram._id}
+              topogramTitle={topogram.title}
+              topogramIsPublic={topogram.sharedPublic}
+              router={router}
             />
           :
-          null
+            null
         }
-
-
       </Drawer>
     )
   }

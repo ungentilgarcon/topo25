@@ -1,1 +1,58 @@
 #app > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div:nth-child(2){background-color:#aa8dc6 !important }
+
+/* Right panel readability improvements */
+.right-panel {
+	color: #ECEFF1;
+	padding: 16px 20px 24px;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+	hyphens: auto;
+	text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.right-panel h1,
+.right-panel h2,
+.right-panel h3,
+.right-panel h4 {
+	color: #fff;
+	margin: 16px 0 8px;
+	line-height: 1.25;
+}
+
+.right-panel p,
+.right-panel li,
+.right-panel .mui-card-text,
+.right-panel .card-text {
+	font-size: 15px;
+	line-height: 1.6;
+	letter-spacing: 0.1px;
+	margin: 0 0 10px;
+}
+
+.right-panel a {
+	color: #64B5F6;
+	text-decoration: underline;
+}
+
+.right-panel hr,
+.right-panel .divider,
+.right-panel .mui-divider {
+	border: 0;
+	border-top: 1px solid rgba(255,255,255,0.08);
+	margin: 12px 0;
+}
+
+.right-panel code {
+	background: rgba(255,255,255,0.08);
+	padding: 1px 4px;
+	border-radius: 3px;
+}
+
+/* Optional: thinner, visible scrollbar */
+.right-panel::-webkit-scrollbar { width: 10px; }
+.right-panel::-webkit-scrollbar-thumb {
+	background: rgba(255,255,255,0.15);
+	border-radius: 8px;
+}

@@ -11,30 +11,30 @@ const PanelDescription = ({
   <span>
     <CardTitle
       title={topogram.title}
-      titleStyle={{ color: '#F2EFE9',fontSize : '8pt', lineHeight : '1em',padding:"2px 2px 10px 2px" }}
+      titleStyle={{ color: '#F2EFE9', fontSize: '16px', lineHeight: '1.25', padding: '2px 2px 10px 2px' }}
 
       subtitle={`${nodesCount} nodes, ${edgesCount} edges`}
-        subtitleStyle={{ color: '#aa8dc6', fontSize : '9pt',fontWeight: 'bold', lineHeight : '1em' }}
+        subtitleStyle={{ color: '#aa8dc6', fontSize: '13px', fontWeight: 'bold', lineHeight: '1.35' }}
       />
 
     <Divider />
-    <CardText style={{ color: '#F2EFE9',fontSize : '8pt',lineHeight : '1em' }}>
+    <CardText style={{ color: '#F2EFE9', fontSize: '15px', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
       {topogram.description}
 
-      <p style={{ color: '#F2EFE9',fontSize : '8pt', lineHeight : '1em' }}>Last modified {moment(topogram.lastModified).fromNow()}</p>
-      <p style={{ color: '#F2EFE9',fontSize : '8pt', lineHeight : '1em' }}>Created {moment(topogram.createdAt).fromNow()}</p>
+      <p style={{ color: '#F2EFE9', fontSize: '15px', lineHeight: '1.6' }}>Last modified {moment(topogram.lastModified).fromNow()}</p>
+      <p style={{ color: '#F2EFE9', fontSize: '15px', lineHeight: '1.6' }}>Created {moment(topogram.createdAt).fromNow()}</p>
 <Divider />
 <br/>
 
-  <p style={{ color: '#aa8dc6',fontSize : '9pt',fontWeight: 'bold', lineHeight : '1em' }}>
+  <p style={{ color: '#aa8dc6', fontSize: '16px', fontWeight: 'bold', lineHeight: '1.35' }}>
     How to use Bandstour?</p>
-  <p style={{ color: '#aa8dc6',fontSize : '8pt', lineHeight : '1em' }}>
+  <p style={{ color: '#aa8dc6', fontSize: '14px', lineHeight: '1.5' }}>
       SidePanels:</p>
 
-  <p style={{ color: '#F2EFE9',fontSize : '8pt', lineHeight : '1em' }}>
+  <p style={{ color: '#F2EFE9', fontSize: '15px', lineHeight: '1.6' }}>
     Network and Map embed controls allow for finer tuning of the views than mouse controls, try it and you will see for yourself!.</p>
 
-  <p style={{ color: '#F2EFE9',fontSize : '8pt', lineHeight : '1em' }}>
+  <p style={{ color: '#F2EFE9', fontSize: '15px', lineHeight: '1.6' }}>
 
 The wheel allows different changes of configuration: Display/Hide legend, Charts, Network, Geo Map,Time. Map background allows changing Geo Map background.
 
@@ -46,14 +46,14 @@ The wheel allows different changes of configuration: Display/Hide legend, Charts
 
 </p>
 <br/>
-<p style={{ color: '#F2EFE9',fontSize : '8pt', lineHeight : '1em' }}>
+<p style={{ color: '#F2EFE9', fontSize: '15px', lineHeight: '1.6' }}>
 
 The Home button allows searching for Nodes (here venues).
 
 </p>
-<p style={{ color: '#aa8dc6',fontSize : '8pt', lineHeight : '1em' }}>
+<p style={{ color: '#aa8dc6', fontSize: '14px', lineHeight: '1.5' }}>
     Main panels:</p>
-<p style={{ color: '#F2EFE9',fontSize : '8pt', lineHeight : '1em' }}>
+<p style={{ color: '#F2EFE9', fontSize: '15px', lineHeight: '1.6' }}>
 Under Title, Datas shows calculated optimisation of tour.
 Title box also get selected nodes/edges chips. Clicking on them reveals their datas.
 When some are selected, Focu and rearrange redraws a subGraph, ordered, whereas focus only just removes the other nodes/edges from the view.

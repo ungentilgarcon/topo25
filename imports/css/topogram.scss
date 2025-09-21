@@ -184,4 +184,5 @@ svg {
   background-color: #FCF7D3
 }
 */
-@import "/home/goonieb/gitrep/topogram/node_modules/video-react/styles/scss/video-react";
+// Import video-react styles from node_modules using Meteor's root alias
+@import "{}/node_modules/video-react/styles/scss/video-react";
