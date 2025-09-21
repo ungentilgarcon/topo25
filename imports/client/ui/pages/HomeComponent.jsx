@@ -186,8 +186,8 @@ Video below shows the evolution of the sector over the 10 years between 2007 and
     <link rel="stylesheet" href="/css/video-react.css" />
     <Player
       playsInline
-      poster="evolution_poster.png"
-      src="DaybyDayALLBANDS.mp4"
+      poster="/evolution_poster.png"
+      src="/DaybyDayALLBANDS.mp4"
     />
 </div>
 
@@ -202,8 +202,8 @@ Video below shows the evolution of the sector over the 10 years between 2007 and
     <link rel="stylesheet" href="/css/video-react.css" />
     <Player
       playsInline
-      poster="cluster_poster.png"
-      src="CLSTD_MAPS_4500_Wmap_35clstrs_WMKD.mp4"
+      poster="/cluster_poster.png"
+      src="/CLSTD_MAPS_4500_Wmap_35clstrs_WMKD.mp4"
     />
 </div>
 
