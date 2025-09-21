@@ -61,7 +61,7 @@ Blocking examples (truncated):
     - Comments/placeholders in `imports/api/nodes/nodesMethods.js` show `tx.start/tx.commit` commented out; actual runtime usage appears minimal.
 
 - Mongo collection helpers:
-  - `imports/api/helpers.js` uses `Mongo.Collection.get(name)` (from `dburles:mongo-collection-instances`).
+  - `imports/api/helpers.js` previously used `Mongo.Collection.get(name)` (from `dburles:mongo-collection-instances`). Refactored to direct collection map.
 
 - Schemas (aldeed:simple-schema, collection2):
   - `imports/api/*/*.js` use `new SimpleSchema(...)` and `attachSchema(...)` (e.g., `Topograms.js`, `Nodes.js`, `Edges.js`).
@@ -117,7 +117,7 @@ Notes:
    - `transactions` / `undo-redo`: remove if not actively used; otherwise implement a minimal undo stack for specific operations.
 
 4) dburles helpers
-   - Replace `Mongo.Collection.get(name)` usages with direct imports of collection modules to remove `dburles:mongo-collection-instances` dependency.
+  - Replaced `Mongo.Collection.get(name)` with a direct collection map. Package can be removed.
 
 5) Schemas
    - Keep `aldeed:simple-schema@1.5.3` on 1.4.4.6 for now. Plan to migrate to `simpl-schema` (npm) in later phases.
