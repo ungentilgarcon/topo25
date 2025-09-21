@@ -81,6 +81,12 @@ Phase 1: Remove hard legacy constraints on 1.4.4.6 (new prep branch)
   - Audit result (2025-09-21): No occurrences of `Tabular.Table`, `new Tabular.Table`, or tabular templates/helpers were found under `imports/` or `client/`. The package appears unused.
   - Action: Removed `aldeed:tabular@=1.4.1` from `.meteor/packages` in branch `chore/m3-prep-phase1`. If any hidden/legacy references surface, re-introduce via a scoped upgrade or replace with a small Blaze/React table.
 
+3) Remove unused babrahams inline-edit stack (Done)
+  - Packages: `babrahams:editable-text`, `babrahams:transactions`, `babrahams:undo-redo`.
+  - Rationale: No references found in app code (no `{{> editableText}}`, `Template.editableText`, or `tx.*`). Only a cosmetic CSS hover rule existed, which is harmless.
+  - Impact: No functional changes expected. Perform a quick manual check for inline edits in node/edge UIs.
+  - Rollback: `meteor add babrahams:editable-text babrahams:transactions babrahams:undo-redo`.
+
 Run syntax (dev/test) on 1.4.4.6
 
 Server with external Mongo and JsonRoutes enabled:
