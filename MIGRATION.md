@@ -187,3 +187,40 @@ Notes:
 - The new container persists data under `_mongo_data/mongodb-44`.
 - Keep the dated dump under `_mongo_dumps/bandstour-20250922/` for audit/backup.
 - For production, consider Mongo 5.0/6.0+ with replica set and proper auth; 4.4 chosen here for compatibility and quick unblock.
+
+## Upgrade Probe Status (Meteor 2.x) and Next Steps
+
+- App successfully starts on Meteor 2.13.3 with UPGRADE_PROBE enabled and a minimal native `/api` route via `webapp`.
+- Restivus/JsonRoutes code paths are guarded and do not execute in probe mode.
+- External Mongo is now `mongodb://localhost:27018/Bandstour_results_meteor` (MongoDB 4.4).
+- Unit/integration tests: migrated runner to `meteortesting:mocha` (for 2.x). A full test harness refresh will follow in the Meteor 3 phase.
+
+Planned sequence toward Meteor 3.3.x:
+1) Replace legacy Atmosphere UI/DB helpers with npm alternatives while still on Meteor 2.13.3.
+  - sergeyt:typeahead → npm typeahead (or React/MUI Autocomplete if feasible without large UI churn).
+  - mikowals:batch-insert / udondan:bulk-collection-update → plain bulkWrite/OrderedBulkOperation helpers.
+  - raix:handlebar-helpers → local helpers or npm equivalents.
+  - fortawesome:fontawesome → npm `@fortawesome/*` packages.
+  - aldeed:simple-schema → npm `simpl-schema` + collection2-core or direct validation.
+2) Stabilize on Meteor 2.x with the above replacements, re-run tests.
+3) Attempt `meteor update --release 3.3.x` with `--allow-incompatible-update`, resolve remaining breaks (ecmascript, webapp, accounts), and migrate the test driver (`zodern:mocha`).
+
+### sergeyt:typeahead replacement (applied)
+
+Context:
+- Searches confirm no usages under `client/` or `imports/` (`Meteor.typeahead`, `.typeahead(...)`, `tt-*` classes).
+- To unblock Meteor 3, we removed the Atmosphere package and added a small shim to ensure compatibility if hidden call sites exist.
+
+Implementation:
+1) Removed `sergeyt:typeahead` from `.meteor/packages` and `.meteor/versions`.
+2) Added npm `corejs-typeahead@^1.3.4` to `package.json` (latest compatible with our legacy npm engine).
+3) Added `imports/startup/client/typeahead-shim.js` which:
+   - imports `meteor/jquery` and `corejs-typeahead` so `$.fn.typeahead` is registered on Meteor's jQuery (prevents dual jQuery instances),
+   - exposes a minimal `Meteor.typeahead(element, opts)` wrapper as a safeguard.
+4) Imported the shim from `imports/startup/client/routes.jsx` to ensure early registration.
+
+Rollback:
+- Re-add `sergeyt:typeahead` to `.meteor/packages` if a regression is discovered and we need a quick temporary restore.
+
+Branching:
+- Work will proceed on a new branch `chore/m3-prep-meteor3` dedicated to Meteor 3 preparation.
