@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 import { Nodes } from '../nodes/Nodes.js'
 import { Meteor } from 'meteor/meteor'
@@ -58,18 +58,22 @@ Topograms.attachSchema(Topograms.schema)
 
 Topograms.helpers({
   nodes() {
+    // Avoid server-side sync DB access in Meteor 3
+    if (Meteor.isServer) return []
     return Nodes.find({ topogramId : this._id }).fetch()
   },
   isPrivate() {
     return !!this.userId || !!this.sharedPublic
   },
   author() {
-    return !this.userId ?
-      {}
-        :
-      Users.findOne(
-        {_id : this.userId}, { fields: { username : 1, createdAt :1 } }
-      )
+    // In Meteor 3, server-side sync findOne is disallowed. Helpers can run on
+    // both client and server; avoid server DB calls here. The publication will
+    // compute and inject author when needed.
+    if (!this.userId) return {}
+    if (Meteor.isServer) return {}
+    return Users.findOne(
+      { _id: this.userId }, { fields: { username: 1, createdAt: 1 } }
+    )
   },
   editableBy(userId) {
     if (!this.userId) return true

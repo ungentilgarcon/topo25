@@ -11,20 +11,25 @@ Meteor.publish( 'topograms.private', function topogramsPrivate() {
   return Topograms.find({ 'userId': this.userId })
 } )
 
-Meteor.publish( 'topograms.public', function topogramsPrivate() {
-
-  Topograms.find({'sharedPublic' : true},
-    {
-      'sort': { 'createdAt': -1 },
-      //'limit': 20
+Meteor.publish('topograms.public', function topogramsPublic() {
+  const self = this
+  ;(async () => {
+    try {
+      const cursor = Topograms.find({ sharedPublic: true }, { sort: { createdAt: -1 } })
+      const list = await cursor.fetchAsync()
+      for (const t of list) {
+        let author = {}
+        if (t.userId) {
+          const u = await Meteor.users.findOneAsync({ _id: t.userId }, { fields: { username: 1, createdAt: 1 } })
+          if (u) author = { username: u.username, createdAt: u.createdAt }
+        }
+        self.added('topograms', t._id, { ...t, author })
+      }
+      self.ready()
+    } catch (e) {
+      try { self.ready() } catch (e2) { /* noop */ }
     }
-  )
-  .forEach( t => {
-      const author = t.author()
-      this.added("topograms", t._id, {...t, author});
-        });
-
-  this.ready();
+  })()
 })
 
 /*

@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 import { Topograms } from '../topograms/Topograms.js'
+import { Meteor } from 'meteor/meteor'
 
 class EdgesCollection extends Mongo.Collection {
 
@@ -118,6 +119,9 @@ Edges.attachSchema(Edges.schema)
 
 Edges.helpers({
   topogram() {
+    // Avoid server-side sync DB access in Meteor 3; publications should join
+    // data if needed.
+    if (Meteor.isServer) return null
     return Topograms.findOne(this.topogramId)
   }
 })

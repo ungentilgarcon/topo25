@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 import { Topograms } from '../topograms/Topograms.js'
+import { Meteor } from 'meteor/meteor'
 
 class NodesCollection extends Mongo.Collection {
 
@@ -132,6 +133,10 @@ Nodes.attachSchema(Nodes.schema)
 
 Nodes.helpers({
   topogram() {
+    // In Meteor 3, server-side sync findOne is disallowed. Helpers can run
+    // on both client and server; avoid server DB calls here. Publications or
+    // call sites should fetch/link as needed on the server.
+    if (Meteor.isServer) return null
     return Topograms.findOne(this.topogramId)
   }
 })

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-import '/imports/css/topogram.scss'
+import '/imports/css/topogram.css'
 
 import { IntlProvider } from 'react-intl'
 import { messages } from '../../../i18n.js'

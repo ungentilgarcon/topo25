@@ -1,4 +1,6 @@
 import React from 'react'
+// Ensure jQuery plugin is registered early if any component needs it
+import './typeahead-shim'
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 

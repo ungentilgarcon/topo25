@@ -1,7 +1,7 @@
 import { slugify } from '../../helpers'
 import { Topograms, Nodes } from '../collections.js'
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 import { buildErrorAnswer } from '/imports/api/responses'
 
@@ -27,10 +27,10 @@ export const topogramCreate = new ValidatedMethod({
     title: Topograms.simpleSchema().schema('title'),
     userId: Topograms.simpleSchema().schema('userId')
   }).validator({ clean: true, filter: false }),
-  run({ title, userId=this.userId }) {
+  async run({ title, userId=this.userId }) {
 
     // forbid with the same name
-    const t = Topograms.findOne({ title, userId })
+    const t = await Topograms.findOneAsync({ title, userId })
     if (t && t._id) {
       return buildErrorAnswer({
         'message' : 'A topogram with the same name already exists',
@@ -40,7 +40,7 @@ export const topogramCreate = new ValidatedMethod({
 
     const sharedPublic = !userId ? true : false
 
-    return Topograms.insert( {
+    return await Topograms.insertAsync({
       title,
       'slug': slugify( title ),
       'createdAt': new Date(), // current time
@@ -59,11 +59,11 @@ export const topogramCreate = new ValidatedMethod({
 export const topogramDelete = new ValidatedMethod({
   name: 'topogram.delete',
   validate: TOPOGRAM_ID_ONLY,
-  run({ topogramId }) {
-    Nodes.remove({ topogramId }) // delete all connected nodes
+  async run({ topogramId }) {
+    await Nodes.removeAsync({ topogramId }) // delete all connected nodes
     // Meteor.call( 'deleteNodesByTopogramId', topogramId )
     // Meteor.call( 'deleteEdgesByTopogramId', topogramId )
-    return Topograms.remove(topogramId)
+    return await Topograms.removeAsync(topogramId)
   }
 })
 
@@ -85,8 +85,8 @@ export const topogramUpdate = new ValidatedMethod({
       description: Topograms.simpleSchema().schema('description')
     })
     .validator({ clean: true, filter: false }),
-  run({ topogramId, title, description }) {
-    return Topograms.update( topogramId,
+  async run({ topogramId, title, description }) {
+    return await Topograms.updateAsync( topogramId,
       { '$set' : {
         'title': title,
         'description': description,
@@ -110,8 +110,8 @@ export const topogramUpdate = new ValidatedMethod({
 export const topogramUpdateTitle = new ValidatedMethod({
   name: 'topogram.updateTitle',
   validate: TOPOGRAM_ID_AND_TITLE,
-  run({ topogramId, title }) {
-    return Topograms.update( topogramId,
+  async run({ topogramId, title }) {
+    return await Topograms.updateAsync( topogramId,
       { '$set' : { 'title' : title, 'slug': slugify( title ) },
         'updatedAt' : new Date()
       }
@@ -129,11 +129,10 @@ export const topogramUpdateTitle = new ValidatedMethod({
 export const topogramTogglePublic = new ValidatedMethod({
   name: 'topogram.togglePublic',
   validate: TOPOGRAM_ID_ONLY,
-  run({ topogramId }) {
-    const t = Topograms.findOne(topogramId, { sharedPublic : 1 })
-    console.log(t);
-    const sharedPublic= t.sharedPublic || false 
-    return Topograms.update( topogramId,
+  async run({ topogramId }) {
+    const t = await Topograms.findOneAsync(topogramId, { fields: { sharedPublic : 1 } })
+    const sharedPublic= (t && t.sharedPublic) || false 
+    return await Topograms.updateAsync( topogramId,
       { '$set' : { 'sharedPublic' : !sharedPublic },
         'updatedAt' : new Date()
       }
