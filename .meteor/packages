@@ -36,7 +36,6 @@ http
 
 # db
 accounts-password@3.2.1
-mikowals:batch-insert
 
 fortawesome:fontawesome
 # Let Meteor 3 select minifiers automatically

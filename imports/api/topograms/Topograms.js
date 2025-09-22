@@ -58,6 +58,8 @@ Topograms.attachSchema(Topograms.schema)
 
 Topograms.helpers({
   nodes() {
+    // Avoid server-side sync DB access in Meteor 3
+    if (Meteor.isServer) return []
     return Nodes.find({ topogramId : this._id }).fetch()
   },
   isPrivate() {

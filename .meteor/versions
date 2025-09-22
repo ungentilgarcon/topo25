@@ -56,7 +56,6 @@ meteor-base@1.5.2
 meteortesting:browser-tests@1.8.0
 meteortesting:mocha@3.3.0
 meteortesting:mocha-core@8.2.0
-mikowals:batch-insert@1.0.0
 minimongo@2.0.4
 mobile-experience@1.1.2
 mobile-status-bar@1.1.1

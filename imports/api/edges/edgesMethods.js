@@ -35,8 +35,8 @@ export const edgeCreate = new ValidatedMethod({
       'data.source',
       'data.target',
     ]).validator(),
-  run(edge) {
-    return Edges.insert( edge )
+  async run(edge) {
+    return await Edges.insertAsync( edge )
   }
 })
 
@@ -50,8 +50,8 @@ export const edgeCreate = new ValidatedMethod({
 export const edgeDelete = new ValidatedMethod({
   name: 'edge.delete',
   validate: EDGE_ID_ONLY,
-  run({ edgeId }) {
-    return Edges.remove( edgeId )
+  async run({ edgeId }) {
+    return await Edges.removeAsync( edgeId )
   }
 })
 
@@ -86,9 +86,14 @@ export const edgeCreateMany = new ValidatedMethod({
     'topogramId': { type: String },
     'edges' : { type : [ edgeSchema ], minCount: 1 }
   }).validator(),
-  run({ topogramId, edges }) {
+  async run({ topogramId, edges }) {
     const ok = edges.map( e =>  ({ ...e, topogramId }) )
-    return Edges.batchInsert( ok )
+    const ids = []
+    for (const e of ok) {
+      // eslint-disable-next-line no-await-in-loop
+      ids.push(await Edges.insertAsync(e))
+    }
+    return ids
   }
 })
 
@@ -139,10 +144,10 @@ export const edgeUpdate = new ValidatedMethod({
       }
     }
   ]).validator(), // TODO :check if ID exists,
-  run( { edgeId, data }) {
+  async run( { edgeId, data }) {
     const $set = {}
     Object.keys(data).map( d=> $set['data.'+d] = data[d])
-    return Edges.update({ 'data.id': edgeId }, { $set })
+    return await Edges.updateAsync({ 'data.id': edgeId }, { $set })
   }
 })
 
@@ -159,8 +164,8 @@ export const edgeDeleteMany = new ValidatedMethod({
   validate: new SimpleSchema({
     edgeIds: { type: [String], minCount: 1 }
   }).validator(), // TODO :check if ID exists,
-  run({ edgeIds }) {
-    return Edges.remove( { '_id' : { $in : edgeIds } } )
+  async run({ edgeIds }) {
+    return await Edges.removeAsync( { '_id' : { $in : edgeIds } } )
   }
 })
 
@@ -175,28 +180,26 @@ export const edgeDeleteAll = new ValidatedMethod({
   name: 'edge.deleteAll',
   validate: new SimpleSchema({ 'topogramId': { type: String } }).validator(),
   // TODO :check if ID exists
-  run( topogramId ) {
-    return Edges.remove(topogramId)
+  async run( topogramId ) {
+    return await Edges.removeAsync(topogramId)
   }
 })
 
 Meteor.methods( {
 
-  batchInsertEdges( edges ) {
-    // console.log(edges.length)
-    return Edges.batchInsert( edges )
+  async batchInsertEdges( edges ) {
+    const ids = []
+    for (const e of edges) { ids.push(await Edges.insertAsync(e)) }
+    return ids
   },
 
-  deleteEdge( edgeId ) {
-    const edge = Edges.findOne( {
-      'data.id': edgeId
-    } )
-    Edges.remove( edge )
+  async deleteEdge( edgeId ) {
+    const edge = await Edges.findOneAsync({ 'data.id': edgeId })
+    if (!edge) return 0
+    return await Edges.removeAsync( edge )
   },
 
-  deleteEdgesByTopogramId( topogramId ) {
-    return Edges.remove( {
-      topogramId
-    } )
+  async deleteEdgesByTopogramId( topogramId ) {
+    return await Edges.removeAsync({ topogramId })
   }
 } )

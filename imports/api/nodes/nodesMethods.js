@@ -38,8 +38,8 @@ export const nodeCreate = new ValidatedMethod({
       'position.y'
     ])
     .validator(),
-  run(node) {
-    return Nodes.insert( node )
+  async run(node) {
+    return await Nodes.insertAsync( node )
   }
 })
 
@@ -74,11 +74,18 @@ export const nodeCreateMany = new ValidatedMethod({
     'topogramId': { type: String },
     'nodes' : { type : [ nodeSchema ], minCount: 1 }
   }).validator(),
-  run({ topogramId, nodes }) {
+  async run({ topogramId, nodes }) {
     // TODO : use validated "batchInsert'
-    return nodes.map( n =>
-      nodeCreate.call({ ...n, topogramId })
-    )
+    const ids = []
+    for (const n of nodes) {
+      // call as method for validation but await execution
+      // Using direct insertAsync to avoid nested method context
+      // Preserve original behavior: create one-by-one
+      // eslint-disable-next-line no-await-in-loop
+      const id = await Nodes.insertAsync({ ...n, topogramId })
+      ids.push(id)
+    }
+    return ids
 
     // return Nodes.batchInsert( ok )
   }
@@ -94,8 +101,8 @@ export const nodeCreateMany = new ValidatedMethod({
 export const nodeDeleteAll = new ValidatedMethod({
   name: 'node.deleteAll',
   validate: new SimpleSchema({ 'topogramId': { type: String } }).validator(), // TODO :check if ID exists,
-  run( topogramId ) {
-    return Nodes.remove(topogramId)
+  async run( topogramId ) {
+    return await Nodes.removeAsync(topogramId)
   }
 })
 
@@ -113,8 +120,8 @@ export const nodeDelete = new ValidatedMethod({
   validate: new SimpleSchema({
     nodeId: { type: String }
   }).validator(), // TODO :check if ID exists,
-  run({ nodeId }) {
-    return Nodes.remove( nodeId )
+  async run({ nodeId }) {
+    return await Nodes.removeAsync( nodeId )
   }
 })
 
@@ -131,8 +138,8 @@ export const nodeDeleteMany = new ValidatedMethod({
   validate: new SimpleSchema({
     nodeIds: { type: [String], minCount: 1 }
   }).validator(), // TODO :check if ID exists,
-  run({ nodeIds }) {
-    return Nodes.remove( { '_id' : { $in : nodeIds } } )
+  async run({ nodeIds }) {
+    return await Nodes.removeAsync( { '_id' : { $in : nodeIds } } )
   }
 })
 
@@ -165,10 +172,10 @@ export const nodeUpdate = new ValidatedMethod({
     nodeUpdateSchema,
     { 'nodeId': { type: String } }
   ]).validator(), // TODO :check if ID exists,
-  run( { nodeId, data }) {
+  async run( { nodeId, data }) {
     const $set = {}
     Object.keys(data).map( d=> $set['data.'+d] = data[d])
-    return Nodes.update({ 'data.id': nodeId }, { $set })
+    return await Nodes.updateAsync({ 'data.id': nodeId }, { $set })
   }
 })
 
@@ -188,111 +195,76 @@ export const nodeMove = new ValidatedMethod({
     'position.x': { type: Number },
     'position.y': { type: Number }
   }).validator(), // TODO :check if ID exists,
-  run({ topogramId, nodeId, position }) {
-    return Nodes.update({ 'topogramId': topogramId,'data.id': nodeId }, { $set: { position } })
+  async run({ topogramId, nodeId, position }) {
+    return await Nodes.updateAsync({ 'topogramId': topogramId,'data.id': nodeId }, { $set: { position } })
   }
 })
 
 Meteor.methods( {
 
-  mergeNodes( sourceId, targetId ) {
-    const source = Nodes.findOne( {
-      '_id': sourceId
-    } )
-    const target = Nodes.findOne( {
-      '_id': targetId
-    } )  // will be deleted
+  async mergeNodes( sourceId, targetId ) {
+    const source = await Nodes.findOneAsync({ '_id': sourceId })
+    const target = await Nodes.findOneAsync({ '_id': targetId })  // will be deleted
 
     // tx.start( "merges nodes" )
 
     // find and replace all target node edges with source id
-    Edges.find({
-      'data.source': target.data.id
-    }).forEach(function (edge) {
-      Edges.update({
-        '_id': edge._id
-      },{
-        $set: {
-          'data.source': source.data.id
-        }
-        // },{
-        //  tx: true
-      })
-    })
+    {
+      const toSource = await Edges.find({ 'data.source': target.data.id }).fetchAsync()
+      for (const edge of toSource) {
+        // eslint-disable-next-line no-await-in-loop
+        await Edges.updateAsync({ '_id': edge._id }, { $set: { 'data.source': source.data.id } })
+      }
+    }
 
-    Edges.find( {
-      'data.target': target.data.id
-    }).forEach( function ( edge ) {
-      Edges.update({
-        '_id': edge._id
-      },{
-        $set: {
-          'data.target': source.data.id
-        }
-
-        // }, {
-        //     tx: true
-      })
-    })
+    {
+      const toTarget = await Edges.find({ 'data.target': target.data.id }).fetchAsync()
+      for (const edge of toTarget) {
+        // eslint-disable-next-line no-await-in-loop
+        await Edges.updateAsync({ '_id': edge._id }, { $set: { 'data.target': source.data.id } })
+      }
+    }
 
     // copy data of target into source (if missing)
     // TODO : node merger startegy
 
     //erase target
-    Nodes.remove({ '_id': targetId })
+  await Nodes.removeAsync({ '_id': targetId })
     // , {
     //     tx: true
     // } )
     // tx.commit()
   },
 
-  deleteNodeAndConnectedEdges( nodeId, edgesId ) {
-    const _id = Nodes.findOne( {
-      'data.id': nodeId
-    }, {
-      '_id': 1
-    } )._id
+  async deleteNodeAndConnectedEdges( nodeId, edgesId ) {
+    const nodeDoc = await Nodes.findOneAsync({ 'data.id': nodeId }, { fields: { _id: 1 } })
+    const _id = nodeDoc && nodeDoc._id
 
     // tx.start( "delete node+neighborhood" )
-    Nodes.remove( {
-      _id
-    })
-    Edges.find( {
-      'data.id': {
-        '$in': edgesId
-      }
-    } ).forEach( function ( edge ) {
-      Edges.remove( {
-        '_id': edge._id
-      })
-    } )
+    await Nodes.removeAsync({ _id })
+    const toRemove = await Edges.find({ 'data.id': { '$in': edgesId } }).fetchAsync()
+    for (const edge of toRemove) {
+      // eslint-disable-next-line no-await-in-loop
+      await Edges.removeAsync({ '_id': edge._id })
+    }
     // tx.commit()
   },
 
-  deleteNodesByTopogramId( topogramId ) {
-    return Nodes.remove( {
-      topogramId
-    } )
+  async deleteNodesByTopogramId( topogramId ) {
+    return await Nodes.removeAsync({ topogramId })
   },
 
   //update coord in DB for a single node
-  updateNodePosition( nodeId, position ) {
-    const node = Nodes.findOne( {
-      'data.id': nodeId
-    } )
-    Nodes.update( {
-      _id: node._id
-    }, {
-      $set: {
-        position
-      }
-    } )
+  async updateNodePosition( nodeId, position ) {
+    const node = await Nodes.findOneAsync({ 'data.id': nodeId })
+    if (!node) return 0
+    return await Nodes.updateAsync({ _id: node._id }, { $set: { position } })
   },
 
 
   // TODO : improve batch update of nodes
   // update coords in DB for bunch of nodes (useful to save topogram layout changes)
-  updateNodesPositions( updatedNodes ) {
+  async updateNodesPositions( updatedNodes ) {
 
     const nodesPosition = {}
     updatedNodes.forEach(function (d) {
@@ -300,17 +272,17 @@ Meteor.methods( {
       return d
     })
 
-    const nodes = Nodes.find({
+    const nodes = (await Nodes.find({
       '_id' : {
         '$in': updatedNodes.map(function (d) {return d._id})
       }
-    }).fetch().map(function (d) { // update data
+    }).fetchAsync()).map(function (d) { // update data
       d.position = nodesPosition[d._id]
       return d
       //  = updatedNodes
     })
 
-    bulkCollectionUpdate(Nodes, nodes, {
+    await bulkCollectionUpdate(Nodes, nodes, {
       primaryKey : '_id',
       callback() {
         // logger.log('Nodes positions updated.')
@@ -318,34 +290,19 @@ Meteor.methods( {
     })
   },
 
-  lockNode( nodeId, position ) {
-    const node = Nodes.findOne( {
-      'data.id': nodeId
-    } )
+  async lockNode( nodeId, position ) {
+    const node = await Nodes.findOneAsync({ 'data.id': nodeId })
+    if (!node) return 0
     const locked = node.locked ? false : true
-    Nodes.update( {
-      _id: node._id
-    }, {
-      $set: {
-        locked,
-        position
-      }
-    } )
+    return await Nodes.updateAsync({ _id: node._id }, { $set: { locked, position } })
   },
 
   // TODO: pass _id instead of data.id
-  starNode( nodeId ) {
-    const node = Nodes.findOne( {
-      'data.id': nodeId
-    })
-    const starred = node.data.starred ? false : true
-    Nodes.update({
-      _id: node._id
-    }, {
-      $set: {
-        'data.starred': starred
-      }
-    })
+  async starNode( nodeId ) {
+    const node = await Nodes.findOneAsync({ 'data.id': nodeId })
+    if (!node) return 0
+    const starred = node.data && node.data.starred ? false : true
+    return await Nodes.updateAsync({ _id: node._id }, { $set: { 'data.starred': starred } })
 
   },
 
