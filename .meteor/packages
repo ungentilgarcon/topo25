@@ -5,42 +5,43 @@
 # but you can also edit it by hand.
 
 # native
-meteor-base@1.5.1
-mongo@1.16.7
-session@1.2.1
-tracker@1.3.2
-logging@1.3.2
-reload@1.3.1
-random@1.2.1
-ejson@1.1.3
-check@1.3.2
+meteor-base@1.5.2
+mongo@2.1.4
+session@1.2.2
+tracker@1.3.4
+logging@1.3.6
+reload@1.3.2
+random@1.2.2
+ejson@1.1.5
+check@1.4.4
 
 # meteor++
-reactive-var@1.0.12
+reactive-var@1.0.13
 
 # UI
-mobile-experience@1.1.0
+mobile-experience@1.1.2
 blaze-html-templates
 spacebars
 jquery
  
 
-fourseven:scss
+# SCSS plugin was using fourseven:scss; removed to avoid node-sass in Meteor 3.
+# Styles now import plain CSS or local .scss that do not require node-sass features.
 
 # js libs
 http
 
 # db
-accounts-password@2.3.4
+accounts-password@3.2.1
 mikowals:batch-insert
  
 udondan:bulk-collection-update
 
 raix:handlebar-helpers
 fortawesome:fontawesome
-standard-minifier-css@1.9.2
-standard-minifier-js@2.8.1
-modules@0.19.0
+standard-minifier-css@1.9.3
+standard-minifier-js@3.1.1
+modules@0.20.3
 
 # rest API
 # nimble:restivus (removed for upgrade probe)
@@ -57,8 +58,8 @@ aldeed:collection2
 johanbrook:publication-collector
 dburles:collection-helpers
 mdg:validated-method
-ecmascript@0.16.7
-shell-server@0.5.0
+ecmascript@0.16.13
+shell-server@0.6.2
 
-dynamic-import
+dynamic-import@0.7.4
 underscore
