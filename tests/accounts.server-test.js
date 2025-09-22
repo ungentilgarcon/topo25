@@ -7,14 +7,14 @@ import { assert } from 'meteor/practicalmeteor:chai'
 
 if (Meteor.isServer) {
   describe('Accounts sanity', function () {
-    it('creates a user and validates password check', function () {
+    it('creates a user and validates password check', async function () {
       const email = `user${Date.now()}@test.local`
       const password = 'pass1234'
-      const userId = Accounts.createUser({ email, password })
+      const userId = await Accounts.createUser({ email, password })
       assert.isString(userId)
-      const user = Meteor.users.findOne(userId)
+      const user = await Meteor.users.findOneAsync(userId)
       assert.isOk(user)
-      const result = Accounts._checkPassword(user, password)
+      const result = await Accounts._checkPasswordAsync(user, password)
       assert.equal(result.error, null)
     })
   })

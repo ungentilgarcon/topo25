@@ -14,14 +14,16 @@ const COLLECTIONS_BY_NAME = {
 Meteor.methods({
   /**
   * Update a specific field based on an _id and a collection name
+  * Uses async DB API for Meteor 3 compatibility.
   */
-  updateField(collection, _id, field, value) {
+  async updateField(collection, _id, field, value) {
     if (collection && _id && field && value) {
       const Collection = COLLECTIONS_BY_NAME[String(collection).toLowerCase()]
-      if (!Collection) return
+      if (!Collection) return 0
       const toUpdate = {}
       toUpdate[field] = value
-      Collection.update({ _id }, { $set: toUpdate })
+      return await Collection.updateAsync({ _id }, { $set: toUpdate })
     }
+    return 0
   }
 })
