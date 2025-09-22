@@ -43,22 +43,28 @@ if (upgradeProbe) {
 export let Api
 if (!upgradeProbe && !useJsonRoutes) {
   // Global API configuration
-  const { Restivus } = require('meteor/nimble:restivus')
-  Api = new Restivus({
-    apiPath: 'api',
-    useDefaultAuth: true,
-    prettyJson: true,
-    onLoggedIn() {
-      // logger.log(this.user.username + ' (' + this.userId + ') logged in')
-    },
-    onLoggedOut() {
-      // logger.log(this.user.username + ' (' + this.userId + ') logged out')
-    }
-  })
+  try {
+    // eslint-disable-next-line global-require
+    const { Restivus } = require('meteor/nimble:restivus')
+    Api = new Restivus({
+      apiPath: 'api',
+      useDefaultAuth: true,
+      prettyJson: true,
+      onLoggedIn() {
+        // logger.log(this.user.username + ' (' + this.userId + ') logged in')
+      },
+      onLoggedOut() {
+        // logger.log(this.user.username + ' (' + this.userId + ') logged out')
+      }
+    })
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Restivus not installed; skipping legacy API. Set USE_JSONROUTES=1 or install nimble:restivus.')
+  }
 }
 
 // Home
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addRoute('',
     { authRequired: false },
     { get() { return { 'message' : 'API works' } } }
@@ -72,7 +78,7 @@ if (!upgradeProbe && !useJsonRoutes) {
 }
 
 // Generates: POST on /api/users and GET, DELETE /api/users/:id for
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addCollection(Meteor.users, {
     excludedEndpoints: [ 'put','delete','patch'],
     routeOptions: {
@@ -109,7 +115,7 @@ if (!upgradeProbe && !useJsonRoutes) {
 }
 
 // Topograms
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addCollection(Topograms, {
     routeOptions: {
       authRequired: true
@@ -136,7 +142,7 @@ if (!upgradeProbe && !useJsonRoutes) {
   })
 }
 
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addRoute('topograms/getByName', {
     post: {
       authRequired: false,
@@ -151,7 +157,7 @@ if (!upgradeProbe && !useJsonRoutes) {
   })
 }
 
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addRoute('topograms/:_id/public', {
     post: {
       authRequired: true,
@@ -169,7 +175,7 @@ if (!upgradeProbe && !useJsonRoutes) {
 }
 
 // Nodes
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addCollection(Nodes, {
     routeOptions: { authRequired: false },
     endpoints: {
@@ -204,7 +210,7 @@ if (!upgradeProbe && !useJsonRoutes) {
   })
 }
 
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addRoute('nodes/delete', {
     post : {
       authRequired: true,
@@ -218,7 +224,7 @@ if (!upgradeProbe && !useJsonRoutes) {
   })
 }
 
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addRoute('topograms/:_id/nodes', {
     get: {
       authRequired: false,
@@ -232,7 +238,7 @@ if (!upgradeProbe && !useJsonRoutes) {
 }
 
 // Edges
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addCollection(Edges, {
     routeOptions: { authRequired: false },
     endpoints: {
@@ -265,7 +271,7 @@ if (!upgradeProbe && !useJsonRoutes) {
   })
 }
 
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addRoute('edges/delete', {
     post : {
       authRequired: true,
@@ -279,7 +285,7 @@ if (!upgradeProbe && !useJsonRoutes) {
   })
 }
 
-if (!upgradeProbe && !useJsonRoutes) {
+if (Api) {
   Api.addRoute('topograms/:_id/edges', {
     get: {
       authRequired: false,
