@@ -1,6 +1,6 @@
 import { Nodes, Edges } from '../collections.js'
 import { Meteor } from 'meteor/meteor'
-import { bulkCollectionUpdate } from 'meteor/udondan:bulk-collection-update'
+import { bulkCollectionUpdate } from '../../lib/bulkCollectionUpdate.js'
 
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
 import { SimpleSchema } from 'meteor/aldeed:simple-schema'

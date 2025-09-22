@@ -4,6 +4,9 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
+# Ensure Meteor 3 runtime is available first
+core-runtime
+
 # native
 meteor-base@1.5.2
 mongo@2.1.4
@@ -34,13 +37,9 @@ http
 # db
 accounts-password@3.2.1
 mikowals:batch-insert
- 
-udondan:bulk-collection-update
 
-raix:handlebar-helpers
 fortawesome:fontawesome
-standard-minifier-css@2.0.1
-standard-minifier-js@3.0.4
+# Let Meteor 3 select minifiers automatically
 modules@0.20.3
 
 # rest API
@@ -62,5 +61,3 @@ ecmascript@0.16.13
 shell-server@0.6.2
 
 dynamic-import@0.7.4
-underscore
-core-runtime

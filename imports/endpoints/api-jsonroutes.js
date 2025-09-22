@@ -76,13 +76,13 @@ function bufferJsonBody(req) {
   })
 }
 
-function attachUser(req) {
+async function attachUser(req) {
   try {
     const userId = req.headers['x-user-id'] || req.headers['x-userid']
     const token = req.headers['x-auth-token'] || req.headers['x-authtoken']
     if (userId && token) {
       const hashed = Accounts._hashLoginToken(token)
-      const user = Meteor.users.findOne({
+      const user = await Meteor.users.findOneAsync({
         _id: userId,
         'services.resume.loginTokens.hashedToken': hashed
       })
@@ -101,8 +101,9 @@ function attachUser(req) {
 }
 
 function requireAuth(req) {
-  const userId = (req && req.userId) || (Meteor.userId && Meteor.userId())
-  return userId
+  // In WebApp HTTP handlers there is no DDP/method context, so Meteor.userId() is invalid.
+  // We only trust the user attached from headers via attachUser().
+  return (req && req.userId) || null
 }
 
 export function setupJsonApi() {
@@ -117,7 +118,7 @@ export function setupJsonApi() {
     const p = pathname === apiBase ? apiBase + '/' : pathname
 
     // Prepare request context
-    attachUser(req)
+  await attachUser(req)
     req.body = await bufferJsonBody(req)
 
     // Routing
@@ -134,17 +135,18 @@ export function setupJsonApi() {
       if (!identifier || !password) {
         return sendJSON(res, { code: 400, data: { error: 'Missing credentials' } })
       }
-      const user = Meteor.users.findOne({
+      const user = await Meteor.users.findOneAsync({
         $or: [
           { 'emails.address': identifier },
           { username: identifier }
         ]
       })
       if (!user) return sendJSON(res, { code: 401, data: { error: 'Unauthorized' } })
-      const check = Accounts._checkPassword(user, password)
-      if (check.error) return sendJSON(res, { code: 401, data: { error: 'Unauthorized' } })
+  const check = await Accounts._checkPasswordAsync(user, password)
+  if (check && check.error) return sendJSON(res, { code: 401, data: { error: 'Unauthorized' } })
       const stamped = Accounts._generateStampedLoginToken()
-      Accounts._insertLoginToken(user._id, stamped)
+      // In Meteor 3, some internals may be async; await just in case
+      await Promise.resolve(Accounts._insertLoginToken(user._id, stamped))
       return sendJSON(res, { code: 200, data: { userId: user._id, authToken: stamped.token } })
     }
 
@@ -152,27 +154,46 @@ export function setupJsonApi() {
     if (req.method === 'GET' && p === `${apiBase}/whoami`) {
       const userId = requireAuth(req)
       if (!userId) return sendJSON(res, { code: 401, data: { error: 'Unauthorized' } })
-      const u = Meteor.users.findOne(userId, { fields: { username: 1, emails: 1 } })
+  const u = await Meteor.users.findOneAsync(userId, { fields: { username: 1, emails: 1 } })
       const email = (u && u.emails && u.emails[0] && u.emails[0].address) || null
       return sendJSON(res, { data: { userId, username: u && u.username, email } })
     }
 
     // Public topograms
     if (req.method === 'GET' && p === `${apiBase}/topogramsPublic`) {
-      const data = Topograms.find({ sharedPublic: { $in: [true, 1] } }).fetch()
-      return sendJSON(res, { data })
+      const list = await Topograms.find({ sharedPublic: { $in: [true, 1] } }).fetchAsync()
+      return sendJSON(res, { data: Array.isArray(list) ? list : [] })
     }
 
     // Users (create)
     if (req.method === 'POST' && p === `${apiBase}/users`) {
       const data = req.body || {}
-      const existing = Meteor.users.find({ 'emails.address': data.email }).fetch()
-      if (existing.length) {
+      const existing = await Meteor.users.find({ 'emails.address': data.email }).fetchAsync()
+      if (existing && existing.length) {
         return sendJSON(res, { code: 403, data: buildErrorAnswer({ statusCode: 403, message: 'Unauthorized - Email already exists' }) })
       }
-      Accounts.createUser(data)
-      const user = Meteor.users.findOne({ 'emails.address': data.email })
-      return sendJSON(res, { code: 201, data: buildSuccessAnswer({ statusCode: 201, data: { _id: user._id } }) })
+      await Accounts.createUser(data)
+      const created = await Meteor.users.findOneAsync({ 'emails.address': data.email })
+      return sendJSON(res, { code: 201, data: buildSuccessAnswer({ statusCode: 201, data: { _id: created && created._id } }) })
+    }
+
+    // Dev helpers (only when API_DEBUG=1)
+    if (apiDebug) {
+      // GET /api/dev/user-by-email?email=...
+      if (req.method === 'GET' && p === `${apiBase}/dev/user-by-email`) {
+        const email = url.searchParams.get('email')
+        const u = email ? await Meteor.users.findOneAsync({ 'emails.address': email }) : null
+        return sendJSON(res, { data: { found: !!u, user: u && { _id: u._id, username: u.username, emails: u.emails } } })
+      }
+      // POST /api/dev/seed-user -> { email, password, username? }
+      if (req.method === 'POST' && p === `${apiBase}/dev/seed-user`) {
+        const { email, password, username } = req.body || {}
+        if (!email || !password) return sendJSON(res, { code: 400, data: { error: 'Missing email/password' } })
+        const exists = await Meteor.users.findOneAsync({ 'emails.address': email })
+        if (exists) return sendJSON(res, { code: 200, data: { userId: exists._id, note: 'already-existed' } })
+        const userId = await Accounts.createUser({ email, password, ...(username ? { username } : {}) })
+        return sendJSON(res, { data: { userId } })
+      }
     }
 
     // Topograms
@@ -188,13 +209,13 @@ export function setupJsonApi() {
 
     if (req.method === 'GET' && p === `${apiBase}/topograms`) {
       if (!requireAuth(req)) return sendJSON(res, { code: 401, data: { error: 'Unauthorized' } })
-      const data = Topograms.find().fetch()
+      const data = await Topograms.find().fetchAsync()
       return sendJSON(res, { data: buildSuccessAnswer({ statusCode: 200, data }) })
     }
 
     if (req.method === 'POST' && p === `${apiBase}/topograms/getByName`) {
       const title = req.body && req.body.name
-      const data = Topograms.findOne({ title })
+      const data = await Topograms.findOneAsync({ title })
       return sendJSON(res, { data: buildSuccessAnswer({ statusCode: 200, data }) })
     }
 
@@ -204,7 +225,7 @@ export function setupJsonApi() {
         if (!requireAuth(req)) return sendJSON(res, { code: 401, data: { error: 'Unauthorized' } })
         const { _id } = params
         togglePublicTopogram({ topogramId: _id })
-        const data = Topograms.findOne(_id)
+        const data = await Topograms.findOneAsync(_id)
         return sendJSON(res, { data: { status: 'success', data } })
       }
     }
@@ -245,7 +266,7 @@ export function setupJsonApi() {
       const params = matchPath(`${apiBase}/topograms/:_id/nodes`, p)
       if (req.method === 'GET' && params) {
         const { _id } = params
-        const data = Nodes.find({ topogramId: _id }).fetch()
+        const data = await Nodes.find({ topogramId: _id }).fetchAsync()
         return sendJSON(res, { data: buildSuccessAnswer({ statusCode: 200, data }) })
       }
     }
@@ -286,7 +307,7 @@ export function setupJsonApi() {
       const params = matchPath(`${apiBase}/topograms/:_id/edges`, p)
       if (req.method === 'GET' && params) {
         const { _id } = params
-        const data = Edges.find({ topogramId: _id }).fetch()
+        const data = await Edges.find({ topogramId: _id }).fetchAsync()
         return sendJSON(res, { data: buildSuccessAnswer({ statusCode: 200, data }) })
       }
     }

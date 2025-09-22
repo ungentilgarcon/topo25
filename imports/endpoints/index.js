@@ -72,8 +72,15 @@ if (!upgradeProbe && !useJsonRoutes) {
       }
     })
   } catch (e) {
+    // If Restivus isn't present (or incompatible), fall back to JsonRoutes scaffold
     // eslint-disable-next-line no-console
-    console.warn('Restivus not installed; skipping legacy API. Set USE_JSONROUTES=1 or install nimble:restivus.')
+    console.warn('Restivus unavailable; enabling JsonRoutes scaffold instead.', e && e.message)
+    try {
+      const { setupJsonApi } = require('/imports/endpoints/api-jsonroutes.js')
+      setupJsonApi()
+    } catch (e2) {
+      console.warn('JsonRoutes scaffold failed to initialize:', e2 && e2.message)
+    }
   }
 }
 

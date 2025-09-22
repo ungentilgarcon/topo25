@@ -64,12 +64,14 @@ Topograms.helpers({
     return !!this.userId || !!this.sharedPublic
   },
   author() {
-    return !this.userId ?
-      {}
-        :
-      Users.findOne(
-        {_id : this.userId}, { fields: { username : 1, createdAt :1 } }
-      )
+    // In Meteor 3, server-side sync findOne is disallowed. Helpers can run on
+    // both client and server; avoid server DB calls here. The publication will
+    // compute and inject author when needed.
+    if (!this.userId) return {}
+    if (Meteor.isServer) return {}
+    return Users.findOne(
+      { _id: this.userId }, { fields: { username: 1, createdAt: 1 } }
+    )
   },
   editableBy(userId) {
     if (!this.userId) return true
