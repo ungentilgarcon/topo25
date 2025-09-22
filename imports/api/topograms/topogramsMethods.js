@@ -1,7 +1,7 @@
 import { slugify } from '../../helpers'
 import { Topograms, Nodes } from '../collections.js'
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 import { buildErrorAnswer } from '/imports/api/responses'
 

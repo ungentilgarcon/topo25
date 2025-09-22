@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 import { Topograms } from '../topograms/Topograms.js'
 import { Meteor } from 'meteor/meteor'
 

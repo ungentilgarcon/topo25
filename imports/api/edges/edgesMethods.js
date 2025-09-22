@@ -2,7 +2,7 @@ import { Edges } from '../collections.js'
 import { Meteor } from 'meteor/meteor'
 
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 const EDGE_ID_ONLY = new SimpleSchema({
   edgeId: Edges.simpleSchema().schema('_id'),
