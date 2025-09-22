@@ -10,6 +10,7 @@ Status: Baseline stabilized on Meteor 1.4.4.6 (branch: `chore/meteor-update-LATE
   - Align `standard-minifier-css@1.3.5`, `standard-minifier-js@2.0.0`
   - `.babelrc`: Babel 6 plugins only (removed `@babel/plugin-proposal-class-properties`)
 - Smoke test: App serves HTTP 200 at `/` with `MONGO_URL=mongodb://localhost:27017/Bandstour_results_meteor`.
+- Authentication: Login flow verified OK against external Mongo using Accounts password; pure-JS bcrypt is sufficient for correctness on this baseline (native module optional). (2025-09-22)
 
 ## Enumerated Conflicts Targeting Meteor 3.3.x
 
