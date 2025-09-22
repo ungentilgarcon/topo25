@@ -39,6 +39,20 @@ if (upgradeProbe) {
   // Skip loading any additional API wiring in upgrade-probe mode
 }
 
+// Lightweight diagnostics for login events to help with end-to-end verification
+if (Meteor.isServer) {
+  Accounts.onLogin((info) => {
+    try {
+      const u = info && info.user
+      const email = (u && u.emails && u.emails[0] && u.emails[0].address) || u && u.username || 'unknown'
+      // eslint-disable-next-line no-console
+      console.log('[accounts] login', { userId: info.user && info.user._id, email })
+    } catch (e) {
+      // noop
+    }
+  })
+}
+
 // If not using JsonRoutes scaffold, set up existing Restivus API (default)
 export let Api
 if (!upgradeProbe && !useJsonRoutes) {
@@ -72,7 +86,8 @@ if (Api) {
 
   Api.addRoute('topogramsPublic', { authRequired: false }, {
     get() {
-      return Topograms.find({ 'sharedPublic': 1 }).fetch()
+      // Support both historical numeric 1 and boolean true
+      return Topograms.find({ 'sharedPublic': { $in: [true, 1] } }).fetch()
     }
   })
 }

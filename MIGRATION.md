@@ -90,7 +90,7 @@ Phase 1: Remove hard legacy constraints on 1.4.4.6 (new prep branch)
 
 Run syntax (dev/test) on 1.4.4.6
 
-Server with external Mongo and JsonRoutes enabled:
+Server with external Mongo and JSON API enabled:
 
 ```sh
 USE_JSONROUTES=1 \
@@ -110,8 +110,37 @@ meteor test --once --full-app --driver-package dispatch:mocha --port 3010
 
 Notes:
 - Internal Meteor Mongo can fail on this legacy stack; always pass `MONGO_URL` to use the external container.
-- JsonRoutes tests live under `imports/endpoints/` and are loaded via `tests/jsonroutes-loader.app-test.js` to ensure discovery by the Meteor 1.4 test harness.
+- JSON API tests live under `imports/endpoints/` and are loaded via `tests/jsonroutes-loader.app-test.js` to ensure discovery by the Meteor 1.4/2.x test harness.
 - Legacy `api.app-test.js` is skipped (describe.skip) to avoid `request` dependency issues.
+
+### Update 2025-09-22: JSON API moved off simple:json-routes
+
+- Replaced the feature-flagged scaffold that used `simple:json-routes` with a native `WebApp.connectHandlers` implementation in `imports/endpoints/api-jsonroutes.js`.
+- All existing paths and behaviors are preserved (`/api`, `/api/topogramsPublic`, `/api/topograms`, nodes/edges subsets, etc.).
+- Authentication header handling remains the same (`X-User-Id` and `X-Auth-Token` using `Accounts._hashLoginToken`).
+- This removes the Atmosphere dependency and makes the JSON API Meteor 3–compatible.
+
+New auth helpers (for end-to-end testing):
+
+- POST `/api/auth/login` with `{ email, password }` (or `{ username, password }`) returns `{ userId, authToken }` suitable for `X-User-Id`/`X-Auth-Token` headers.
+- GET `/api/whoami` returns `{ userId, username?, email? }` when valid auth headers are provided.
+
+Quick smoke (requires Mongo 4.4 at 27018):
+
+```sh
+# Start
+USE_JSONROUTES=1 API_DEBUG=1 \
+MONGO_URL=mongodb://localhost:27018/Bandstour_results_meteor \
+ROOT_URL=http://localhost:3020 meteor --port 3020
+
+# In a second shell
+base=http://localhost:3020
+email="cli_$(date +%s)@test.local"; pass="pass1234"
+curl -sS -X POST "$base/api/users" -H 'Content-Type: application/json' -d '{"email":"'"$email"'","password":"'"$pass"'"}'
+login=$(curl -sS -X POST "$base/api/auth/login" -H 'Content-Type: application/json' -d '{"email":"'"$email"'","password":"'"$pass"'"}')
+uid=$(echo "$login" | sed -n 's/.*"userId":"\([^"]*\)".*/\1/p'); tok=$(echo "$login" | sed -n 's/.*"authToken":"\([^"]*\)".*/\1/p')
+curl -sS "$base/api/whoami" -H "X-User-Id: $uid" -H "X-Auth-Token: $tok"
+```
 
 3) babrahams packages
    - `editable-text`: replace inline editing with a small Blaze helper or React component.

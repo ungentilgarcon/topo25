@@ -111,5 +111,29 @@ if (Meteor.isServer) {
         done()
       }).catch(done)
     })
+
+    it('POST /api/auth/login returns token and GET /api/whoami works', function (done) {
+      const email = `user${Date.now()}@test.local`
+      const password = 'pass1234'
+      Accounts.createUser({ email, password })
+
+      httpRequest('POST', `${base}/api/auth/login`, { json: { email, password } })
+        .then(({ statusCode, body }) => {
+          assert.equal(statusCode, 200)
+          const data = JSON.parse(body)
+          assert.isString(data.userId)
+          assert.isString(data.authToken)
+          return httpRequest('GET', `${base}/api/whoami`, {
+            headers: { 'X-User-Id': data.userId, 'X-Auth-Token': data.authToken }
+          })
+        })
+        .then(({ statusCode, body }) => {
+          assert.equal(statusCode, 200)
+          const me = JSON.parse(body)
+          assert.equal(typeof me.userId, 'string')
+          done()
+        })
+        .catch(done)
+    })
   })
 }
