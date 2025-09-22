@@ -1,10 +1,14 @@
 import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
-import { Restivus } from 'meteor/nimble:restivus'
+// During upgrade probes, avoid importing Restivus so we can remove the package safely
+// import { Restivus } from 'meteor/nimble:restivus'
 
-// Feature flag: allow scaffolding a JsonRoutes-based API without removing Restivus yet
+// Feature flags
+// - USE_JSONROUTES: allow scaffolding a JsonRoutes-based API without removing Restivus yet
+// - UPGRADE_PROBE: skip Restivus/JsonRoutes entirely and expose only a minimal health endpoint
 const useJsonRoutes = (Meteor.settings && Meteor.settings.public && Meteor.settings.public.useJsonRoutes) ||
   (typeof process !== 'undefined' && process.env && process.env.USE_JSONROUTES === '1')
+const upgradeProbe = (typeof process !== 'undefined' && process.env && process.env.UPGRADE_PROBE === '1')
 
 // import logger from '/imports/logger.js'
 
@@ -19,10 +23,27 @@ import {
 import { buildSuccessAnswer, buildErrorAnswer } from '/imports/api/responses'
 import { Topograms, Nodes, Edges } from '/imports/api/collections.js'
 
+// In upgrade-probe mode, define only a tiny health route using WebApp and bail out
+if (upgradeProbe) {
+  try {
+    // eslint-disable-next-line global-require
+    const { WebApp } = require('meteor/webapp')
+    WebApp.connectHandlers.use('/api', (req, res) => {
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ message: 'API works (upgrade probe minimal mode)' }))
+    })
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Upgrade probe health route failed to initialize:', e && e.message)
+  }
+  // Skip loading any additional API wiring in upgrade-probe mode
+}
+
 // If not using JsonRoutes scaffold, set up existing Restivus API (default)
 export let Api
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   // Global API configuration
+  const { Restivus } = require('meteor/nimble:restivus')
   Api = new Restivus({
     apiPath: 'api',
     useDefaultAuth: true,
@@ -37,7 +58,7 @@ if (!useJsonRoutes) {
 }
 
 // Home
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addRoute('',
     { authRequired: false },
     { get() { return { 'message' : 'API works' } } }
@@ -51,7 +72,7 @@ if (!useJsonRoutes) {
 }
 
 // Generates: POST on /api/users and GET, DELETE /api/users/:id for
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addCollection(Meteor.users, {
     excludedEndpoints: [ 'put','delete','patch'],
     routeOptions: {
@@ -88,7 +109,7 @@ if (!useJsonRoutes) {
 }
 
 // Topograms
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addCollection(Topograms, {
     routeOptions: {
       authRequired: true
@@ -115,7 +136,7 @@ if (!useJsonRoutes) {
   })
 }
 
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addRoute('topograms/getByName', {
     post: {
       authRequired: false,
@@ -130,7 +151,7 @@ if (!useJsonRoutes) {
   })
 }
 
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addRoute('topograms/:_id/public', {
     post: {
       authRequired: true,
@@ -148,7 +169,7 @@ if (!useJsonRoutes) {
 }
 
 // Nodes
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addCollection(Nodes, {
     routeOptions: { authRequired: false },
     endpoints: {
@@ -183,7 +204,7 @@ if (!useJsonRoutes) {
   })
 }
 
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addRoute('nodes/delete', {
     post : {
       authRequired: true,
@@ -272,7 +293,7 @@ if (!useJsonRoutes) {
 }
 
 // If JsonRoutes scaffold is enabled, set up parallel endpoints (scaffold only)
-if (useJsonRoutes) {
+if (!upgradeProbe && useJsonRoutes) {
   try {
     // Lazy load to avoid adding server-only deps unless enabled
     // eslint-disable-next-line global-require

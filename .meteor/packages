@@ -5,24 +5,24 @@
 # but you can also edit it by hand.
 
 # native
-meteor-base@1.0.4
-mongo@1.1.15
-session@1.1.7
-tracker@1.1.2
-logging@1.1.17
-reload@1.1.11
-random@1.0.10
-ejson@1.0.13
-check@1.2.4
+meteor-base
+mongo
+session
+tracker
+logging
+reload
+random
+ejson
+check
 
 # meteor++
-reactive-var@1.0.11
+reactive-var
 
 # UI
-mobile-experience@1.0.4
+mobile-experience
 blaze-html-templates
 spacebars
-jquery@1.11.10
+jquery
  
 
 fourseven:scss
@@ -32,24 +32,23 @@ sergeyt:typeahead
 http
 
 # db
-accounts-password@1.3.4
+accounts-password
 mikowals:batch-insert
  
 udondan:bulk-collection-update
 
 raix:handlebar-helpers
 fortawesome:fontawesome
-standard-minifier-css@1.3.5
-standard-minifier-js@2.0.0
-modules@0.7.9
+standard-minifier-css
+standard-minifier-js
+modules
 
 # rest API
-nimble:restivus
-simple:json-routes
+# nimble:restivus (removed for upgrade probe)
+# simple:json-routes (removed for upgrade probe)
 
 # testing
-xolvio:cleaner
-practicalmeteor:chai
+meteortesting:mocha
 
 
 react-template-helper
@@ -59,7 +58,6 @@ aldeed:collection2
 johanbrook:publication-collector
 dburles:collection-helpers
 mdg:validated-method
-ecmascript@0.6.3
+ecmascript
 shell-server
-practicalmeteor:mocha
-dispatch:mocha
+
