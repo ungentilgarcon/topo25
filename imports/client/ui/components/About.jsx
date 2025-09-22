@@ -4,7 +4,7 @@ import Dialog from 'material-ui/Dialog'
 import MenuItem from 'material-ui/MenuItem'
 import FlatButton from 'material-ui/FlatButton'
 import InfoIcon from 'material-ui/svg-icons/action/info'
-// import Version from './Version.jsx'
+import Version from './Version.jsx'
 
 
 class About extends React.Component {
@@ -67,7 +67,7 @@ class About extends React.Component {
             BandsTour 2015-2018 (cc). Thanks to Grégory Bahde,Clément Renaud.
             Topogram 2015-2017 (cc). Thanks to Clément Renaud, Grégory Bahde and Lionel Radisson.
           </small></p>
-          {/* <Version /> */}
+          <Version />
         </Dialog>
       </div>
     )

@@ -1,10 +1,11 @@
-# Topogram
+# Topogram (BandsTour fork)
 
-**Topogram** is a web-based app to visualize the evolution of networks over time and space.
+Topogram is a web app to visualize the evolution of networks over time and space. This fork powers BandsTour and adds a JSON API and UI improvements.
 
-[![Build Status](https://travis-ci.org/topogram/topogram.svg?branch=api)](https://travis-ci.org/topogram/topogram)
+- Current version: V0.3 (Meteor 2.13.x)
+- Highlights in V0.3: non-blocking, draggable help popup; JSON API endpoints; migration groundwork. See the [Changelog](./CHANGELOG.md).
 
-For more information, please [read the docs ](http://topogram.io)
+For background, see the original project: http://topogram.io
 
 ## Features
 
@@ -19,10 +20,24 @@ For more information, please [read the docs ](http://topogram.io)
 
 You need [Meteor JS](https://www.meteor.com/) to install Topogram.
 
-    git clone https://github.com/topogram/topogram-client.git
-    cd topogram-client
-    meteor npm install
-    meteor
+Quick start (development):
+
+1. Clone this repo
+2. Install dependencies
+3. Run Meteor
+
+```
+git clone https://github.com/ungentilgarcon/topo25.git
+cd topo25/topogram
+meteor npm install
+# Optional: use a local MongoDB and enable JSON API endpoints
+export MONGO_URL='mongodb://localhost:27018/Bandstour_results_meteor'
+export USE_JSONROUTES=1
+export ROOT_URL='http://localhost:3020'
+meteor --port 3020
+```
+
+More details in docs/Quickstart.md.
 
 
 ### Test & Code quality
@@ -56,6 +71,13 @@ All the docs will be built in the `.docs/` folder.
 
     gulp doc
 
+### JSON API (optional)
+
+This fork exposes a lightweight JSON API for basic operations (auth, listing public topograms, and CRUD for topograms/nodes/edges). The API is disabled by default and can be enabled by setting `USE_JSONROUTES=1` at runtime.
+
+- Docs: docs/API.md
+- Quick probe: `curl http://localhost:3020/api/whoami`
+
 ### Publishing instructions
 
 This project is set up to automatically publish to npm. To publish:
@@ -66,3 +88,7 @@ This project is set up to automatically publish to npm. To publish:
 ### Internationalization
 
 Topogram supports internationalization. Please read our [i18n guidelines](https://github.com/topogram/topogram/wiki/App-translation) and feel free to add your own language by translating a file in `./i18n` folder!
+
+---
+
+Maintainer of this fork: @ungentilgarcon
