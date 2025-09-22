@@ -152,3 +152,38 @@ Phase 3: Jump to Meteor 3.x
 ---
 
 This document will be updated as we implement Phase 1 and discover additional constraints.
+
+## Data Migration: Mongo 3.2 -> 4.4 container (2025-09-22)
+
+Context: The legacy external Mongo at localhost:27017 is a Docker container (mongo:3.2) with DB `Bandstour_results_meteor`. Meteor 2.x+ requires a newer Mongo driver (wire protocol ≥ 6), so we provisioned a new container and migrated data.
+
+Steps performed:
+
+1) Identify the old source
+- docker ps shows `mongodb-32` at 0.0.0.0:27017.
+- DBs include `Bandstour_results_meteor`.
+
+2) Dump the old DB
+- Inside the old container: `mongodump --db Bandstour_results_meteor --out /dump`.
+- Copied to host: `/home/g/gitrep3/TOPOTEST2025/_mongo_dumps/bandstour-20250922/dump` (≈1.6GB).
+
+3) Start new Mongo 4.4 on 27018
+- Command used: `docker run -d --name mongodb-44 -p 27018:27017 -v /home/g/gitrep3/TOPOTEST2025/_mongo_data/mongodb-44:/data/db mongo:4.4`.
+
+4) Restore into the new container
+- Copied dump into container: `docker cp .../dump mongodb-44:/dump`.
+- Restored: `mongorestore --drop --nsInclude=Bandstour_results_meteor.* /dump`.
+- Verified counts: edges=1,634,273; nodes=1,168,198; topograms=5,696; users=1.
+
+5) Point the app to the new Mongo
+- Use: `MONGO_URL=mongodb://localhost:27018/Bandstour_results_meteor`.
+- In upgrade-probe mode (Meteor 2.x), start example:
+  - `UPGRADE_PROBE=1 USE_JSONROUTES=0 ROOT_URL=http://localhost:3020 meteor --port 3020`.
+
+6) Rollback / switch back
+- To revert to old DB, change MONGO_URL to `mongodb://localhost:27017/Bandstour_results_meteor` and ensure the old container `mongodb-32` is running.
+
+Notes:
+- The new container persists data under `_mongo_data/mongodb-44`.
+- Keep the dated dump under `_mongo_dumps/bandstour-20250922/` for audit/backup.
+- For production, consider Mongo 5.0/6.0+ with replica set and proper auth; 4.4 chosen here for compatibility and quick unblock.

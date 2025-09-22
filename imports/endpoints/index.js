@@ -218,7 +218,7 @@ if (!upgradeProbe && !useJsonRoutes) {
   })
 }
 
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addRoute('topograms/:_id/nodes', {
     get: {
       authRequired: false,
@@ -232,7 +232,7 @@ if (!useJsonRoutes) {
 }
 
 // Edges
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addCollection(Edges, {
     routeOptions: { authRequired: false },
     endpoints: {
@@ -265,7 +265,7 @@ if (!useJsonRoutes) {
   })
 }
 
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addRoute('edges/delete', {
     post : {
       authRequired: true,
@@ -279,7 +279,7 @@ if (!useJsonRoutes) {
   })
 }
 
-if (!useJsonRoutes) {
+if (!upgradeProbe && !useJsonRoutes) {
   Api.addRoute('topograms/:_id/edges', {
     get: {
       authRequired: false,
