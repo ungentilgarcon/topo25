@@ -50,7 +50,6 @@ meteortesting:mocha
 
 
 react-template-helper
-aldeed:simple-schema@=1.5.3
 dburles:factory
 aldeed:collection2
 johanbrook:publication-collector
