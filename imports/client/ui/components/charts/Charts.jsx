@@ -44,6 +44,8 @@ class Charts extends React.Component {
     const fire = () => { try { window.dispatchEvent(new Event('resize')) } catch (e) {} }
     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fire)
     setTimeout(fire, 50)
+    // Try to force a C3 refresh shortly after mount in case colors changed
+    setTimeout(() => { try { window.dispatchEvent(new Event('resize')) } catch(e) {} }, 180)
     // After initial render, enforce high-contrast labels and tooltip theme
     setTimeout(() => {
       try {
@@ -703,16 +705,14 @@ try {
       .map(el => String(el.data.weight))
   )
   const yellow = '#EEFF41'
-  data.color = (color, d) => {
-    if (!d || typeof d.id === 'undefined') return color
-    const idStr = String(d.id)
-    return nodeBins.has(idStr) ? yellow : color
-  }
-  data2.color = (color, d) => {
-    if (!d || typeof d.id === 'undefined') return color
-    const idStr = String(d.id)
-    return edgeBins.has(idStr) ? yellow : color
-  }
+  // Build explicit color maps so selected bins are yellow; others fall back to pattern
+  if (!data.colors) data.colors = {}
+  if (!data2.colors) data2.colors = {}
+  // Reset previous maps each render to avoid lingering highlights
+  data.colors = {}
+  data2.colors = {}
+  nodeBins.forEach(bin => { data.colors[bin] = yellow })
+  edgeBins.forEach(bin => { data2.colors[bin] = yellow })
   // Keys to force chart instance re-creation when selection changes, ensuring colors refresh
   this._nodesBinsKey = Array.from(nodeBins).sort().join(',')
   this._edgesBinsKey = Array.from(edgeBins).sort().join(',')
