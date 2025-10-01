@@ -29,27 +29,32 @@ export default class GeoEdges extends React.Component {
     }
     lng1 = norm(lng1); lng2 = norm(lng2)
 
-    const delta = lng2 - lng1
+  const delta = lng2 - lng1
 
     // No split if shortest longitudinal delta is within [-180, 180]
     if (!isFinite(lat1) || !isFinite(lng1) || !isFinite(lat2) || !isFinite(lng2)) {
       return { segments: [], chevrons: [] }
     }
+    // Compute wrapped minimal longitudinal delta in [-180, 180]
+    const wrappedDelta = ((delta + 540) % 360) - 180
     if (Math.abs(delta) <= 180) {
       return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
     }
 
-    // We cross the dateline: choose which meridian we hit first (±180)
-    const boundaryLng = delta > 0 ? 180 : -180
+    // We cross the date line. Determine wrapped direction and nearest boundary seam.
+    const dirSign = wrappedDelta >= 0 ? 1 : -1
+    // Distance along chosen direction from a to b on circle
+    const distAlong = (a, b, sign) => sign > 0 ? ((b - a + 360) % 360) : ((a - b + 360) % 360)
+    const dTo180 = distAlong(lng1, 180, dirSign)
+    const dToNeg180 = distAlong(lng1, -180, dirSign)
+    const boundaryLng = dTo180 <= dToNeg180 ? 180 : -180
     const otherBoundaryLng = boundaryLng === 180 ? -180 : 180
 
-    // Linear interpolation in lon/lat space to find intersection lat at boundaryLng
-    const denom = (lng2 - lng1)
-    if (!denom) {
-      return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
-    }
-    // Clamp t to [0,1] to ensure intersection lies between endpoints
-    let t = (boundaryLng - lng1) / denom
+    // Fraction to reach the seam along the wrapped path
+    const total = Math.abs(wrappedDelta) // in (0, 180]
+    const toSeam = distAlong(lng1, boundaryLng, dirSign)
+    let t = total > 0 ? (toSeam / total) : 0
+    if (!isFinite(t)) t = 0
     if (t < 0) t = 0
     if (t > 1) t = 1
     const latInt = lat1 + t * (lat2 - lat1)
@@ -57,8 +62,9 @@ export default class GeoEdges extends React.Component {
       return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
     }
 
-    const seamA = [latInt, boundaryLng]
-    const seamB = [latInt, otherBoundaryLng]
+  const seamA = [latInt, boundaryLng]
+  // Move the partner seam onto the opposite boundary within normalized range
+  const seamB = [latInt, otherBoundaryLng]
     if (!isFinite(seamA[0]) || !isFinite(seamA[1]) || !isFinite(seamB[0]) || !isFinite(seamB[1])) {
       return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
     }
@@ -70,7 +76,7 @@ export default class GeoEdges extends React.Component {
     ]
 
     // Chevron glyph and placement at both seams
-    const glyph = delta > 0 ? '\u00BB' /* » eastward */ : '\u00AB' /* « westward */
+  const glyph = dirSign > 0 ? '\u00BB' /* » eastward */ : '\u00AB' /* « westward */
     const makeIcon = (g) => L.divIcon({
       className: 'geo-chevron',
       html: `<span>${g}</span>`,
