@@ -35,7 +35,7 @@ div.leaflet-top:nth-child(1){  z-index: 10000 !important;
   pointer-events: none;
   transform: translate(-50%, -50%);
 }
-.geo-chevron span {
+.geo-chevron .chev {
   display: inline-block;
   padding: 2px 4px;
   border-radius: 3px;
@@ -45,4 +45,10 @@ div.leaflet-top:nth-child(1){  z-index: 10000 !important;
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(0,0,0,0.2);
   box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+.geo-chevron .chev-n {
+  font-size: 10px;
+  font-style: normal;
+  margin-left: 4px;
+  color: inherit;
 }

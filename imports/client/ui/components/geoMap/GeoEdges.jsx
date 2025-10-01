@@ -76,15 +76,18 @@ export default class GeoEdges extends React.Component {
 
     // Chevron glyph and placement at both seams
     const glyph = dirSign > 0 ? '\u00BB' /* » eastward */ : '\u00AB' /* « westward */
-    const makeIcon = (g, col) => L.divIcon({
+    const makeIcon = (g, col, label) => L.divIcon({
       className: 'geo-chevron',
-      html: `<span style="color:${col}; border-color:${col};">${g}</span>`,
+      html: `<span class="chev" style="color:${col}; border-color:${col};">
+               <b>${g}</b>
+               <em class="chev-n">${label != null ? label : ''}</em>
+             </span>`,
       iconSize: [0, 0]
     })
 
     const chevrons = [
-      { position: seamA, icon: makeIcon(glyph, color), key: `chev-a-${latInt}-${boundaryLng}` },
-      { position: seamB, icon: makeIcon(glyph, color), key: `chev-b-${latInt}-${otherBoundaryLng}` }
+      { position: seamA, icon: makeIcon(glyph, color, 1), key: `chev-a-${latInt}-${boundaryLng}` },
+      { position: seamB, icon: makeIcon(glyph, color, 2), key: `chev-b-${latInt}-${otherBoundaryLng}` }
     ]
 
     return { segments, chevrons }
@@ -120,6 +123,20 @@ export default class GeoEdges extends React.Component {
               color={color}
               weight={weight}
               dashArray={dashArray}
+              positions={seg}
+              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
+              onMouseDown={() => isolateMode ? onFocusElement(e) : null }
+              onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
+            />
+          )
+          // Invisible hit area: larger weight, nearly transparent
+          const hitWeight = Math.max(weight, 24)
+          children.push(
+            <Polyline
+              key={`edge-${i}-seg-${sIdx}-hit`}
+              opacity={0.001}
+              color={color}
+              weight={hitWeight}
               positions={seg}
               onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
               onMouseDown={() => isolateMode ? onFocusElement(e) : null }
