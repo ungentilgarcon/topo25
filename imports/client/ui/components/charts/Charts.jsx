@@ -676,6 +676,28 @@ const vh = (typeof window !== 'undefined') ? window.innerHeight : 800
 const popupWidth = Math.min(900, Math.max(600, Math.round(vw * 0.7)))
 const popupHeight = Math.min(900, Math.max(560, Math.round(vh * 0.8)))
 
+// Legend clicks should select items instead of toggling visibility
+const legendNodes = {
+  item: {
+    onclick: (id) => {
+      const payload = { name: id }
+      const run = () => this.handleClickChartNodeElement(payload)
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run)
+      else setTimeout(run, 0)
+    }
+  }
+}
+const legendEdges = {
+  item: {
+    onclick: (id) => {
+      const payload = { name: id }
+      const run = () => this.handleClickChartEdgeElement(payload)
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run)
+      else setTimeout(run, 0)
+    }
+  }
+}
+
 return (
   <Popup
     show
@@ -698,6 +720,7 @@ return (
   <C3Chart
     data={data}
   color={c3Colors}
+    legend={legendNodes}
     title={"nodes"}
     unselectAllElements={this.unselectAllElements}
     unselectElement={this.unselectElement}
@@ -722,6 +745,7 @@ return (
   <C3Chart
   data={data2}
   color={c3Colors}
+  legend={legendEdges}
   title={"edges"}
   style={{
 
