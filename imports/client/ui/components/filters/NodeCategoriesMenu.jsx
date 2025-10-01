@@ -5,7 +5,6 @@ import ui from 'redux-ui'
 // import SelectField from 'material-ui/SelectField';
 
 import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import { SubheaderCompat as Subheader, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 

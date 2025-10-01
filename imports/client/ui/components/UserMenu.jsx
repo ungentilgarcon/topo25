@@ -3,12 +3,9 @@ import PropTypes from 'prop-types'
 
 // import { messages } from '../../../i18n.js'
 
-import Subheader from 'material-ui/Subheader'
 import Divider from 'material-ui/Divider'
 import IconMenu from 'material-ui/IconMenu'
-import MenuItem from 'material-ui/MenuItem'
 import { SubheaderCompat as Subheader, MenuItemCompat as MenuItem, IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
-import IconButton from 'material-ui/IconButton'
 
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import Home from 'material-ui/svg-icons/action/home'
