@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import MenuItem from 'material-ui/MenuItem'
 import Dialog from 'material-ui/Dialog'
@@ -27,43 +28,40 @@ const messages = defineMessages({
   }
 })
 
-const TopogramDelete = React.createClass({
+class TopogramDelete extends React.Component {
+  static propTypes = {
+    topogramTitle: PropTypes.string,
+    topogramId: PropTypes.string.isRequired,
+    router: PropTypes.object.isRequired,
+    intl: PropTypes.object.isRequired,
+  }
 
-  getDefaultProps() {
-    return {
-      topogramTitle: '',
-      topogramId : ''
-    }
-  },
-  getInitialState() {
-    return {
-      open: false
-    }
-  },
-  handleOpen() {
-    this.setState({ open: true })
-  },
-  handleClose() {
-    this.setState({ open: false })
-  },
-  _deleteItem() {
-    topogramDelete.call({
-      topogramId : this.props.topogramId
-    })
+  static defaultProps = {
+    topogramTitle: '',
+    topogramId: ''
+  }
+
+  state = { open: false }
+
+  handleOpen = () => { this.setState({ open: true }) }
+  handleClose = () => { this.setState({ open: false }) }
+  _deleteItem = () => {
+    topogramDelete.call({ topogramId : this.props.topogramId })
     this.props.router.push('/')
+  }
 
-  },
   render() {
     const { formatMessage } = this.props.intl
     const actions = [
       <FlatButton
+        key="cancel"
         label={formatMessage(messages.cancel)}
         primary={true}
         onTouchTap={this.handleClose}
       />,
       <FlatButton
-      style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-      color:'#F2EFE9',}}
+        key="delete"
+        style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9',}}
         label={formatMessage(messages.delete)}
         primary={true}
         keyboardFocused={true}
@@ -73,9 +71,7 @@ const TopogramDelete = React.createClass({
     return (
       <div>
         <MenuItem
-        style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-        color:'#F2EFE9',}}
-          // style={{backgroundColor : 'red', color : 'white'}}
+          style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9',}}
           primaryText={formatMessage(messages.delete)}
           onTouchTap={this.handleOpen}
           leftIcon={<Delete color={red500} />}
@@ -87,13 +83,11 @@ const TopogramDelete = React.createClass({
           open={this.state.open}
           onRequestClose={this.handleClose}
         >
-          <FormattedMessage
-            {...messages.confirmQuestion}
-          />
+          <FormattedMessage {...messages.confirmQuestion} />
         </Dialog>
       </div>
     )
   }
-})
+}
 
 export default injectIntl(TopogramDelete)

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 import Dialog from 'material-ui/Dialog'

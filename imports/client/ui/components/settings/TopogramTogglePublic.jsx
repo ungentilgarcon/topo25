@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 
 import MenuItem from 'material-ui/MenuItem'
 import { topogramTogglePublic } from '../../../../api/topograms/topogramsMethods.js'
