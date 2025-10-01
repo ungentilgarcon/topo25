@@ -367,7 +367,7 @@ componentDidUpdate(prevProps) {
     minWeight,
   } = this.props
 
-  if (hasTimeInfo && (!prevProps.ui || (ui.minTime !== prevProps.ui.minTime || ui.maxTime !== prevProps.ui.maxTime)) && !ui.minTime && !ui.maxTime) {
+  if (hasTimeInfo && !ui.minTime && !ui.maxTime) {
     // pass value to UI as default
     this.props.updateUI('minTime', minTime)
     this.props.updateUI('maxTime', maxTime)

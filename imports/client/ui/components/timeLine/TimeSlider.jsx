@@ -45,9 +45,10 @@ export default class TimeSlider extends React.Component {
   render() {
     const { minTime, maxTime
      } = this.props
-    const { valueRange
-
-   } = this.props.ui
+    const { valueRange } = this.props.ui
+    const rangeValid = Array.isArray(valueRange) && valueRange.length === 2 &&
+      isFinite(valueRange[0]) && isFinite(valueRange[1])
+    const currentRange = rangeValid ? valueRange : [minTime, maxTime]
 
     const minYear = moment(minTime).year(),
       maxYear = moment(maxTime).year()
@@ -70,7 +71,7 @@ export default class TimeSlider extends React.Component {
             <Range
             defaultValue={[minTime,maxTime]}
             style={{ zIndex : 1000 }}
-            value={valueRange}
+            value={currentRange}
             min={minTime}
             max={maxTime}
             //defaultValue={[ 1281214800000, 1284866786842 ]}
