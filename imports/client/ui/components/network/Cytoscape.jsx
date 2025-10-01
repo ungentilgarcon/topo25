@@ -72,7 +72,7 @@ class Cytoscape extends Component {
     const { style, elements } = this.props
 
     const cy = cytoscape({
-      container: this.refs.cyelement,
+      container: this._cyelement,
       layout: {
         name: 'preset' // load saved positions
       //  name: 'spread' // load saved positions
@@ -162,23 +162,31 @@ class Cytoscape extends Component {
       this.updateRadiusByDegree()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
+    if (!this.cy) return
 
-    const { layoutName, nodeRadius } = nextProps
+    const { layoutName, nodeRadius, elements, style } = this.props
 
-    // replace elements
-    this.cy.json(nextProps)
-
-    // apply new layout if any
-    if ( this.props.layoutName !== layoutName) {this.applyLayout(layoutName)}
-
-    // init
-    if (!this.state.init && nextProps.init) {
-      this.applyLayout(layoutName)
-      this.setState({ init :true })
+    // replace elements/style only when they change
+    if (elements !== prevProps.elements || style !== prevProps.style) {
+      this.cy.json({ elements, style })
     }
 
-    this.updateRadius(nodeRadius)
+    // apply new layout if any
+    if (prevProps.layoutName !== layoutName) {
+      this.applyLayout(layoutName)
+    }
+
+    // init once when requested
+    if (!this.state.init && this.props.init) {
+      this.applyLayout(layoutName)
+      this.setState({ init: true })
+    }
+
+    // keep radius in sync
+    if (prevProps.nodeRadius !== nodeRadius || elements !== prevProps.elements) {
+      this.updateRadius(nodeRadius)
+    }
   }
 
   componentWillUnmount() {
@@ -193,7 +201,7 @@ class Cytoscape extends Component {
     const { height, width } = this.props
     return (<div
       style={Object.assign({}, cyStyle, { width, height })}
-      ref="cyelement"
+      ref={el => { this._cyelement = el }}
       >
       <cytoscapePanzoom/>
 
