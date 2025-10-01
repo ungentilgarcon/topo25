@@ -2,6 +2,7 @@ import React from 'react'
 // Ensure jQuery plugin is registered early if any component needs it
 import './typeahead-shim'
 import { Provider } from 'react-redux'
+import LegacyReduxProvider from './LegacyReduxProvider.jsx'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 
 import store from '/imports/client/store'
@@ -25,6 +26,7 @@ import Page404 from '/imports/client/ui/pages/Page404.jsx'
 
 export const renderRoutes = () => (
   <Provider store={store}>
+    <LegacyReduxProvider store={store}>
     <Router history={browserHistory}>
       <Route path="/"
         component={App}>
@@ -52,5 +54,6 @@ export const renderRoutes = () => (
           component={Page404}/>
       </Route>
     </Router>
+    </LegacyReduxProvider>
   </Provider>
 )
