@@ -4,6 +4,7 @@ import { Card, CardTitle, CardActions } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'
 import d3 from 'd3'
 import { CircleMarker } from 'react-leaflet'
+import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
 
 const LEGEND_DIV_ID = "legend"
@@ -70,28 +71,13 @@ const right = width === '50vw' ? '50vw' : 0
 
 
 return (
-
-
-  <Card
-    style={{
-      maxWidth : '50%',
-      minWidth : '20%',
-
-
-      float : 'right',
-      //zDepth: -10000,
-      border : "10px",
-      position: 'relative',
-      borderBottomLeftRadius: '20px',
-      borderTopLeftRadius: '5px',
-      borderTopRightRadius: '5px',
-      borderBottomRightRadius: '5px',
-      padding: "10px",
-      boxShadow: '1px 1px 8px  #000',
-      border: '1px solid #222',
-      backgroundColor: 'rgba(255,255,255,0.8)',
-      zIndex: -1
-    }}
+  <Popup
+    show
+    title={'Legend'}
+    onClose={() => this.props.updateUI('legendVisible', false)}
+    onPopOut={() => this.setState({ poppedOut: true })}
+    width={460}
+    height={420}
   >
   <div>
 
@@ -110,23 +96,17 @@ return (
 <table>
     <tbody  style= {{fontSize: "8pt"}}>
 
-<tr display="inline">
-<td>
-<div>
-  <svg height="36" width="36">
-
-    <circle cx="15" cy="15" r="12" stroke="black" strokeWidth="1" fill="blue" />
-    <circle cx="15" cy="7" r="4" stroke="black" strokeWidth="1" fill="red" />
-  </svg>
-</div>
-</td>
-<td >
-<div>
-<a>1 date </a>
-<br/>
-<a>10 dates</a>
-</div>
-</td>
+<tr>
+  <td colSpan="2">
+    <svg height="40" width="180" style={{ display:'block' }}>
+      {/* circles */}
+      <circle cx="20" cy="20" r="12" stroke="black" strokeWidth="1" fill="blue" />
+      <circle cx="20" cy="8" r="4" stroke="black" strokeWidth="1" fill="red" />
+      {/* labels aligned to circle centers */}
+      <text x="40" y="10" fill="#F2EFE9" style={{ fontSize: '10pt' }}>1 date</text>
+      <text x="40" y="22" fill="#F2EFE9" style={{ fontSize: '10pt' }}>10 dates</text>
+    </svg>
+  </td>
 </tr>
 
 
@@ -134,10 +114,10 @@ return (
     </tbody>
 </table>
 <Divider/>
-  <a style={{ fontSize : '8pt',textStyle:'bold' }}>Map Legends</a>
+  <a style={{ display:'inline-block', marginTop:'10px', fontSize : '9pt', fontWeight:'bold' }}>Map Legends</a>
 <Divider/>
 
-<div  style= {{fontSize: "8pt" ,textAlign:'center'}}> map scale => bottom right</div>
+<div  style= {{fontSize: "8pt" ,textAlign:'center', marginTop:'6px'}}> map scale =&gt; bottom right</div>
 <br/>
 
     <table>
@@ -269,9 +249,7 @@ return (
 
 
 
-
-
-    </Card>
+  </Popup>
 
 
 )

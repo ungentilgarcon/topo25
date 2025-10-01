@@ -3,6 +3,7 @@ import ui from 'redux-ui'
 import { Card, CardTitle, CardActions } from 'material-ui/Card'
 import C3Chart from 'react-c3js';
 import RaisedButton from 'material-ui/RaisedButton'
+import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
 
 import './c3.css';
@@ -36,6 +37,46 @@ class Charts extends React.Component {
     this.state = {
       hasCharts : true
     }
+  }
+
+  componentDidMount() {
+    // Nudge C3 to compute dimensions once the popup is visible
+    const fire = () => { try { window.dispatchEvent(new Event('resize')) } catch (e) {} }
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fire)
+    setTimeout(fire, 50)
+    // Try to force a C3 refresh shortly after mount in case colors changed
+    setTimeout(() => { try { window.dispatchEvent(new Event('resize')) } catch(e) {} }, 180)
+    // After initial render, enforce high-contrast labels and tooltip theme
+    setTimeout(() => {
+      try {
+        // Ensure tooltip container has our dark theme even if C3 injects new nodes later
+        const tt = document.querySelectorAll('.c3-tooltip')
+        tt.forEach(n => { n.style.setProperty('background-color','rgba(33,33,33,0.95)','important'); n.style.setProperty('color','#F2EFE9','important') })
+        // Improve arc label contrast dynamically: if text sits on a light slice, use dark text with light stroke
+        const labels = document.querySelectorAll('.c3-chart-arc text')
+        labels.forEach(t => {
+          const fill = (t.style && t.style.fill) || window.getComputedStyle(t).fill
+          // For very light colors or yellow-ish, prefer dark text
+          const isLight = (() => {
+            try {
+              const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(fill)
+              if (m) {
+                const r = parseInt(m[1],10), g = parseInt(m[2],10), b = parseInt(m[3],10)
+                const lum = (0.2126*r + 0.7152*g + 0.0722*b)/255
+                return lum > 0.75 || (r > 230 && g > 230 && b < 120) // bright/yellow-ish
+              }
+            } catch (_) {}
+            return false
+          })()
+          if (isLight) {
+            t.style.fill = '#263238'
+            t.style.stroke = 'rgba(255,255,255,0.85)'
+            t.style.strokeWidth = '1.8px'
+            t.style.paintOrder = 'stroke fill'
+          }
+        })
+      } catch (e) { /* noop */ }
+    }, 120)
   }
 
 
@@ -117,7 +158,7 @@ class Charts extends React.Component {
 */
 
    handleClickChartNodeElement(el) {
-       const {cy} = this.props.ui
+     const {cy} = this.props.ui
        //console.log("elelel",el);
        //console.log(cy);
        //console.log("FILT",this.props.ui.cy.filter('node'));
@@ -126,79 +167,51 @@ class Charts extends React.Component {
        //console.log(cyFIL[1]["_private"]);
        //console.log(cyFIL.length);
 
-       for (var i = 0; i < cyFIL.length; i++)
-
-      {
-
-      var group = 'node'
-
-
-
-      const filter = `${group}[id='${cyFIL[i]["_private"]["data"]["id"]}']`
-      //console.log(filter)
-      const cyEl = cy.filter(filter)
-      //console.log("cyEL ",cyEl);
-      //console.log("cyEL selected",cyEl.data('selected'));
-      //console.log("cyEL weight",cyEl.data('weight'));
-      //console.log("cyEL weightsquared",parseInt(cyEl.data('weight')**2));
-      //console.log("elelel",el['name']);
-      //console.log(Math.round(Math.pow(cyEl.data('weight'),2)));
-      if (Math.round(Math.pow(cyEl.data('weight'),2)) == el['name']) {
-
-        cyEl.data('selected') ?
-         this.unselectElement(cyEl.json())
-         :
-         this.selectElement(cyEl.json())
-       }
-
+      // Build the set of matching nodes for this legend/bin
+      const matches = []
+      for (var i = 0; i < cyFIL.length; i++) {
+        var group = 'node'
+        const filter = `${group}[id='${cyFIL[i]["_private"]["data"]["id"]}']`
+        const cyEl = cy.filter(filter)
+        if (Math.round(Math.pow(cyEl.data('weight'),2)) == el['name']) {
+          matches.push(cyEl)
+        }
       }
+      // Decide action: if all currently selected, unselect all; else select all
+      const allSelected = matches.length > 0 && matches.every(elc => !!elc.data('selected'))
+      const run = () => {
+        matches.forEach(elc => {
+          allSelected ? this.unselectElement(elc.json()) : this.selectElement(elc.json())
+        })
+      }
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run)
+      else setTimeout(run, 0)
       console.log("LOOP ENDED");
      }
 
-     handleClickChartEdgeElement(el) {
-         const {cy} = this.props.ui
-         //console.log("elelel",el);
-         //console.log(cy);
-         //console.log("FILT",this.props.ui.cy.filter('node'));
-         var cyFIL=this.props.ui.cy.filter('edge')
-         //console.log(cyFIL[0]["_private"]);
-         //console.log(cyFIL[1]["_private"]);
-         //console.log(cyFIL.length);
-
-         for (var i = 0; i < cyFIL.length; i++)
-
-        {
-
-        var group = 'edge'
-
-
-
-        const filter = `${group}[id='${cyFIL[i]["_private"]["data"]["id"]}']`
-        //console.log(filter)
-        //console.log(cyFIL[i]["_private"]["data"]["id"]);
-        const cyEl = cy.filter(filter)
-        //console.log("cyEL ",cyEl);
-        //console.log("cyEL priv",cyEl["_private"]);
-        //console.log("cyEL priv",cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]);
-        //console.log("cyEL selected",cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["selected"]);
-        //console.log("cyEL weight",cyEl.data('weight'));
-        //console.log("cyEL weightsquared",parseInt(cyEl.data('weight')**2));
-        //console.log("elelel",el['name']);
-        //console.log(Math.round(Math.pow(cyEl.data('weight'),2)));
-
-        //console.log("WEIGHT",cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]['weight']);
-        //console.log("TARGET WEIGHT",el['name']);
-        if (cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]['weight'] == el['name']) {
-
-          cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["selected"] ?
-           this.unselectElement(cyEl.json())
-           :
-           this.selectElement(cyEl.json())
-         }
-
-        }
-        console.log("LOOP ENDED");
-       }
+   handleClickChartEdgeElement(el) {
+     const { cy } = this.props.ui
+     const cyEdges = cy.filter('edge')
+     // C3 can pass id as d.id; keep backward compat with d.name
+     const target = (el && (el.id != null ? el.id : el.name != null ? el.name : el))
+     // Build the set of matching edges by weight/bin
+     const matches = []
+     for (let i = 0; i < cyEdges.length; i++) {
+       const id = cyEdges[i] && cyEdges[i]._private && cyEdges[i]._private.data && cyEdges[i]._private.data.id
+       if (!id) continue
+       const cyEl = cy.filter(`edge[id='${id}']`)
+       const w = cyEl && cyEl.data && cyEl.data('weight')
+       if (w == target) matches.push(cyEl)
+     }
+     const allSelected = matches.length > 0 && matches.every(elc => !!(elc && elc.data && elc.data('selected')))
+     const run = () => {
+       matches.forEach(elc => {
+         allSelected ? this.unselectElement(elc.json()) : this.selectElement(elc.json())
+       })
+     }
+     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run)
+     else setTimeout(run, 0)
+   }
 
 
 
@@ -655,46 +668,89 @@ const sample = [1, 2, 3, 4, 19, 5, 6, 6, 15, 50, 23, 14, 45];
 
 //const mountNode = document.getElementById('react-c3js');
 
+// Use a stable color pattern so legend tiles receive explicit fills
+// Palette aligned with app theme: blue, orange, green, red, purple, teal, yellow, grey
+const c3Colors = { pattern: ['#1976D2','#FB8C00','#43A047','#E53935','#8E24AA','#00897B','#FDD835','#78909C'] }
+
+// Highlight selected series (bins) in fluorescent yellow using a dynamic color callback
+try {
+  const selected = (this.props.ui && this.props.ui.selectedElements) ? this.props.ui.selectedElements : []
+  const nodeBins = new Set(
+    selected
+      .filter(el => el && el.group === 'nodes' && el.data && el.data.weight != null)
+      .map(el => String(Math.round(Math.pow(el.data.weight, 2))))
+  )
+  const edgeBins = new Set(
+    selected
+      .filter(el => el && el.group === 'edges' && el.data && el.data.weight != null)
+      .map(el => String(el.data.weight))
+  )
+  const yellow = '#EEFF41'
+  // Build explicit color maps so selected bins are yellow; others fall back to pattern
+  if (!data.colors) data.colors = {}
+  if (!data2.colors) data2.colors = {}
+  // Reset previous maps each render to avoid lingering highlights
+  data.colors = {}
+  data2.colors = {}
+  nodeBins.forEach(bin => { data.colors[bin] = yellow })
+  edgeBins.forEach(bin => { data2.colors[bin] = yellow })
+  // Keys to force chart instance re-creation when selection changes, ensuring colors refresh
+  this._nodesBinsKey = Array.from(nodeBins).sort().join(',')
+  this._edgesBinsKey = Array.from(edgeBins).sort().join(',')
+} catch (e) { /* best-effort highlight */ }
+
+// Compute an initial size that fits most viewports without needing a drag
+const vw = (typeof window !== 'undefined') ? window.innerWidth : 1200
+const vh = (typeof window !== 'undefined') ? window.innerHeight : 800
+const popupWidth = Math.min(900, Math.max(600, Math.round(vw * 0.7)))
+const popupHeight = Math.min(900, Math.max(560, Math.round(vh * 0.8)))
+
+// Legend clicks should select items instead of toggling visibility
+const legendNodes = {
+  item: {
+    onclick: (id) => {
+      const payload = { name: id }
+      const run = () => this.handleClickChartNodeElement(payload)
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run)
+      else setTimeout(run, 0)
+    }
+  }
+}
+const legendEdges = {
+  item: {
+    onclick: (id) => {
+      const payload = { name: id }
+      const run = () => this.handleClickChartEdgeElement(payload)
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run)
+      else setTimeout(run, 0)
+    }
+  }
+}
+
 return (
-
-
-  <Card
-    style={{
-      //top:100,
-      //bottom: -120,
-
-      maxWidth : '50%',
-      minWidth : '20%',
-
-
-      float : 'right',
-      //zDepth: -10000,
-      //border : 10,
-      position: 'relative',
-
-      zIndex: -1,
-      borderBottomLeftRadius: '20px',
-      borderTopLeftRadius: '5px',
-      borderTopRightRadius: '20px',
-      borderBottomRightRadius: '5px',
-      padding:"10px",
-      boxShadow: '1px 1px 8px  #000',
-      border: '1px solid #222',
-      backgroundColor: 'rgba(256,256,256,0.8)'
-    }}
+  <Popup
+    show
+    title={'Charts'}
+    onClose={() => this.props.updateUI('chartsVisible', false)}
+    onPopOut={() => this.setState({ poppedOut: true })}
+    width={popupWidth}
+    height={popupHeight}
   >
   <div>
     <CardTitle
 
       title='Charts'
-      titleStyle={{ fontSize : '12pt', lineHeight : '1em' }}
+      titleStyle={{ fontSize : '12pt', lineHeight : '1em', color: '#F2EFE9' }}
       subtitle='Nodes repartition (how often the band has played the same venue)'
-      subtitleStyle={{ fontSize : '8pt', lineHeight : '1em' }}
+      subtitleStyle={{ fontSize : '9pt', lineHeight : '1.2em', color: '#F2EFE9' }}
 
     />
 
-    <C3Chart
+  <C3Chart
     data={data}
+  color={c3Colors}
+    key={`nodes-${this._nodesBinsKey || 'none'}`}
+    legend={legendNodes}
     title={"nodes"}
     unselectAllElements={this.unselectAllElements}
     unselectElement={this.unselectElement}
@@ -714,10 +770,13 @@ return (
       //title='Charts'
       //titleStyle={{ fontSize : '12pt', lineHeight : '1em' }}
       subtitle='Edges repartition (how often the band has followed the same route)'
-      subtitleStyle={{ fontSize : '8pt', lineHeight : '1em' }}
+      subtitleStyle={{ fontSize : '9pt', lineHeight : '1.2em', color: '#F2EFE9' }}
   />
   <C3Chart
   data={data2}
+  color={c3Colors}
+  key={`edges-${this._edgesBinsKey || 'none'}`}
+  legend={legendEdges}
   title={"edges"}
   style={{
 
@@ -727,18 +786,22 @@ return (
   }}
   />
 </div>
-<div>
-<RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
-  label="Reset selection"
-  labelPosition="before"
-//  icon={<FocusIcon />}
-  onClick={this.unselectAllElements}
+<div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 46px' }}>
+  <RaisedButton
+    backgroundColor="#546E7A"
+    labelColor="#F2EFE9"
+    style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.3)' }}
+    buttonStyle={{ height: 40, lineHeight: '40px', padding: '0 18px', borderRadius: 4 }}
+    labelStyle={{ fontSize: '12pt', fontWeight: 'bold', letterSpacing: '0.3px' }}
+    label="Reset selection"
+    labelPosition="before"
+    onClick={this.unselectAllElements}
   />
-  </div>
+</div>
 
 
 
-    </Card>
+    </Popup>
 
 
 )
