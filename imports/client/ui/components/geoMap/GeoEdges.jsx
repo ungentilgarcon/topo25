@@ -13,6 +13,20 @@ export default class GeoEdges extends React.Component {
     onUnfocusElement : PropTypes.func.isRequired
   }
 
+  componentDidMount() {
+    if (typeof window !== 'undefined') {
+      this._onShowChevronsChanged = () => this.forceUpdate()
+      window.addEventListener('topo:showChevronsChanged', this._onShowChevronsChanged)
+    }
+  }
+
+  componentWillUnmount() {
+    if (typeof window !== 'undefined' && this._onShowChevronsChanged) {
+      window.removeEventListener('topo:showChevronsChanged', this._onShowChevronsChanged)
+      this._onShowChevronsChanged = null
+    }
+  }
+
   // Return segments and chevrons for an edge, splitting at the antimeridian when needed
   buildSegmentsAndChevrons(coords, color, selected, label) {
     if (!coords || coords.length !== 2) return { segments: [], chevrons: [] }

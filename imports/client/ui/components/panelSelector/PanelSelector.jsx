@@ -13,7 +13,7 @@ const buttonStyle = {
   color:'#F2EFE9 !important'
 }
 
-@ui({ key: 'PanelSettings', state: { showChevrons: true } })
+@ui({ key: 'PanelSettings', state: { showChevrons: (typeof window !== 'undefined' && window.localStorage && window.localStorage.getItem('topo.showChevrons') !== null) ? JSON.parse(window.localStorage.getItem('topo.showChevrons')) : true } })
 export default class PanelSelector extends React.Component {
 
   static propTypes = {
@@ -37,7 +37,19 @@ export default class PanelSelector extends React.Component {
 
   toggleChevrons() {
     const cur = this.props.ui.showChevrons
-    this.props.updateUI('showChevrons', cur === false ? true : !cur)
+    const next = cur === false ? true : !cur
+    this.props.updateUI('showChevrons', next)
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('topo.showChevrons', JSON.stringify(next))
+      }
+      if (typeof window !== 'undefined') {
+        const evt = new CustomEvent('topo:showChevronsChanged', { detail: { value: next } })
+        window.dispatchEvent(evt)
+      }
+    } catch (e) {
+      // no-op if storage unavailable
+    }
   }
 
 
