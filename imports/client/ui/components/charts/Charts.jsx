@@ -713,6 +713,9 @@ try {
     const idStr = String(d.id)
     return edgeBins.has(idStr) ? yellow : color
   }
+  // Keys to force chart instance re-creation when selection changes, ensuring colors refresh
+  this._nodesBinsKey = Array.from(nodeBins).sort().join(',')
+  this._edgesBinsKey = Array.from(edgeBins).sort().join(',')
 } catch (e) { /* best-effort highlight */ }
 
 // Compute an initial size that fits most viewports without needing a drag
@@ -765,6 +768,7 @@ return (
   <C3Chart
     data={data}
   color={c3Colors}
+    key={`nodes-${this._nodesBinsKey || 'none'}`}
     legend={legendNodes}
     title={"nodes"}
     unselectAllElements={this.unselectAllElements}
@@ -790,6 +794,7 @@ return (
   <C3Chart
   data={data2}
   color={c3Colors}
+  key={`edges-${this._edgesBinsKey || 'none'}`}
   legend={legendEdges}
   title={"edges"}
   style={{
