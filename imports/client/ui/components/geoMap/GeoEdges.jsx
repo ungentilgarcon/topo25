@@ -116,6 +116,7 @@ export default class GeoEdges extends React.Component {
               weight={weight}
               dashArray={dashArray}
               positions={seg}
+              bubblingMouseEvents={false}
               onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
               onMouseDown={() => isolateMode ? onFocusElement(e) : null }
               onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
@@ -125,10 +126,13 @@ export default class GeoEdges extends React.Component {
       }
       if (chevrons && chevrons.length) {
         chevrons.forEach((ch, cIdx) => {
+          const lat = parseFloat(ch.position[0])
+          const lng = parseFloat(ch.position[1])
+          if (!isFinite(lat) || !isFinite(lng)) return
           children.push(
             <Marker
               key={`${ch.key}-${i}-${cIdx}`}
-              position={ch.position}
+              position={[lat, lng]}
               icon={ch.icon}
               interactive={false}
             />
