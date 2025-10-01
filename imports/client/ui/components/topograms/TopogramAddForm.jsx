@@ -31,7 +31,7 @@ class TopogramAddForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault()
 
-    const topogramTitle = this.refs.topogramTitle.getValue()
+    const topogramTitle = this._topogramTitle && this._topogramTitle.getValue ? this._topogramTitle.getValue() : ''
 
     if ( topogramTitle != '' ) {
       topogramCreate.call( {
@@ -60,7 +60,7 @@ class TopogramAddForm extends React.Component {
         >
           <TextField
             name="topogramTitle"
-            ref="topogramTitle"
+            ref={el => { this._topogramTitle = el }}
             floatingLabelText={formatMessage(messages.label)}
             hintText={formatMessage(messages.hint)}
           />

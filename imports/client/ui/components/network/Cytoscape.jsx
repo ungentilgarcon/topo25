@@ -199,11 +199,13 @@ class Cytoscape extends Component {
     // apply new layout if any
     if (prevProps.layoutName !== layoutName) {
       this.applyLayout(layoutName)
+      if (this.cy) this.cy.fit(undefined, 50)
     }
 
     // init once when requested
     if (!this.state.init && this.props.init) {
       this.applyLayout(layoutName)
+      if (this.cy) this.cy.fit(undefined, 50)
       this.setState({ init: true })
     }
 
