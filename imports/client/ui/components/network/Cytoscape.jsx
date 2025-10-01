@@ -89,9 +89,26 @@ class Cytoscape extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
+    // trigger updates for size changes
     if (nextProps.width !== this.props.width) return true
-    else if (nextProps.height !== this.props.height) return true
-    else return false
+    if (nextProps.height !== this.props.height) return true
+
+    // trigger updates for layout/radius/init/style changes
+    if (nextProps.layoutName !== this.props.layoutName) return true
+    if (nextProps.nodeRadius !== this.props.nodeRadius) return true
+    if (nextProps.init !== this.props.init) return true
+    if (nextProps.style !== this.props.style) return true
+
+    // trigger updates when element counts change (handles mutated arrays with same ref)
+    const prevEls = this.props.elements || {}
+    const nextEls = nextProps.elements || {}
+    const prevNodes = Array.isArray(prevEls) ? prevEls.filter(e => e.group === 'nodes').length : ((prevEls.nodes || []).length)
+    const prevEdges = Array.isArray(prevEls) ? prevEls.filter(e => e.group === 'edges').length : ((prevEls.edges || []).length)
+    const nextNodes = Array.isArray(nextEls) ? nextEls.filter(e => e.group === 'nodes').length : ((nextEls.nodes || []).length)
+    const nextEdges = Array.isArray(nextEls) ? nextEls.filter(e => e.group === 'edges').length : ((nextEls.edges || []).length)
+    if (prevNodes !== nextNodes || prevEdges !== nextEdges) return true
+
+    return false
   }
 
   applyLayout(layoutName) {
@@ -165,10 +182,17 @@ class Cytoscape extends Component {
   componentDidUpdate(prevProps) {
     if (!this.cy) return
 
-    const { layoutName, nodeRadius, elements, style } = this.props
+    const { layoutName, nodeRadius, elements, style, width, height } = this.props
 
     // replace elements/style only when they change
-    if (elements !== prevProps.elements || style !== prevProps.style) {
+    const prevEls = prevProps.elements || {}
+    const currEls = elements || {}
+    const prevNodes = Array.isArray(prevEls) ? prevEls.filter(e => e.group === 'nodes').length : ((prevEls.nodes || []).length)
+    const prevEdges = Array.isArray(prevEls) ? prevEls.filter(e => e.group === 'edges').length : ((prevEls.edges || []).length)
+    const currNodes = Array.isArray(currEls) ? currEls.filter(e => e.group === 'nodes').length : ((currEls.nodes || []).length)
+    const currEdges = Array.isArray(currEls) ? currEls.filter(e => e.group === 'edges').length : ((currEls.edges || []).length)
+
+    if (elements !== prevProps.elements || style !== prevProps.style || prevNodes !== currNodes || prevEdges !== currEdges) {
       this.cy.json({ elements, style })
     }
 
@@ -187,6 +211,11 @@ class Cytoscape extends Component {
     if (prevProps.nodeRadius !== nodeRadius || elements !== prevProps.elements) {
       this.updateRadius(nodeRadius)
     }
+
+    // handle container size changes
+    if (prevProps.width !== width || prevProps.height !== height) {
+      this.cy.resize()
+    }
   }
 
   componentWillUnmount() {
@@ -203,8 +232,6 @@ class Cytoscape extends Component {
       style={Object.assign({}, cyStyle, { width, height })}
       ref={el => { this._cyelement = el }}
       >
-      <cytoscapePanzoom/>
-
     </div>)
   }
 }
