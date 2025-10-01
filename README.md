@@ -1,4 +1,4 @@
-# Topogram (BandsTour fork)
+# BandsTour ( a heavily modded fork of Topogram)
 
 [![Release V0.3](https://img.shields.io/badge/release-V0.3-blue)](https://github.com/ungentilgarcon/topo25/tree/V0.3)
 [![Latest tag](https://img.shields.io/github/v/tag/ungentilgarcon/topo25?sort=semver&label=latest%20tag)](https://github.com/ungentilgarcon/topo25/tags)
