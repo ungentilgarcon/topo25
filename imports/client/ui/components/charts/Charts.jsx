@@ -658,6 +658,29 @@ const sample = [1, 2, 3, 4, 19, 5, 6, 6, 15, 50, 23, 14, 45];
 // Palette aligned with app theme: blue, orange, green, red, purple, teal, yellow, grey
 const c3Colors = { pattern: ['#1976D2','#FB8C00','#43A047','#E53935','#8E24AA','#00897B','#FDD835','#78909C'] }
 
+// Highlight selected series (bins) in fluorescent yellow
+try {
+  const selected = (this.props.ui && this.props.ui.selectedElements) ? this.props.ui.selectedElements : []
+  const nodeBins = new Set(
+    selected
+      .filter(el => el && el.group === 'nodes' && el.data && el.data.weight != null)
+      .map(el => Math.round(Math.pow(el.data.weight, 2)))
+  )
+  const edgeBins = new Set(
+    selected
+      .filter(el => el && el.group === 'edges' && el.data && el.data.weight != null)
+      .map(el => el.data.weight)
+  )
+  if (nodeBins.size) {
+    data.colors = data.colors || {}
+    nodeBins.forEach(bin => { data.colors[String(bin)] = '#EEFF41' })
+  }
+  if (edgeBins.size) {
+    data2.colors = data2.colors || {}
+    edgeBins.forEach(bin => { data2.colors[String(bin)] = '#EEFF41' })
+  }
+} catch (e) { /* best-effort highlight */ }
+
 // Compute an initial size that fits most viewports without needing a drag
 const vw = (typeof window !== 'undefined') ? window.innerWidth : 1200
 const vh = (typeof window !== 'undefined') ? window.innerHeight : 800
