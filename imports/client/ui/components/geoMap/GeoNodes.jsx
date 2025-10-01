@@ -56,7 +56,7 @@ export default class GeoNodes extends React.Component {
     return (
       <FeatureGroup name="Nodes"
         pane="nodesPane"
-        ref="nodesGroup">
+        ref={el => { this._nodesGroup = el }}>
         {nodes}
       </FeatureGroup>
     )

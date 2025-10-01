@@ -351,7 +351,7 @@ handleRequestClose() {
   })
 }
 
-componentWillUpdate(nextProps) {
+componentDidUpdate(prevProps) {
 
   // // show timeline if time info
   // if (this.props.hasTimeInfo)
@@ -375,7 +375,7 @@ componentWillUpdate(nextProps) {
     this.props.updateUI('maxTime', maxTime)
 
   }
-  if (hasTimeInfo && ui.valueRange.some(function (el) {
+  if (hasTimeInfo && ui.valueRange && ui.valueRange.some(function (el) {
     return el == null;
   }))
 
@@ -385,7 +385,7 @@ componentWillUpdate(nextProps) {
 
 
   }
-  if (nodeCategories && !ui.minWeight && !ui.maxWeight){
+  if (nodeCategories && (!prevProps.ui || (ui.minWeight !== prevProps.ui.minWeight || ui.maxWeight !== prevProps.ui.maxWeight)) && !ui.minWeight && !ui.maxWeight){
     this.props.updateUI('minWeight', minWeight)
     this.props.updateUI('maxWeight', maxWeight)
 
@@ -393,7 +393,7 @@ componentWillUpdate(nextProps) {
 
 
   // default value to all
-  if (nodeCategories && !ui.selectedNodeCategories.length)
+  if (nodeCategories && ui.selectedNodeCategories && !ui.selectedNodeCategories.length)
   this.props.updateUI('selectedNodeCategories', nodeCategories)
 
 }

@@ -48,7 +48,7 @@ class QueryBox extends React.Component {
 
     return (
       <AutoComplete
-        ref="queryBox"
+        ref={el => { this._queryBox = el }}
         filter={AutoComplete.fuzzyFilter}
         dataSource={dataSource}
         maxSearchResults={7}
