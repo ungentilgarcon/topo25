@@ -52,6 +52,12 @@ If you get a "Can't listen on port 3024" error (another process is using the por
 lsof -ti :3024 | xargs -r kill -9
 ```
 
+Then relaunch Meteor on the same port in one line:
+
+```sh
+PORT=3024 ROOT_URL=http://localhost:3024 MONGO_URL='mongodb://127.0.0.1:27018/Bandstour_results_meteor' USE_JSONROUTES=1 UPGRADE_PROBE=0 meteor --port 3024
+```
+
 
 ### Test & Code quality
 
