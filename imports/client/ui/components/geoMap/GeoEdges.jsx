@@ -15,7 +15,26 @@ export default class GeoEdges extends React.Component {
 
   componentDidMount() {
     if (typeof window !== 'undefined') {
-      this._onShowChevronsChanged = () => this.forceUpdate()
+      // Initialize local chevron state from storage or props
+      try {
+        const ls = window.localStorage ? window.localStorage.getItem('topo.showChevrons') : null
+        if (ls !== null) {
+          this.setState({ chevronsOn: JSON.parse(ls) })
+        }
+      } catch (e) {}
+      this._onShowChevronsChanged = (evt) => {
+        const val = evt && evt.detail && typeof evt.detail.value === 'boolean' ? evt.detail.value : undefined
+        if (typeof val === 'boolean') {
+          this.setState({ chevronsOn: val })
+        } else {
+          // Fallback, read from storage
+          try {
+            const ls = window.localStorage ? window.localStorage.getItem('topo.showChevrons') : null
+            if (ls !== null) this.setState({ chevronsOn: JSON.parse(ls) })
+            else this.forceUpdate()
+          } catch (e) { this.forceUpdate() }
+        }
+      }
       window.addEventListener('topo:showChevronsChanged', this._onShowChevronsChanged)
     }
   }
@@ -114,8 +133,10 @@ export default class GeoEdges extends React.Component {
       onUnfocusElement
      } = this.props
 
-  const children = []
-    const isChevronsOn = (!this.props.ui || this.props.ui.showChevrons !== false)
+    const children = []
+    const isChevronsOn = (this.state && typeof this.state.chevronsOn === 'boolean')
+      ? this.state.chevronsOn
+      : (!this.props.ui || this.props.ui.showChevrons !== false)
     const seamSlots = { '180': new Map(), '-180': new Map() }
     const getOffsetLat = (boundary, lat) => {
       const key = boundary === 180 ? '180' : '-180'

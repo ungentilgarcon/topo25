@@ -111,12 +111,14 @@ class GeoMap extends React.Component {
       ext
     } = mapTiles[geoMapTile]
 
+    const chevOn = (!this.props.ui || this.props.ui.showChevrons !== false)
     return (
       <div
         id={MAP_DIV_ID}
         style={Object.assign({}, divMapStyle,{ left, height })}
       >
         <Map
+          key={`map-${chevOn ? 'with' : 'no'}-chev`}
           center={position}
           zoom={zoom}
           zoomSnap= "0.01"
