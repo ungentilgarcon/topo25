@@ -82,20 +82,26 @@ class GeoMap extends React.Component {
 
     const nodes = this.props.nodes
       .map( n => {
-        const coords = [n.data.lat,n.data.lng]
+        const lat = parseFloat(n.data.lat)
+        const lng = parseFloat(n.data.lng)
+        if (!isFinite(lat) || !isFinite(lng)) return null
+        const coords = [lat, lng]
         const node = { ...n, coords }
         nodesById[n.data.id] = node // store for edges
         return node
       })
+      .filter(Boolean)
 
     const edges = this.props.edges
       .map( e => {
-        const source = nodesById[e.data.source],
-          target = nodesById[e.data.target],
-          coords = [source.coords, target.coords],
-          selected = e.data.selected
+        const source = nodesById[e.data.source]
+        const target = nodesById[e.data.target]
+        if (!source || !target) return null
+        const coords = [source.coords, target.coords]
+        const selected = e.data.selected
         return { ...e, source, target, coords, selected }
       })
+      .filter(Boolean)
 
     const {
       url,

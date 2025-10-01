@@ -17,6 +17,8 @@ export default class GeoEdges extends React.Component {
   buildSegmentsAndChevrons(coords, color, selected) {
     if (!coords || coords.length !== 2) return { segments: [], chevrons: [] }
     let [[lat1, lng1], [lat2, lng2]] = coords
+    lat1 = parseFloat(lat1); lng1 = parseFloat(lng1)
+    lat2 = parseFloat(lat2); lng2 = parseFloat(lng2)
 
     // Normalize longitudes into [-180, 180]
     const norm = lng => {
@@ -30,7 +32,7 @@ export default class GeoEdges extends React.Component {
     const delta = lng2 - lng1
 
     // No split if shortest longitudinal delta is within [-180, 180]
-    if (isNaN(lat1) || isNaN(lng1) || isNaN(lat2) || isNaN(lng2)) {
+    if (!isFinite(lat1) || !isFinite(lng1) || !isFinite(lat2) || !isFinite(lng2)) {
       return { segments: [], chevrons: [] }
     }
     if (Math.abs(delta) <= 180) {
@@ -57,6 +59,9 @@ export default class GeoEdges extends React.Component {
 
     const seamA = [latInt, boundaryLng]
     const seamB = [latInt, otherBoundaryLng]
+    if (!isFinite(seamA[0]) || !isFinite(seamA[1]) || !isFinite(seamB[0]) || !isFinite(seamB[1])) {
+      return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
+    }
 
     // Two segments: start -> seamA, seamB -> end
     const segments = [
