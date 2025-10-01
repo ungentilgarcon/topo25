@@ -80,7 +80,7 @@ export default class GeoEdges extends React.Component {
       className: 'geo-chevron',
       html: `<span class="chev" style="color:${col}; border-color:${col};">
                <b>${g}</b>
-               <em class="chev-n">${label != null ? label : ''}</em>
+               <em class="chev-n" style="color:#000;">${label != null ? label : ''}</em>
              </span>`,
       iconSize: [0, 0]
     })
