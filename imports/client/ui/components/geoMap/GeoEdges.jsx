@@ -78,9 +78,8 @@ export default class GeoEdges extends React.Component {
     const glyph = dirSign > 0 ? '\u00BB' /* » eastward */ : '\u00AB' /* « westward */
     const makeIcon = (g, col, label) => L.divIcon({
       className: 'geo-chevron',
-      html: `<span class="chev" style="color:${col}; border-color:${col};">
-               <b>${g}</b>
-               <em class="chev-n" style="color:#000;">${label != null ? label : ''}</em>
+      html: `<span class="chev" style="color:${col}; border-color:${col}; white-space:nowrap; display:inline-flex; align-items:center;">
+               <b>${g}</b>&nbsp;<em class="chev-n" style="color:#000;">${label != null ? label : ''}</em>
              </span>`,
       iconSize: [0, 0]
     })

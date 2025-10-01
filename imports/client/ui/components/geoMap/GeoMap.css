@@ -37,9 +37,9 @@ div.leaflet-top:nth-child(1){  z-index: 10000 !important;
 }
 .geo-chevron .chev {
   display: inline-block;
-  padding: 1px 3px;
+  padding: 0 2px;
   border-radius: 3px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #222;
   background: rgba(255, 255, 255, 0.85);
@@ -47,7 +47,7 @@ div.leaflet-top:nth-child(1){  z-index: 10000 !important;
   box-shadow: 0 1px 2px rgba(0,0,0,0.15);
 }
 .geo-chevron .chev-n {
-  font-size: 9px;
+  font-size: 8.5px;
   font-style: normal;
   margin-left: 4px;
   color: #000; /* enforced also inline in icon HTML */
