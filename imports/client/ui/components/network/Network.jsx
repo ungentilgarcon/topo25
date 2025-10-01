@@ -238,8 +238,8 @@ class Network extends React.Component {
           style={{
             position: 'fixed',
             right: '16px',
-            bottom: '16px',
-            zIndex: 2000,
+            bottom: '140px',
+            zIndex: 1000000,
             background: 'rgba(0,0,0,0.65)',
             color: '#fff',
             border: 'none',
