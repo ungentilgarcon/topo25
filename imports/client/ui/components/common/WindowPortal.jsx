@@ -49,6 +49,12 @@ export default class WindowPortal extends React.Component {
         copyStyles(document, this.externalWindow.document)
         this.containerEl = this.externalWindow.document.getElementById('__popup_root')
         this._renderSubtree()
+        // Nudge layouts (like C3) inside the pop-out to compute to the new window size
+        try {
+          const fire = () => { try { this.externalWindow.dispatchEvent(new this.externalWindow.Event('resize')) } catch (e) {} }
+          if (this.externalWindow.requestAnimationFrame) this.externalWindow.requestAnimationFrame(fire)
+          setTimeout(fire, 50)
+        } catch (e) { /* ignore */ }
       } catch (e) {
         // best effort
       }

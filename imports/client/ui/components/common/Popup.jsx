@@ -140,11 +140,24 @@ export default class Popup extends React.Component {
     const { show, children, zIndex, title } = this.props
     if (!show) return null
     if (this.state.poppedOut) {
+      // Compute pop-out features dynamically based on available screen space
+      let dynamicFeatures = this.props.popoutFeatures
+      try {
+        if (!dynamicFeatures && typeof window !== 'undefined' && window.screen) {
+          const aw = window.screen.availWidth || window.innerWidth || 1280
+          const ah = window.screen.availHeight || window.innerHeight || 800
+          const w = Math.min(aw - 100, Math.max(700, Math.round(aw * 0.75)))
+          const h = Math.min(ah - 120, Math.max(560, Math.round(ah * 0.8)))
+          const l = Math.max(0, Math.round((aw - w) / 2))
+          const t = Math.max(0, Math.round((ah - h) / 2))
+          dynamicFeatures = `width=${w},height=${h},left=${l},top=${t},menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes`
+        }
+      } catch (e) { /* ignore, fallback below */ }
       return (
         <WindowPortal
           title={title}
           name={(title || 'popup').toLowerCase().replace(/\s+/g, '_')}
-          features={this.props.popoutFeatures || 'width=820,height=640,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes'}
+          features={dynamicFeatures || 'width=900,height=680,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes'}
           onClose={() => this.setState({ poppedOut: false })}
         >
           <div className="__popup_content" style={{ padding: '8px 10px', color: '#F2EFE9', background: 'rgba(69,90,100,1)', fontWeight: 'bold' }}>{title}</div>
