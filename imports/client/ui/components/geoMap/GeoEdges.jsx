@@ -45,14 +45,13 @@ export default class GeoEdges extends React.Component {
     const dirSign = wrappedDelta >= 0 ? 1 : -1
     // Distance along chosen direction from a to b on circle
     const distAlong = (a, b, sign) => sign > 0 ? ((b - a + 360) % 360) : ((a - b + 360) % 360)
-    const dTo180 = distAlong(lng1, 180, dirSign)
-    const dToNeg180 = distAlong(lng1, -180, dirSign)
-    const boundaryLng = dTo180 <= dToNeg180 ? 180 : -180
-    const otherBoundaryLng = boundaryLng === 180 ? -180 : 180
+  // Boundary is determined by wrapped direction: east crosses +180, west crosses -180
+  const boundaryLng = dirSign > 0 ? 180 : -180
+  const otherBoundaryLng = boundaryLng === 180 ? -180 : 180
 
     // Fraction to reach the seam along the wrapped path
     const total = Math.abs(wrappedDelta) // in (0, 180]
-    const toSeam = distAlong(lng1, boundaryLng, dirSign)
+  const toSeam = distAlong(lng1, boundaryLng, dirSign)
     let t = total > 0 ? (toSeam / total) : 0
     if (!isFinite(t)) t = 0
     if (t < 0) t = 0
@@ -76,16 +75,16 @@ export default class GeoEdges extends React.Component {
     ]
 
     // Chevron glyph and placement at both seams
-  const glyph = dirSign > 0 ? '\u00BB' /* » eastward */ : '\u00AB' /* « westward */
-    const makeIcon = (g) => L.divIcon({
+    const glyph = dirSign > 0 ? '\u00BB' /* » eastward */ : '\u00AB' /* « westward */
+    const makeIcon = (g, col) => L.divIcon({
       className: 'geo-chevron',
-      html: `<span>${g}</span>`,
+      html: `<span style="color:${col}; border-color:${col};">${g}</span>`,
       iconSize: [0, 0]
     })
 
     const chevrons = [
-      { position: seamA, icon: makeIcon(glyph), key: `chev-a-${latInt}-${boundaryLng}` },
-      { position: seamB, icon: makeIcon(glyph), key: `chev-b-${latInt}-${otherBoundaryLng}` }
+      { position: seamA, icon: makeIcon(glyph, color), key: `chev-a-${latInt}-${boundaryLng}` },
+      { position: seamB, icon: makeIcon(glyph, color), key: `chev-b-${latInt}-${otherBoundaryLng}` }
     ]
 
     return { segments, chevrons }
@@ -122,7 +121,6 @@ export default class GeoEdges extends React.Component {
               weight={weight}
               dashArray={dashArray}
               positions={seg}
-              bubblingMouseEvents={false}
               onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
               onMouseDown={() => isolateMode ? onFocusElement(e) : null }
               onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
@@ -140,7 +138,8 @@ export default class GeoEdges extends React.Component {
               key={`${ch.key}-${i}-${cIdx}`}
               position={[lat, lng]}
               icon={ch.icon}
-              interactive={false}
+              interactive={true}
+              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
             />
           )
         })

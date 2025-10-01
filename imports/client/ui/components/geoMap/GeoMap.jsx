@@ -122,7 +122,6 @@ class GeoMap extends React.Component {
           zoomSnap= "0.01"
            zoomDelta= "0.05"
           zoomControl= {false}
-          doubleClickZoom={false}
 
 
           ref="map"
