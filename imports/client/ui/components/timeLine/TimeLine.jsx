@@ -4,7 +4,7 @@ import ui from 'redux-ui'
 import moment from 'moment'
 
 import { Card, CardText, CardHeader } from 'material-ui/Card'
-import TextField from 'material-ui/TextField';
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 import DatePicker from 'material-ui/DatePicker'
 import IconButton from 'material-ui/IconButton'
 import PlayCircleFilled from 'material-ui/svg-icons/av/play-circle-filled';

@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 
 import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Button from '@mui/material/Button'
-import TextField from 'material-ui/TextField'
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 
 import AuthLayout from './AuthLayout.jsx'
 

@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader'
 
 import TopogramTogglePublic from './TopogramTogglePublic.jsx'

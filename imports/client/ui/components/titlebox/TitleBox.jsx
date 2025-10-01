@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 import { Card, CardTitle, CardActions } from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
+// FlatButton removed in favor of MUI v5 Button
 import Button from '@mui/material/Button'
 import ClearIcon from 'material-ui/svg-icons/content/clear'
 import FocusIcon from 'material-ui/svg-icons/image/center-focus-strong'
@@ -138,12 +138,9 @@ return(
     {
       isolateMode ?
       <div>
-        <FlatButton
-          label="Clear"
-          labelPosition="before"
-          icon={<ClearIcon />}
-          onClick={handleExitIsolateMode}
-          />
+        <Button variant="text" onClick={handleExitIsolateMode} startIcon={<ClearIcon />} sx={{ color: '#F2EFE9' }}>
+          Clear
+        </Button>
         {/*
           <RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
             label="Save selection"

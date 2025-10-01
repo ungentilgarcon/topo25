@@ -1,8 +1,7 @@
 import React from 'react'
 
-import Dialog from 'material-ui/Dialog'
-import MenuItem from 'material-ui/MenuItem'
-import FlatButton from 'material-ui/FlatButton'
+import { DialogCompat as Dialog, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
+import Button from '@mui/material/Button'
 import InfoIcon from 'material-ui/svg-icons/action/info'
 import Version from './Version.jsx'
 
@@ -24,13 +23,13 @@ class About extends React.Component {
 
   render() {
     const actions = [
-      <FlatButton
-      style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-      color:'#F2EFE9',}}
-        label="Close"
-        primary={true}
+      <Button
+        variant="contained"
         onClick={this.handleClose}
-      />
+        sx={{ bgcolor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9', '&:hover': { bgcolor: 'rgba(55,71,79,0.9)' } }}
+      >
+        Close
+      </Button>
     ]
     return (
       <div style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
