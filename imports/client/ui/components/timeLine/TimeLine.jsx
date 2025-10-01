@@ -71,11 +71,19 @@ export default class TimeLine extends React.Component {
   }
 
   openMinDatePicker = () => {
-    this.refs.minDatePicker.focus()
+    if (this._minDatePicker && typeof this._minDatePicker.openDialog === 'function') {
+      this._minDatePicker.openDialog()
+    } else if (this._minDatePicker && typeof this._minDatePicker.focus === 'function') {
+      this._minDatePicker.focus()
+    }
   }
 
   openMaxDatePicker = () => {
-    this.refs.maxDatePicker.focus()
+    if (this._maxDatePicker && typeof this._maxDatePicker.openDialog === 'function') {
+      this._maxDatePicker.openDialog()
+    } else if (this._maxDatePicker && typeof this._maxDatePicker.focus === 'function') {
+      this._maxDatePicker.focus()
+    }
   }
 
   pause = () => {
@@ -293,14 +301,14 @@ export default class TimeLine extends React.Component {
                     <span>
                       <DatePicker
                         onChange={this.handleChangeMinTime}
-                        ref="minDatePicker"
+                        ref={el => { this._minDatePicker = el }}
                         autoOk={true}
                         textFieldStyle={{ display: 'none' }}
                         floatingLabelText="Min Date"
                         value={minTime}
                         />
                       <DatePicker
-                        ref="maxDatePicker"
+                        ref={el => { this._maxDatePicker = el }}
                         textFieldStyle={{ display: 'none' }}
                         onChange={this.handleChangeMaxTime}
                         autoOk={true}

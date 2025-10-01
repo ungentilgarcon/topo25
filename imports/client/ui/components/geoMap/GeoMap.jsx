@@ -142,7 +142,7 @@ class GeoMap extends React.Component {
           zoomControl= {false}
 
 
-          ref="map"
+          ref={el => { this._map = el }}
         >
           {
             edges.length ? (

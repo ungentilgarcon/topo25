@@ -136,7 +136,7 @@ class TopogramList extends React.Component {
         return (
           <div style={{backgroundColor:'#D6EBE6',color: '#000  !important'}}>
             <AutoComplete
-              ref="queryBox"
+              ref={el => { this._queryBox = el }}
               filter={AutoComplete.fuzzyFilter}
               dataSource={dataSource}
               maxSearchResults={70}
