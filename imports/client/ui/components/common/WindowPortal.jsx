@@ -102,7 +102,14 @@ export default class WindowPortal extends React.Component {
   _renderSubtree() {
     if (!this.containerEl) return
     try {
-      ReactDOM.unstable_renderSubtreeIntoContainer(this, this.props.children, this.containerEl)
+      let content = this.props.children
+      // React 15 requires a single root element; wrap arrays in a container
+      if (Array.isArray(content)) {
+        content = React.createElement('div', null, content)
+      }
+      // Clear any fallback content before mounting
+      this.containerEl.innerHTML = ''
+      ReactDOM.unstable_renderSubtreeIntoContainer(this, content, this.containerEl)
     } catch (e) {
       // If rendering fails (e.g., devtools sourcemap worker errors), no-op rather than crash
       // Keep a friendly fallback visible for the user
