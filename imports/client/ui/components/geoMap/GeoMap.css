@@ -36,10 +36,11 @@ div.leaflet-top:nth-child(1){  z-index: 10000 !important;
   transform: translate(-50%, -50%);
 }
 .geo-chevron .chev {
-  display: inline-block;
-  padding: 0 1px; /* less vertical/overall padding */
+  display: inline-flex; /* tighter inline layout */
+  align-items: center;
+  padding: 0 0.5px; /* trim padding to shrink box */
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 11px; /* increase text size */
   font-weight: 700;
   color: #222;
   background: rgba(255, 255, 255, 0.85);
@@ -47,8 +48,10 @@ div.leaflet-top:nth-child(1){  z-index: 10000 !important;
   box-shadow: 0 0.5px 1px rgba(0,0,0,0.12);
 }
 .geo-chevron .chev-n {
-  font-size: 8px;
+  font-size: 8.5px; /* slightly larger */
   font-style: normal;
-  margin-left: 3px;
+  margin-left: 2px;
+  line-height: 1;
+  letter-spacing: 0.1px;
   color: #000; /* enforced also inline in icon HTML */
 }

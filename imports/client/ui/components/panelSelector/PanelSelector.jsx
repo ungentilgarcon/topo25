@@ -108,10 +108,10 @@ export default class PanelSelector extends React.Component {
             onClick={ () => this.toggleGeo()}
           />
         </MenuItem>
-        <MenuItem style={{...buttonStyle, paddingLeft: 48, paddingTop: 2, paddingBottom: 2}}>
+  <MenuItem style={{...buttonStyle, paddingLeft: 48, paddingTop: 0, paddingBottom: 0, marginBottom: -2}}>
           <Checkbox
             label={'Chevrons'}
-            style={{ marginLeft: 0, marginTop: -4, marginBottom: -4 }}
+            style={{ marginLeft: 0, marginTop: -6, marginBottom: -6 }}
             labelStyle={{
               backgroundColor: 'rgba(69,90,100 ,0.9)',
               color:'#F2EFE9',
@@ -123,7 +123,7 @@ export default class PanelSelector extends React.Component {
             onClick={ () => this.toggleChevrons()}
           />
         </MenuItem>
-        <MenuItem style={buttonStyle}>
+  <MenuItem style={{...buttonStyle, paddingTop: 0, marginTop: -2}}>
           <Checkbox
             label={'Time'}
             labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
