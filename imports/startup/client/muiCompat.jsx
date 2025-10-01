@@ -56,8 +56,20 @@ export class TextFieldCompat extends React.Component {
       errorText,
       multiLine,
       floatingLabelFixed, // eslint-disable-line no-unused-vars
+      floatingLabelStyle, // legacy MUI 0.x label style
+      underlineStyle, // legacy MUI 0.x underline style (ignored by default)
+      sx: sxProp,
       ...rest
     } = this.props
+    // Do not leak legacy style props onto DOM; map what we can to MUI v5
+    const InputLabelProps = floatingLabelStyle ? { sx: floatingLabelStyle } : undefined
+    // Optionally map underline style to standard variant underline selectors if provided
+    // Keep variant unchanged; only apply underline styles if consumer sets variant='standard'
+    const sx = underlineStyle ? {
+      ...sxProp,
+      '& .MuiInput-underline:before': { ...(underlineStyle || {}) },
+      '& .MuiInput-underline:after': { ...(underlineStyle || {}) }
+    } : sxProp
     return (
       <MUITextField
         {...rest}
@@ -66,6 +78,8 @@ export class TextFieldCompat extends React.Component {
         error={!!errorText}
         helperText={errorText}
         multiline={!!multiLine}
+        InputLabelProps={InputLabelProps}
+        sx={sx}
         inputRef={el => { this._input = el }}
       />
     )
