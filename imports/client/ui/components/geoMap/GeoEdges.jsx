@@ -88,7 +88,7 @@ export default class GeoEdges extends React.Component {
       onUnfocusElement
      } = this.props
 
-    const edges = this.props.edges.map( (e,i) => {
+  const edges = this.props.edges.map( (e,i) => {
       const color = e.selected ? 'yellow' : (e.data.color ? e.data.color : 'purple')
       const weight = e.data.weight ? (e.data.weight > 6 ? 20 : Math.pow(e.data.weight,2)) : 1
       const dashArray = e.data.group ? (
@@ -100,6 +100,8 @@ export default class GeoEdges extends React.Component {
       ) : ""
 
       const { segments, chevrons } = this.buildSegmentsAndChevrons(e.coords, color, e.selected)
+      const hasChildren = (segments && segments.length) || (chevrons && chevrons.length)
+      if (!hasChildren) return null
 
       return (
         <LayerGroup key={`edge-${i}`}>
@@ -129,7 +131,7 @@ export default class GeoEdges extends React.Component {
           ))}
         </LayerGroup>
       )
-    })
+  }).filter(Boolean)
 
     return (
       <FeatureGroup name="GeoEdges"
