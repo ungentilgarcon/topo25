@@ -15,6 +15,7 @@ class Network extends React.Component {
   constructor(props) {
     super(props)
     this.state = { init : false }
+    this.handleFit = this.handleFit.bind(this)
   }
 
   setUpClickEvents() {
@@ -186,6 +187,16 @@ class Network extends React.Component {
     this.refs.graph.getCy().resize().fit()
   }
 
+  handleFit() {
+    const cy = this.refs.graph && this.refs.graph.getCy ? this.refs.graph.getCy() : null
+    if (cy) {
+      try {
+        cy.resize()
+        cy.fit(undefined, 50)
+      } catch (e) { /* no-op */ }
+    }
+  }
+
   render() {
 
     const {
@@ -208,16 +219,41 @@ class Network extends React.Component {
     if (edges.length) elements.edges = edges
 
     return (
-      <Cytoscape
-        ref = "graph"
-        elements ={elements}
-        init={this.state.init}
-        style = {NetworkDefaultStyle()}
-        layoutName = {layoutName}
-        nodeRadius = {nodeRadius}
-        width = {width}
-        height = {height}
-      />
+      <div>
+        <Cytoscape
+          ref = "graph"
+          elements ={elements}
+          init={this.state.init}
+          style = {NetworkDefaultStyle()}
+          layoutName = {layoutName}
+          nodeRadius = {nodeRadius}
+          width = {width}
+          height = {height}
+        />
+        <button
+          type="button"
+          aria-label="Fit to view"
+          title="Fit to view"
+          onClick={this.handleFit}
+          style={{
+            position: 'fixed',
+            right: '16px',
+            bottom: '16px',
+            zIndex: 2000,
+            background: 'rgba(0,0,0,0.65)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 4,
+            padding: '8px 10px',
+            lineHeight: 1,
+            cursor: 'pointer',
+            fontSize: 12,
+            boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+          }}
+        >
+          Fit
+        </button>
+      </div>
     )
   }
 }
