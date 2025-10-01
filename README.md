@@ -1,5 +1,8 @@
 # Topogram (BandsTour fork)
 
+[![Release V0.3](https://img.shields.io/badge/release-V0.3-blue)](https://github.com/ungentilgarcon/topo25/tree/V0.3)
+[![Latest tag](https://img.shields.io/github/v/tag/ungentilgarcon/topo25?sort=semver&label=latest%20tag)](https://github.com/ungentilgarcon/topo25/tags)
+
 Topogram is a web app to visualize the evolution of networks over time and space. This fork powers BandsTour and adds a JSON API and UI improvements.
 
 - Current version: V0.3 (Meteor 2.13.x)
