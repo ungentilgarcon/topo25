@@ -129,6 +129,7 @@ class GeoMap extends React.Component {
           {
             edges.length ?
               <GeoEdges
+                key={`geoedges-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
                 edges={edges}
                 isolateMode={isolateMode}
                 handleClickGeoElement={

@@ -114,7 +114,8 @@ export default class GeoEdges extends React.Component {
       onUnfocusElement
      } = this.props
 
-    const children = []
+  const children = []
+    const isChevronsOn = (!this.props.ui || this.props.ui.showChevrons !== false)
     const seamSlots = { '180': new Map(), '-180': new Map() }
     const getOffsetLat = (boundary, lat) => {
       const key = boundary === 180 ? '180' : '-180'
@@ -129,7 +130,7 @@ export default class GeoEdges extends React.Component {
       return offset
     }
     // Decide behavior per toggle: when chevrons are off, draw direct single segments
-    this.props.edges.forEach( (e,i) => {
+  this.props.edges.forEach( (e,i) => {
       const label = i + 1
       const color = e.selected ? 'yellow' : (e.data.color ? e.data.color : 'purple')
       const weight = e.data.weight ? (e.data.weight > 6 ? 20 : Math.pow(e.data.weight,2)) : 1
@@ -141,7 +142,7 @@ export default class GeoEdges extends React.Component {
         ""
       ) : ""
       // Read UI toggle once per edge to drive splitting behavior
-      const showChevrons = !this.props.ui || this.props.ui.showChevrons !== false
+  const showChevrons = isChevronsOn
       let segments = []
       let chevrons = []
       if (showChevrons) {
@@ -163,7 +164,7 @@ export default class GeoEdges extends React.Component {
         segments.forEach((seg, sIdx) => {
           children.push(
             <Polyline
-              key={`edge-${i}-seg-${sIdx}`}
+              key={`edge-${i}-seg-${sIdx}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               opacity={"0.8"}
               color={color}
               weight={weight}
@@ -178,7 +179,7 @@ export default class GeoEdges extends React.Component {
           const hitWeight = Math.max(weight, 24)
           children.push(
             <Polyline
-              key={`edge-${i}-seg-${sIdx}-hit`}
+              key={`edge-${i}-seg-${sIdx}-hit-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               opacity={0.001}
               color={color}
               weight={hitWeight}
@@ -191,8 +192,7 @@ export default class GeoEdges extends React.Component {
         })
       }
       // Only render chevrons when enabled
-      const showChevronsRender = !this.props.ui || this.props.ui.showChevrons !== false
-      if (showChevronsRender && chevrons && chevrons.length) {
+      if (isChevronsOn && chevrons && chevrons.length) {
         chevrons.forEach((ch, cIdx) => {
           let lat = parseFloat(ch.position[0])
           let lng = parseFloat(ch.position[1])
@@ -204,7 +204,7 @@ export default class GeoEdges extends React.Component {
           }
           children.push(
             <Marker
-              key={`${ch.key}-${i}-${cIdx}`}
+              key={`${ch.key}-${i}-${cIdx}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               position={[lat, lng]}
               icon={ch.icon}
               interactive={true}
@@ -215,7 +215,7 @@ export default class GeoEdges extends React.Component {
       }
     })
 
-    const uiKey = (!this.props.ui || this.props.ui.showChevrons !== false) ? 'with-chevrons' : 'no-chevrons'
+  const uiKey = isChevronsOn ? 'with-chevrons' : 'no-chevrons'
     return (
       <FeatureGroup name="GeoEdges"
         key={`edges-${uiKey}`}
