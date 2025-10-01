@@ -146,9 +146,9 @@ class Charts extends React.Component {
       //console.log(Math.round(Math.pow(cyEl.data('weight'),2)));
         if (Math.round(Math.pow(cyEl.data('weight'),2)) == el['name']) {
           // Defer selection changes to avoid React 15 dispatch crashes when DOM nodes are removed during native event
-          setTimeout(() => {
-            cyEl.data('selected') ? this.unselectElement(cyEl.json()) : this.selectElement(cyEl.json())
-          }, 0)
+          const toggle = () => { cyEl.data('selected') ? this.unselectElement(cyEl.json()) : this.selectElement(cyEl.json()) }
+          if (typeof requestAnimationFrame === 'function') requestAnimationFrame(toggle)
+          else setTimeout(toggle, 0)
         }
 
       }
@@ -165,15 +165,12 @@ class Charts extends React.Component {
          //console.log(cyFIL[1]["_private"]);
          //console.log(cyFIL.length);
 
-         for (var i = 0; i < cyFIL.length; i++)
+  for (var i = 0; i < cyFIL.length; i++)
 
         {
-
-        var group = 'edge'
-
-
-
-        const filter = `${group}[id='${cyFIL[i]["_private"]["data"]["id"]}']`
+  if (!cyFIL[i] || !cyFIL[i]["_private"] || !cyFIL[i]["_private"]["data"]) { continue }
+  var group = 'edge'
+  const filter = `${group}[id='${cyFIL[i]["_private"]["data"]["id"]}']`
         //console.log(filter)
         //console.log(cyFIL[i]["_private"]["data"]["id"]);
         const cyEl = cy.filter(filter)
@@ -188,11 +185,19 @@ class Charts extends React.Component {
 
         //console.log("WEIGHT",cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]['weight']);
         //console.log("TARGET WEIGHT",el['name']);
-        if (cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]['weight'] == el['name']) {
-          setTimeout(() => {
-            cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["selected"] ?
-              this.unselectElement(cyEl.json()) : this.selectElement(cyEl.json())
-          }, 0)
+        if (cyEl && cyEl["_private"] && cyEl["_private"]["ids"] && cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]] &&
+            cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"] &&
+            cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]) {
+          const edgeData = cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]
+          const isSelected = cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["selected"]
+          if (edgeData['weight'] == el['name']) {
+            // Defer to next frame for React 15 event safety
+            if (typeof requestAnimationFrame === 'function') {
+              requestAnimationFrame(() => { isSelected ? this.unselectElement(cyEl.json()) : this.selectElement(cyEl.json()) })
+            } else {
+              setTimeout(() => { isSelected ? this.unselectElement(cyEl.json()) : this.selectElement(cyEl.json()) }, 0)
+            }
+          }
         }
 
         }
