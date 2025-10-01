@@ -3,7 +3,7 @@ import { FeatureGroup, Polyline, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import ui from 'redux-ui'
 
-@ui()
+@ui({ key: 'PanelSettings' })
 export default class GeoEdges extends React.Component {
   static propTypes = {
     edges : PropTypes.array.isRequired,

@@ -13,7 +13,7 @@ const buttonStyle = {
   color:'#F2EFE9 !important'
 }
 
-@ui({ state: { showChevrons: true } })
+@ui({ key: 'PanelSettings', state: { showChevrons: true } })
 export default class PanelSelector extends React.Component {
 
   static propTypes = {
@@ -133,15 +133,6 @@ export default class PanelSelector extends React.Component {
             checked={legendVisible}
             //disabled={!legendVisible}
             onClick={ () => this.toggleLegend()}
-          />
-        </MenuItem>
-        <MenuItem style={buttonStyle}>
-          <Checkbox
-            label={'Chevrons'}
-            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}
-            checked={showChevrons !== false}
-            onClick={ () => this.toggleChevrons()}
           />
         </MenuItem>
         {/* <MenuItem style={buttonStyle}>
