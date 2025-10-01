@@ -190,47 +190,28 @@ class Charts extends React.Component {
      }
 
    handleClickChartEdgeElement(el) {
-         const {cy} = this.props.ui
-         //console.log("elelel",el);
-         //console.log(cy);
-         //console.log("FILT",this.props.ui.cy.filter('node'));
-         var cyFIL=this.props.ui.cy.filter('edge')
-         //console.log(cyFIL[0]["_private"]);
-         //console.log(cyFIL[1]["_private"]);
-         //console.log(cyFIL.length);
-
-      // Build the set of matching edges
-      const matchesE = []
-      for (var i = 0; i < cyFIL.length; i++) {
-        if (!cyFIL[i] || !cyFIL[i]["_private"] || !cyFIL[i]["_private"]["data"]) { continue }
-        var group = 'edge'
-        const filter = `${group}[id='${cyFIL[i]["_private"]["data"]["id"]}']`
-        const cyEl = cy.filter(filter)
-        if (cyEl && cyEl["_private"] && cyEl["_private"]["ids"] && cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]] &&
-            cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"] &&
-            cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]) {
-          const edgeData = cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]
-          if (edgeData['weight'] == el['name']) {
-            matchesE.push(cyEl)
-          }
-        }
-      }
-      const allSelectedE = matchesE.length > 0 && matchesE.every(elc => !!(elc && elc["_private"] && elc["_private"]["ids"] && elc["_private"]["ids"][elc[0] ? elc[0]._private.data.id : cyFIL[0]["_private"]["data"]["id"]] && elc["_private"]["ids"][elc[0] ? elc[0]._private.data.id : cyFIL[0]["_private"]["data"]["id"]]["_private"]["selected"]))
-      const runE = () => {
-        matchesE.forEach(elc => {
-          const id = elc ? (elc[0] && elc[0]._private && elc[0]._private.data && elc[0]._private.data.id) : null
-          const isSel = id && elc["_private"] && elc["_private"]["ids"] && elc["_private"]["ids"][id] && elc["_private"]["ids"][id]["_private"]["selected"]
-          if (allSelectedE) {
-            if (isSel) this.unselectElement(elc.json())
-          } else {
-            if (!isSel) this.selectElement(elc.json())
-          }
-        })
-      }
-      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(runE)
-      else setTimeout(runE, 0)
-        console.log("LOOP ENDED");
-       }
+     const { cy } = this.props.ui
+     const cyEdges = cy.filter('edge')
+     // C3 can pass id as d.id; keep backward compat with d.name
+     const target = (el && (el.id != null ? el.id : el.name != null ? el.name : el))
+     // Build the set of matching edges by weight/bin
+     const matches = []
+     for (let i = 0; i < cyEdges.length; i++) {
+       const id = cyEdges[i] && cyEdges[i]._private && cyEdges[i]._private.data && cyEdges[i]._private.data.id
+       if (!id) continue
+       const cyEl = cy.filter(`edge[id='${id}']`)
+       const w = cyEl && cyEl.data && cyEl.data('weight')
+       if (w == target) matches.push(cyEl)
+     }
+     const allSelected = matches.length > 0 && matches.every(elc => !!(elc && elc.data && elc.data('selected')))
+     const run = () => {
+       matches.forEach(elc => {
+         allSelected ? this.unselectElement(elc.json()) : this.selectElement(elc.json())
+       })
+     }
+     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run)
+     else setTimeout(run, 0)
+   }
 
 
 
