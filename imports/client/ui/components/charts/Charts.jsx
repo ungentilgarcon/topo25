@@ -39,6 +39,13 @@ class Charts extends React.Component {
     }
   }
 
+  componentDidMount() {
+    // Nudge C3 to compute dimensions once the popup is visible
+    const fire = () => { try { window.dispatchEvent(new Event('resize')) } catch (e) {} }
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fire)
+    setTimeout(fire, 50)
+  }
+
 
 
   static propTypes = {
@@ -659,14 +666,20 @@ const sample = [1, 2, 3, 4, 19, 5, 6, 6, 15, 50, 23, 14, 45];
 
 //const mountNode = document.getElementById('react-c3js');
 
+// Compute an initial size that fits most viewports without needing a drag
+const vw = (typeof window !== 'undefined') ? window.innerWidth : 1200
+const vh = (typeof window !== 'undefined') ? window.innerHeight : 800
+const popupWidth = Math.min(900, Math.max(600, Math.round(vw * 0.7)))
+const popupHeight = Math.min(900, Math.max(560, Math.round(vh * 0.8)))
+
 return (
   <Popup
     show
     title={'Charts'}
     onClose={() => this.props.updateUI('chartsVisible', false)}
     onPopOut={() => this.setState({ poppedOut: true })}
-    width={600}
-    height={520}
+    width={popupWidth}
+    height={popupHeight}
   >
   <div>
     <CardTitle
