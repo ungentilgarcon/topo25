@@ -163,6 +163,10 @@ class GeoMap extends React.Component {
             minZoom={minZoom}
             maxZoom={maxZoom}
             ext={ext}
+            crossOrigin={'anonymous'}
+            subdomains={mapTiles[geoMapTile] && mapTiles[geoMapTile].subdomains}
+            errorTileUrl={"data:image/gif;base64,R0lGODlhAQABAAAAACw="}
+            referrerPolicy={'no-referrer'}
           />
           <ScaleControl
             position='bottomright'
