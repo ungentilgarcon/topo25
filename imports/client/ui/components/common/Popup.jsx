@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import WindowPortal from './WindowPortal.jsx'
 
 class Portal extends React.Component {
   componentDidMount() {
@@ -34,7 +35,8 @@ export default class Popup extends React.Component {
     this.state = {
       left, top, width, height,
       dragging: false, startX: 0, startY: 0,
-      resizing: false, resizeStartX: 0, resizeStartY: 0, startWidth: width, startHeight: height
+      resizing: false, resizeStartX: 0, resizeStartY: 0, startWidth: width, startHeight: height,
+      poppedOut: false
     }
   }
 
@@ -135,8 +137,23 @@ export default class Popup extends React.Component {
   }
 
   render() {
-    const { show, children, zIndex } = this.props
+    const { show, children, zIndex, title } = this.props
     if (!show) return null
+    if (this.state.poppedOut) {
+      return (
+        <WindowPortal
+          title={title}
+          name={(title || 'popup').toLowerCase().replace(/\s+/g, '_')}
+          features={this.props.popoutFeatures || 'width=820,height=640,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes'}
+          onClose={() => this.setState({ poppedOut: false })}
+        >
+          <div style={{ padding: '8px 10px', color: '#F2EFE9', background: 'rgba(69,90,100,1)', fontWeight: 'bold' }}>{title}</div>
+          <div style={{ padding: '12px 14px', color: '#F2EFE9' }}>
+            {children}
+          </div>
+        </WindowPortal>
+      )
+    }
     return (
       <Portal>
         <div
