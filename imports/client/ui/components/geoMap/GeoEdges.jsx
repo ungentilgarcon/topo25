@@ -158,7 +158,7 @@ export default class GeoEdges extends React.Component {
           )
         })
       }
-      const showChevrons = (this.props.ui && this.props.ui.showChevrons !== false)
+  const showChevrons = !this.props.ui || this.props.ui.showChevrons !== false
       if (showChevrons && chevrons && chevrons.length) {
         chevrons.forEach((ch, cIdx) => {
           let lat = parseFloat(ch.position[0])

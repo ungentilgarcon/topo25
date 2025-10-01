@@ -13,7 +13,7 @@ const buttonStyle = {
   color:'#F2EFE9 !important'
 }
 
-@ui()
+@ui({ state: { showChevrons: true } })
 export default class PanelSelector extends React.Component {
 
   static propTypes = {
