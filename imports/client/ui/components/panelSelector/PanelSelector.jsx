@@ -108,17 +108,17 @@ export default class PanelSelector extends React.Component {
             onClick={ () => this.toggleGeo()}
           />
         </MenuItem>
-        <MenuItem style={{...buttonStyle, paddingLeft: 48, paddingTop: 6, paddingBottom: 6}}>
+        <MenuItem style={{...buttonStyle, paddingLeft: 48, paddingTop: 2, paddingBottom: 2}}>
           <Checkbox
             label={'Chevrons'}
-            style={{ marginLeft: 0 }}
+            style={{ marginLeft: 0, marginTop: -4, marginBottom: -4 }}
             labelStyle={{
               backgroundColor: 'rgba(69,90,100 ,0.9)',
               color:'#F2EFE9',
-              fontSize: 12,
-              lineHeight: '16px'
+              fontSize: 11,
+              lineHeight: '14px'
             }}
-            iconStyle={{ transform: 'scale(0.85)', transformOrigin: 'left center' }}
+            iconStyle={{ transform: 'scale(0.8)', transformOrigin: 'left center' }}
             checked={showChevrons !== false}
             onClick={ () => this.toggleChevrons()}
           />
