@@ -37,6 +37,8 @@ export default class WindowPortal extends React.Component {
   body.__popup_theme .c3 .c3-axis-x g.tick text,
   body.__popup_theme .c3 .c3-axis-y g.tick text,
   body.__popup_theme .c3 .c3-chart-arc text { fill: #F2EFE9 !important; }
+  /* Outline arc labels for contrast against bright slices (e.g., yellow) */
+  body.__popup_theme .c3 .c3-chart-arc text { stroke: rgba(38,50,56,0.65); stroke-width: 1.6px; paint-order: stroke fill; }
   /* Preserve legend item text color (per-series) */
   body.__popup_theme .c3 .c3-legend-item text { fill: inherit !important; }
         /* Axes/lines contrast */

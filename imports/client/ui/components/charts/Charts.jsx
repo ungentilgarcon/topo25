@@ -44,6 +44,37 @@ class Charts extends React.Component {
     const fire = () => { try { window.dispatchEvent(new Event('resize')) } catch (e) {} }
     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fire)
     setTimeout(fire, 50)
+    // After initial render, enforce high-contrast labels and tooltip theme
+    setTimeout(() => {
+      try {
+        // Ensure tooltip container has our dark theme even if C3 injects new nodes later
+        const tt = document.querySelectorAll('.c3-tooltip')
+        tt.forEach(n => { n.style.setProperty('background-color','rgba(33,33,33,0.95)','important'); n.style.setProperty('color','#F2EFE9','important') })
+        // Improve arc label contrast dynamically: if text sits on a light slice, use dark text with light stroke
+        const labels = document.querySelectorAll('.c3-chart-arc text')
+        labels.forEach(t => {
+          const fill = (t.style && t.style.fill) || window.getComputedStyle(t).fill
+          // For very light colors or yellow-ish, prefer dark text
+          const isLight = (() => {
+            try {
+              const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(fill)
+              if (m) {
+                const r = parseInt(m[1],10), g = parseInt(m[2],10), b = parseInt(m[3],10)
+                const lum = (0.2126*r + 0.7152*g + 0.0722*b)/255
+                return lum > 0.75 || (r > 230 && g > 230 && b < 120) // bright/yellow-ish
+              }
+            } catch (_) {}
+            return false
+          })()
+          if (isLight) {
+            t.style.fill = '#263238'
+            t.style.stroke = 'rgba(255,255,255,0.85)'
+            t.style.strokeWidth = '1.8px'
+            t.style.paintOrder = 'stroke fill'
+          }
+        })
+      } catch (e) { /* noop */ }
+    }, 120)
   }
 
 
