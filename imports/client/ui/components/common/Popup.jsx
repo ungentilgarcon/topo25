@@ -123,7 +123,7 @@ export default class Popup extends React.Component {
         <span>
           {onPopOut ? (
             <button
-              onClick={(e) => { e.stopPropagation(); onPopOut(); }}
+              onClick={(e) => { e.stopPropagation(); this.setState({ poppedOut: true }); try { onPopOut() } catch (err) {} }}
               title="Pop out"
               style={{ marginRight: 8, background:'transparent', color:'#F2EFE9', border:'1px solid #78909C', borderRadius:4, padding:'2px 6px' }}
             >

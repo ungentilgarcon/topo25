@@ -19,15 +19,16 @@ export default class WindowPortal extends React.Component {
     const { title, features } = this.props
     this.externalWindow = window.open('', this.props.name || '', features || 'width=800,height=600,resizable=yes,scrollbars=yes')
     if (!this.externalWindow || this.externalWindow.closed) return
-    this.externalWindow.document.title = title || ''
+    const baseHref = (typeof document !== 'undefined' && document.baseURI) ? document.baseURI : (window.location.origin + '/')
+    try {
+      this.externalWindow.document.open()
+      this.externalWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title || ''}</title><base href="${baseHref}"></head><body style="margin:0;background:#37474F;"><div id="__popup_root"></div></body></html>`)
+      this.externalWindow.document.close()
+    } catch (e) { /* ignore */ }
+    // Copy styles after skeleton is ready
     copyStyles(document, this.externalWindow.document)
 
-    this.containerEl = this.externalWindow.document.createElement('div')
-    this.containerEl.style.margin = '0'
-    this.containerEl.style.padding = '0'
-    this.externalWindow.document.body.style.margin = '0'
-    this.externalWindow.document.body.style.background = '#37474F'
-    this.externalWindow.document.body.appendChild(this.containerEl)
+    this.containerEl = this.externalWindow.document.getElementById('__popup_root')
 
     this._renderSubtree()
     this.externalWindow.addEventListener('beforeunload', this.handleExternalClose)
@@ -58,7 +59,12 @@ export default class WindowPortal extends React.Component {
 
   _renderSubtree() {
     if (!this.containerEl) return
-    ReactDOM.unstable_renderSubtreeIntoContainer(this, this.props.children, this.containerEl)
+    try {
+      ReactDOM.unstable_renderSubtreeIntoContainer(this, this.props.children, this.containerEl)
+    } catch (e) {
+      // If rendering fails (e.g., devtools sourcemap worker errors), no-op rather than crash
+      // The window remains open; user can close it or retry.
+    }
   }
 
   render() { return null }
