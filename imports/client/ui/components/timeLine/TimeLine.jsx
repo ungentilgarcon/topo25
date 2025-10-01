@@ -6,7 +6,7 @@ import moment from 'moment'
 import { Card, CardText, CardHeader } from 'material-ui/Card'
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 import DatePicker from 'material-ui/DatePicker'
-import IconButton from 'material-ui/IconButton'
+import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 import PlayCircleFilled from 'material-ui/svg-icons/av/play-circle-filled';
 import Pause from 'material-ui/svg-icons/av/pause';
 import Stop from 'material-ui/svg-icons/av/stop';

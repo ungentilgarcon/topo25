@@ -5,7 +5,7 @@ import {Toolbar} from 'material-ui/Toolbar';
 
 import {CardActions} from 'material-ui/Card'
 import Drawer from 'material-ui/Drawer'
-import IconButton from 'material-ui/IconButton'
+import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 
 import ActionHome from 'material-ui/svg-icons/action/home';
 import SettingsIcon from 'material-ui/svg-icons/action/settings';

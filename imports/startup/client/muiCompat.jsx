@@ -5,6 +5,8 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import MenuItem from '@mui/material/MenuItem'
+import ListSubheader from '@mui/material/ListSubheader'
+import MUIIconButton from '@mui/material/IconButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import MUITextField from '@mui/material/TextField'
@@ -91,4 +93,28 @@ TextFieldCompat.propTypes = {
   hintText: PropTypes.node,
   errorText: PropTypes.node,
   multiLine: PropTypes.bool
+}
+
+export function SubheaderCompat({ children, style }) {
+  return <ListSubheader sx={style || {}}>{children}</ListSubheader>
+}
+
+SubheaderCompat.propTypes = {
+  children: PropTypes.node,
+  style: PropTypes.object
+}
+
+export function IconButtonCompat({ style, sx: sxProp, children, ...rest }) {
+  const sx = style ? { ...sxProp, ...style } : sxProp
+  return (
+    <MUIIconButton {...rest} sx={sx}>
+      {children}
+    </MUIIconButton>
+  )
+}
+
+IconButtonCompat.propTypes = {
+  style: PropTypes.object,
+  sx: PropTypes.object,
+  children: PropTypes.node
 }

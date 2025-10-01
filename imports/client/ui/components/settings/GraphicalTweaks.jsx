@@ -5,6 +5,8 @@ import MenuItem from 'material-ui/MenuItem'
 //import WorldIcon from 'material-ui/svg-icons/social/public'
 import CheckedIcon from 'material-ui/svg-icons/navigation/check'
 import Subheader from 'material-ui/Subheader'
+import { MenuItemCompat as MenuItem, SubheaderCompat as Subheader } from '/imports/startup/client/muiCompat'
+// Importing compat wrappers for fast migration
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 import ui from 'redux-ui'
 import Checkbox from 'material-ui/Checkbox'

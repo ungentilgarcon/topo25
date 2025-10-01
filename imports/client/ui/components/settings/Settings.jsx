@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Subheader from 'material-ui/Subheader'
+import { SubheaderCompat as Subheader } from '/imports/startup/client/muiCompat'
 
 import TopogramTogglePublic from './TopogramTogglePublic.jsx'
 import TopogramEditTitle from './TopogramEditTitle.jsx'

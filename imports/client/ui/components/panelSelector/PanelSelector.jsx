@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 
 import Menu from 'material-ui/Menu'
-import MenuItem from 'material-ui/MenuItem'
+import { MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 import Checkbox from 'material-ui/Checkbox'
 import './PanelSelector.css'
 

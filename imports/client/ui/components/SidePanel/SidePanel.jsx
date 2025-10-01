@@ -4,7 +4,7 @@ import ui from 'redux-ui'
 
 import Drawer from 'material-ui/Drawer'
 import ClearIcon from 'material-ui/svg-icons/content/clear'
-import IconButton from 'material-ui/IconButton'
+import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 
 import SidePanelActions from './SidePanelActions.jsx'
 import PanelDescription from './PanelDescription.jsx'

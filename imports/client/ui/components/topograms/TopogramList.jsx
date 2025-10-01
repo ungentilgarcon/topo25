@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Toggle from 'material-ui/Toggle'
-import SubHeader from 'material-ui/Subheader'
+import { SubheaderCompat as SubHeader } from '/imports/startup/client/muiCompat'
 import { GridList } from 'material-ui/GridList'
 import TopogramListItem from './TopogramListItem.jsx'
 import ui from 'redux-ui'

@@ -7,6 +7,7 @@ import Subheader from 'material-ui/Subheader'
 import Divider from 'material-ui/Divider'
 import IconMenu from 'material-ui/IconMenu'
 import MenuItem from 'material-ui/MenuItem'
+import { SubheaderCompat as Subheader, MenuItemCompat as MenuItem, IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 import IconButton from 'material-ui/IconButton'
 
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'

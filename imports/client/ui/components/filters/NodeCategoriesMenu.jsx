@@ -7,7 +7,7 @@ import ui from 'redux-ui'
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader'
+import { SubheaderCompat as Subheader, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 
 import LensIcon from 'material-ui/svg-icons/image/lens'
 import { colors } from '/imports/client/helpers/colors.js'

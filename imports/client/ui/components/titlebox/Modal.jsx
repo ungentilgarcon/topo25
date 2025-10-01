@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import IconButton from 'material-ui/IconButton'
+import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 import ClearIcon from 'material-ui/svg-icons/content/clear'
 class Modal extends React.Component {
   render() {
