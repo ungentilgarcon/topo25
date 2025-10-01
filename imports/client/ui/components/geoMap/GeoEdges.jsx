@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { FeatureGroup, Polyline, Marker } from 'react-leaflet'
+import { FeatureGroup, LayerGroup, Polyline, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import ui from 'redux-ui'
 
@@ -15,7 +15,7 @@ export default class GeoEdges extends React.Component {
 
   // Return segments and chevrons for an edge, splitting at the antimeridian when needed
   buildSegmentsAndChevrons(coords, color, selected) {
-    if (!coords || coords.length !== 2) return { segments: [coords], chevrons: [] }
+    if (!coords || coords.length !== 2) return { segments: [], chevrons: [] }
     let [[lat1, lng1], [lat2, lng2]] = coords
 
     // Normalize longitudes into [-180, 180]
@@ -30,6 +30,9 @@ export default class GeoEdges extends React.Component {
     const delta = lng2 - lng1
 
     // No split if shortest longitudinal delta is within [-180, 180]
+    if (isNaN(lat1) || isNaN(lng1) || isNaN(lat2) || isNaN(lng2)) {
+      return { segments: [], chevrons: [] }
+    }
     if (Math.abs(delta) <= 180) {
       return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
     }
@@ -43,8 +46,14 @@ export default class GeoEdges extends React.Component {
     if (!denom) {
       return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
     }
-    const t = (boundaryLng - lng1) / denom
+    // Clamp t to [0,1] to ensure intersection lies between endpoints
+    let t = (boundaryLng - lng1) / denom
+    if (t < 0) t = 0
+    if (t > 1) t = 1
     const latInt = lat1 + t * (lat2 - lat1)
+    if (!isFinite(latInt)) {
+      return { segments: [ [[lat1, lng1], [lat2, lng2]] ], chevrons: [] }
+    }
 
     const seamA = [latInt, boundaryLng]
     const seamB = [latInt, otherBoundaryLng]
@@ -93,7 +102,7 @@ export default class GeoEdges extends React.Component {
       const { segments, chevrons } = this.buildSegmentsAndChevrons(e.coords, color, e.selected)
 
       return (
-        <FeatureGroup key={`edge-${i}`}>
+        <LayerGroup key={`edge-${i}`}>
           {segments.map((seg, sIdx) => (
             <Polyline
               key={`edge-${i}-seg-${sIdx}`}
@@ -118,7 +127,7 @@ export default class GeoEdges extends React.Component {
               interactive={false}
             />
           ))}
-        </FeatureGroup>
+        </LayerGroup>
       )
     })
 
