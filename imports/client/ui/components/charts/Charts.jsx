@@ -726,12 +726,15 @@ return (
   />
 </div>
 <div>
-<RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
+<RaisedButton
+  primary={true}
+  backgroundColor="#546E7A"
+  labelColor="#F2EFE9"
+  style={{ marginTop: 12, fontSize: '10pt' }}
   label="Reset selection"
   labelPosition="before"
-//  icon={<FocusIcon />}
   onClick={this.unselectAllElements}
-  />
+/>
   </div>
 
 

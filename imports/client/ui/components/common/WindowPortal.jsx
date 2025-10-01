@@ -6,6 +6,12 @@ function copyStyles(sourceDoc, targetDoc) {
     const nodes = sourceDoc.querySelectorAll('style, link[rel="stylesheet"]')
     nodes.forEach((node) => {
       const clone = node.cloneNode(true)
+      // Reduce devtools sourcemap noise inside the pop-out by stripping inline sourcemap comments
+      if (clone.tagName === 'STYLE' && clone.textContent && /# sourceMappingURL=/.test(clone.textContent)) {
+        try { clone.textContent = clone.textContent.replace(/\n\/\/# sourceMappingURL=.*$/gm, '') } catch (e) {}
+      }
+      // Mark as silent for tooling that might read this
+      try { clone.setAttribute('data-sourcemap-silent', 'true') } catch (e) {}
       targetDoc.head.appendChild(clone)
     })
   } catch (e) {
