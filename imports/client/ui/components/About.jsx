@@ -29,7 +29,7 @@ class About extends React.Component {
       color:'#F2EFE9',}}
         label="Close"
         primary={true}
-        onTouchTap={this.handleClose}
+        onClick={this.handleClose}
       />
     ]
     return (

@@ -10,8 +10,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { green500, indigo700, redA200 } from 'material-ui/styles/colors'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
-import injectTapEventPlugin from 'react-tap-event-plugin'
-injectTapEventPlugin()
+// react-tap-event-plugin removed; use standard onClick handlers instead
 
 // import UserMenu from '../components/UserMenu.jsx'
 

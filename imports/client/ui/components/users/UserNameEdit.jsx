@@ -45,14 +45,14 @@ export default class UserNameEdit extends React.Component {
         label="Cancel"
         key="cancel"
         primary={true}
-        onTouchTap={this.props.handleClose}
+        onClick={this.props.handleClose}
       />,
       <FlatButton
         label="Change Username"
         key="update"
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this.handleClickUpdateUsername}
+        onClick={this.handleClickUpdateUsername}
       />
     ]
 

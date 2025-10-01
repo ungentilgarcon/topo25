@@ -52,14 +52,14 @@ export default class TopogramEditTitle extends React.Component {
         label="Cancel"
         key="cancel"
         primary={true}
-        onTouchTap={this.handleClose}
+        onClick={this.handleClose}
       />,
       <FlatButton
         label="Update Title"
         key="update"
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this.handleClickUpdateTitle}
+        onClick={this.handleClickUpdateTitle}
       />
     ]
 
@@ -69,7 +69,7 @@ export default class TopogramEditTitle extends React.Component {
           style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
           color:'#F2EFE9',}}
           primaryText="Update Title"
-          onTouchTap={this.handleOpen}
+          onClick={this.handleOpen}
           leftIcon={<ModeEdit />}
         />
         <Dialog

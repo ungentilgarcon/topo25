@@ -57,7 +57,7 @@ class TopogramDelete extends React.Component {
         key="cancel"
         label={formatMessage(messages.cancel)}
         primary={true}
-        onTouchTap={this.handleClose}
+        onClick={this.handleClose}
       />,
       <FlatButton
         key="delete"
@@ -65,7 +65,7 @@ class TopogramDelete extends React.Component {
         label={formatMessage(messages.delete)}
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this._deleteItem}
+        onClick={this._deleteItem}
       />,
     ]
     return (
@@ -73,7 +73,7 @@ class TopogramDelete extends React.Component {
         <MenuItem
           style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9',}}
           primaryText={formatMessage(messages.delete)}
-          onTouchTap={this.handleOpen}
+          onClick={this.handleOpen}
           leftIcon={<Delete color={red500} />}
         />
         <Dialog
