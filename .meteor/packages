@@ -37,7 +37,6 @@ http
 # db
 accounts-password@3.2.1
 
-fortawesome:fontawesome
 # Let Meteor 3 select minifiers automatically
 modules@0.20.3
 

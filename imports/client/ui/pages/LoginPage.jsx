@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 
 import Snackbar from 'material-ui/Snackbar'
 import LoginForm from '/imports/client/ui/components/auth/LoginForm.jsx'

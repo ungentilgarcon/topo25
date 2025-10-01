@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Snackbar from 'material-ui/Snackbar'
 
 import { FormattedMessage, defineMessages } from 'react-intl'
@@ -57,10 +58,10 @@ export class HomeComponent extends React.Component {
   }
 
   static propTypes = {
-    topograms: React.PropTypes.array.isRequired,
-    loadTopograms: React.PropTypes.func.isRequired,
-    stopTopogramsSubscription: React.PropTypes.func.isRequired,
-    router: React.PropTypes.object.isRequired
+    topograms: PropTypes.array.isRequired,
+    loadTopograms: PropTypes.func.isRequired,
+    stopTopogramsSubscription: PropTypes.func.isRequired,
+    router: PropTypes.object.isRequired
   }
 
 

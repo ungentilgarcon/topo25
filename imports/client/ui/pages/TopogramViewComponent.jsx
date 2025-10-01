@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 
 import MainViz from '/imports/client/ui/components/mainViz/MainViz.jsx'
@@ -533,7 +534,6 @@ render() {
         nodeCategories={this.props.nodeCategories}
 
         user={user}
-        router={router}
 
         hasTimeInfo={ this.props.hasTimeInfo }
         hasGeoInfo={ this.props.hasGeoInfo }
@@ -541,7 +541,7 @@ render() {
         fontSizeNetwork={this.props.ui.fontSizeNetwork}
         open={this.props.ui.filterPanelIsOpen}
 
-        router={this.props.router}
+  router={this.props.router}
         authorIsLoggedIn={ this.props.userId === this.props.topogram.userId && this.props.isLoggedIn }
 
         onFocusElement={this.onFocusElement}

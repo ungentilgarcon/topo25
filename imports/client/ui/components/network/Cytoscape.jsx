@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import cytoscape from 'cytoscape'
 import panzoom from 'cytoscape-panzoom'
 import spread from 'cytoscape-spread'
@@ -40,11 +41,11 @@ var defaults = {
   },
   fitAnimationDuration: 1000, // duration of animation on fit
 
-  // icon class names
-  sliderHandleIcon: 'fa fa-minus',
-  zoomInIcon: 'fa fa-plus',
-  zoomOutIcon: 'fa fa-minus',
-  resetIcon: 'fa fa-expand'
+  // icon class names (pure CSS fallback; no Font Awesome)
+  sliderHandleIcon: 'icon',
+  zoomInIcon: 'icon',
+  zoomOutIcon: 'icon',
+  resetIcon: 'icon'
 };
 
 

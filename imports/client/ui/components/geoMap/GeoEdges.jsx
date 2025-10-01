@@ -205,6 +205,7 @@ export default class GeoEdges extends React.Component {
               opacity={0.001}
               color={color}
               weight={hitWeight}
+              bubblingMouseEvents={false}
               positions={seg}
               onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
               onMouseDown={() => isolateMode ? onFocusElement(e) : null }
@@ -240,6 +241,7 @@ export default class GeoEdges extends React.Component {
   const uiKey = isChevronsOn ? 'with-chevrons' : 'no-chevrons'
     return (
       <FeatureGroup name="GeoEdges"
+        pane="edgesPane"
         key={`edges-${uiKey}`}
         ref="edgesGroup">
         {children}
