@@ -14,7 +14,7 @@ export default class GeoEdges extends React.Component {
   }
 
   // Return segments and chevrons for an edge, splitting at the antimeridian when needed
-  buildSegmentsAndChevrons(coords, color, selected) {
+  buildSegmentsAndChevrons(coords, color, selected, label) {
     if (!coords || coords.length !== 2) return { segments: [], chevrons: [] }
     let [[lat1, lng1], [lat2, lng2]] = coords
     lat1 = parseFloat(lat1); lng1 = parseFloat(lng1)
@@ -86,8 +86,8 @@ export default class GeoEdges extends React.Component {
     })
 
     const chevrons = [
-      { position: seamA, icon: makeIcon(glyph, color, 1), key: `chev-a-${latInt}-${boundaryLng}` },
-      { position: seamB, icon: makeIcon(glyph, color, 2), key: `chev-b-${latInt}-${otherBoundaryLng}` }
+      { position: seamA, icon: makeIcon(glyph, color, label), key: `chev-a-${latInt}-${boundaryLng}` },
+      { position: seamB, icon: makeIcon(glyph, color, label), key: `chev-b-${latInt}-${otherBoundaryLng}` }
     ]
 
     return { segments, chevrons }
@@ -103,6 +103,7 @@ export default class GeoEdges extends React.Component {
 
     const children = []
     this.props.edges.forEach( (e,i) => {
+      const label = i + 1
       const color = e.selected ? 'yellow' : (e.data.color ? e.data.color : 'purple')
       const weight = e.data.weight ? (e.data.weight > 6 ? 20 : Math.pow(e.data.weight,2)) : 1
       const dashArray = e.data.group ? (
@@ -113,7 +114,7 @@ export default class GeoEdges extends React.Component {
         ""
       ) : ""
 
-      const { segments, chevrons } = this.buildSegmentsAndChevrons(e.coords, color, e.selected)
+  const { segments, chevrons } = this.buildSegmentsAndChevrons(e.coords, color, e.selected, label)
       if (segments && segments.length) {
         segments.forEach((seg, sIdx) => {
           children.push(
