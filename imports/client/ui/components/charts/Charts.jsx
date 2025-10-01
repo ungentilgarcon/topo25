@@ -695,23 +695,23 @@ try {
   const nodeBins = new Set(
     selected
       .filter(el => el && el.group === 'nodes' && el.data && el.data.weight != null)
-      .map(el => Math.round(Math.pow(el.data.weight, 2)))
+      .map(el => String(Math.round(Math.pow(el.data.weight, 2))))
   )
   const edgeBins = new Set(
     selected
       .filter(el => el && el.group === 'edges' && el.data && el.data.weight != null)
-      .map(el => el.data.weight)
+      .map(el => String(el.data.weight))
   )
   const yellow = '#EEFF41'
   data.color = (color, d) => {
     if (!d || typeof d.id === 'undefined') return color
-    const idNum = Number(d.id)
-    return nodeBins.has(idNum) ? yellow : color
+    const idStr = String(d.id)
+    return nodeBins.has(idStr) ? yellow : color
   }
   data2.color = (color, d) => {
     if (!d || typeof d.id === 'undefined') return color
-    const idNum = Number(d.id)
-    return edgeBins.has(idNum) ? yellow : color
+    const idStr = String(d.id)
+    return edgeBins.has(idStr) ? yellow : color
   }
 } catch (e) { /* best-effort highlight */ }
 
