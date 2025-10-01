@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { FeatureGroup, LayerGroup, Polyline, Marker } from 'react-leaflet'
+import { FeatureGroup, Polyline, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import ui from 'redux-ui'
 
@@ -88,7 +88,8 @@ export default class GeoEdges extends React.Component {
       onUnfocusElement
      } = this.props
 
-  const edges = this.props.edges.map( (e,i) => {
+    const children = []
+    this.props.edges.forEach( (e,i) => {
       const color = e.selected ? 'yellow' : (e.data.color ? e.data.color : 'purple')
       const weight = e.data.weight ? (e.data.weight > 6 ? 20 : Math.pow(e.data.weight,2)) : 1
       const dashArray = e.data.group ? (
@@ -100,12 +101,9 @@ export default class GeoEdges extends React.Component {
       ) : ""
 
       const { segments, chevrons } = this.buildSegmentsAndChevrons(e.coords, color, e.selected)
-      const hasChildren = (segments && segments.length) || (chevrons && chevrons.length)
-      if (!hasChildren) return null
-
-      return (
-        <LayerGroup key={`edge-${i}`}>
-          {segments.map((seg, sIdx) => (
+      if (segments && segments.length) {
+        segments.forEach((seg, sIdx) => {
+          children.push(
             <Polyline
               key={`edge-${i}-seg-${sIdx}`}
               opacity={"0.8"}
@@ -113,30 +111,31 @@ export default class GeoEdges extends React.Component {
               weight={weight}
               dashArray={dashArray}
               positions={seg}
-              onClick={() => !isolateMode ?
-                handleClickGeoElement({ group : 'edge', el: e })
-                : null
-              }
+              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
               onMouseDown={() => isolateMode ? onFocusElement(e) : null }
               onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
             />
-          ))}
-          {chevrons.map(ch => (
+          )
+        })
+      }
+      if (chevrons && chevrons.length) {
+        chevrons.forEach((ch, cIdx) => {
+          children.push(
             <Marker
-              key={ch.key}
+              key={`${ch.key}-${i}-${cIdx}`}
               position={ch.position}
               icon={ch.icon}
               interactive={false}
             />
-          ))}
-        </LayerGroup>
-      )
-  }).filter(Boolean)
+          )
+        })
+      }
+    })
 
     return (
       <FeatureGroup name="GeoEdges"
         ref="edgesGroup">
-        {edges}
+        {children}
       </FeatureGroup>
     )
   }
