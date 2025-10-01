@@ -725,17 +725,18 @@ return (
   }}
   />
 </div>
-<div>
-<RaisedButton
-  primary={true}
-  backgroundColor="#546E7A"
-  labelColor="#F2EFE9"
-  style={{ marginTop: 12, fontSize: '10pt' }}
-  label="Reset selection"
-  labelPosition="before"
-  onClick={this.unselectAllElements}
-/>
-  </div>
+<div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 28px' }}>
+  <RaisedButton
+    backgroundColor="#546E7A"
+    labelColor="#F2EFE9"
+    style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.3)' }}
+    buttonStyle={{ height: 40, lineHeight: '40px', padding: '0 18px', borderRadius: 4 }}
+    labelStyle={{ fontSize: '12pt', fontWeight: 'bold', letterSpacing: '0.3px' }}
+    label="Reset selection"
+    labelPosition="before"
+    onClick={this.unselectAllElements}
+  />
+</div>
 
 
 

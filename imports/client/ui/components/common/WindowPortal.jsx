@@ -39,6 +39,11 @@ export default class WindowPortal extends React.Component {
         /* Tooltip styling for dark theme */
         body.__popup_theme .c3-tooltip { background: rgba(33, 33, 33, 0.9) !important; color: #F2EFE9 !important; border: 1px solid #78909C !important; }
         body.__popup_theme .c3-tooltip th, body.__popup_theme .c3-tooltip td { color: #F2EFE9 !important; }
+        /* Material RaisedButton tweaks inside pop-out */
+        body.__popup_theme .mui-raised-button, body.__popup_theme .mui-raised-button > button {
+          background: #546E7A !important; color: #F2EFE9 !important;
+        }
+        body.__popup_theme .mui-raised-button-label { color: #F2EFE9 !important; font-weight: 700; }
         /* Slight font bump for typical text containers inside pop-outs (helps Legend) */
         body.__popup_theme .__popup_content, body.__popup_theme .__popup_content a,
         body.__popup_theme .__popup_content td, body.__popup_theme .__popup_content tbody,
