@@ -100,7 +100,7 @@ export default class Popup extends React.Component {
   }
 
   renderHeader() {
-    const { title, onClose } = this.props
+    const { title, onClose, onPopOut } = this.props
     return (
       <div
         onMouseDown={this.handleDragStart}
@@ -118,7 +118,18 @@ export default class Popup extends React.Component {
         }}
       >
         <span>{title}</span>
-        <span style={{ cursor: 'pointer', fontSize: 18, opacity: 0.85 }} onClick={onClose} title="Close">✕</span>
+        <span>
+          {onPopOut ? (
+            <button
+              onClick={(e) => { e.stopPropagation(); onPopOut(); }}
+              title="Pop out"
+              style={{ marginRight: 8, background:'transparent', color:'#F2EFE9', border:'1px solid #78909C', borderRadius:4, padding:'2px 6px' }}
+            >
+              Pop out
+            </button>
+          ) : null}
+          <span style={{ cursor: 'pointer', fontSize: 18, opacity: 0.85 }} onClick={onClose} title="Close">✕</span>
+        </span>
       </div>
     )
   }

@@ -71,7 +71,25 @@ const right = width === '50vw' ? '50vw' : 0
 
 
 return (
-  <Popup show title={'Legend'} onClose={() => this.props.updateUI('legendVisible', false)} width={460} height={420}>
+  <Popup
+    show
+    title={'Legend'}
+    onClose={() => this.props.updateUI('legendVisible', false)}
+    onPopOut={() => {
+      if (typeof window === 'undefined') return
+      const style = 'body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#37474F;color:#F2EFE9;}header{background:rgba(69,90,100,1);padding:10px 14px;font-weight:bold;position:sticky;top:0;}main{padding:14px 16px;line-height:1.6;font-size:15px;}h1{font-size:16px;margin:0;color:#F2EFE9}h2{font-size:14px;color:#aa8dc6;margin:14px 0 6px;}a,button{cursor:pointer}'
+      const w = window.open('', 'legend_popup', 'width=600,height=520,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes')
+      if (!w || w.closed) { alert('Please allow pop-ups for this site to open the Legend window.'); return }
+      try {
+        w.document.open()
+        // Simple HTML with a heading; legend in main app remains the source of truth
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Legend</title><style>${style}</style></head><body><header><h1>Legend</h1></header><main><p>Use this pop-out to keep Legends visible while working in the app.</p></main></body></html>`)
+        w.document.close(); w.focus()
+      } catch (e) {}
+    }}
+    width={460}
+    height={420}
+  >
   <div>
 
     {/* <CardTitle
