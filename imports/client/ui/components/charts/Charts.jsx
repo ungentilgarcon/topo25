@@ -3,6 +3,7 @@ import ui from 'redux-ui'
 import { Card, CardTitle, CardActions } from 'material-ui/Card'
 import C3Chart from 'react-c3js';
 import RaisedButton from 'material-ui/RaisedButton'
+import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
 
 import './c3.css';
@@ -656,33 +657,7 @@ const sample = [1, 2, 3, 4, 19, 5, 6, 6, 15, 50, 23, 14, 45];
 //const mountNode = document.getElementById('react-c3js');
 
 return (
-
-
-  <Card
-    style={{
-      //top:100,
-      //bottom: -120,
-
-      maxWidth : '50%',
-      minWidth : '20%',
-
-
-      float : 'right',
-      //zDepth: -10000,
-      //border : 10,
-      position: 'relative',
-
-      zIndex: -1,
-      borderBottomLeftRadius: '20px',
-      borderTopLeftRadius: '5px',
-      borderTopRightRadius: '20px',
-      borderBottomRightRadius: '5px',
-      padding:"10px",
-      boxShadow: '1px 1px 8px  #000',
-      border: '1px solid #222',
-      backgroundColor: 'rgba(256,256,256,0.8)'
-    }}
-  >
+  <Popup show title={'Charts'} onClose={() => this.props.updateUI('chartsVisible', false)} width={600} height={520}>
   <div>
     <CardTitle
 
@@ -738,7 +713,7 @@ return (
 
 
 
-    </Card>
+    </Popup>
 
 
 )

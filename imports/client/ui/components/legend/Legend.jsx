@@ -4,6 +4,7 @@ import { Card, CardTitle, CardActions } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'
 import d3 from 'd3'
 import { CircleMarker } from 'react-leaflet'
+import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
 
 const LEGEND_DIV_ID = "legend"
@@ -70,29 +71,7 @@ const right = width === '50vw' ? '50vw' : 0
 
 
 return (
-
-
-  <Card
-    style={{
-      maxWidth : '50%',
-      minWidth : '20%',
-
-
-      float : 'right',
-      //zDepth: -10000,
-      border : "10px",
-      position: 'relative',
-      borderBottomLeftRadius: '20px',
-      borderTopLeftRadius: '5px',
-      borderTopRightRadius: '5px',
-      borderBottomRightRadius: '5px',
-      padding: "10px",
-      boxShadow: '1px 1px 8px  #000',
-      border: '1px solid #222',
-      backgroundColor: 'rgba(255,255,255,0.8)',
-      zIndex: -1
-    }}
-  >
+  <Popup show title={'Legend'} onClose={() => this.props.updateUI('legendVisible', false)} width={460} height={420}>
   <div>
 
     {/* <CardTitle
@@ -137,7 +116,7 @@ return (
   <a style={{ fontSize : '8pt',textStyle:'bold' }}>Map Legends</a>
 <Divider/>
 
-<div  style= {{fontSize: "8pt" ,textAlign:'center'}}> map scale => bottom right</div>
+<div  style= {{fontSize: "8pt" ,textAlign:'center'}}> map scale =&gt; bottom right</div>
 <br/>
 
     <table>
@@ -269,9 +248,7 @@ return (
 
 
 
-
-
-    </Card>
+  </Popup>
 
 
 )
