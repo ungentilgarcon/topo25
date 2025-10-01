@@ -147,8 +147,8 @@ export default class Popup extends React.Component {
           features={this.props.popoutFeatures || 'width=820,height=640,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes'}
           onClose={() => this.setState({ poppedOut: false })}
         >
-          <div style={{ padding: '8px 10px', color: '#F2EFE9', background: 'rgba(69,90,100,1)', fontWeight: 'bold' }}>{title}</div>
-          <div style={{ padding: '12px 14px', color: '#F2EFE9' }}>
+          <div className="__popup_content" style={{ padding: '8px 10px', color: '#F2EFE9', background: 'rgba(69,90,100,1)', fontWeight: 'bold' }}>{title}</div>
+          <div className="__popup_content" style={{ padding: '12px 14px', color: '#F2EFE9' }}>
             {children}
           </div>
         </WindowPortal>

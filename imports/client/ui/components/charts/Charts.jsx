@@ -144,19 +144,18 @@ class Charts extends React.Component {
       //console.log("cyEL weightsquared",parseInt(cyEl.data('weight')**2));
       //console.log("elelel",el['name']);
       //console.log(Math.round(Math.pow(cyEl.data('weight'),2)));
-      if (Math.round(Math.pow(cyEl.data('weight'),2)) == el['name']) {
-
-        cyEl.data('selected') ?
-         this.unselectElement(cyEl.json())
-         :
-         this.selectElement(cyEl.json())
-       }
+        if (Math.round(Math.pow(cyEl.data('weight'),2)) == el['name']) {
+          // Defer selection changes to avoid React 15 dispatch crashes when DOM nodes are removed during native event
+          setTimeout(() => {
+            cyEl.data('selected') ? this.unselectElement(cyEl.json()) : this.selectElement(cyEl.json())
+          }, 0)
+        }
 
       }
       console.log("LOOP ENDED");
      }
 
-     handleClickChartEdgeElement(el) {
+   handleClickChartEdgeElement(el) {
          const {cy} = this.props.ui
          //console.log("elelel",el);
          //console.log(cy);
@@ -190,12 +189,11 @@ class Charts extends React.Component {
         //console.log("WEIGHT",cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]['weight']);
         //console.log("TARGET WEIGHT",el['name']);
         if (cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["data"]['weight'] == el['name']) {
-
-          cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["selected"] ?
-           this.unselectElement(cyEl.json())
-           :
-           this.selectElement(cyEl.json())
-         }
+          setTimeout(() => {
+            cyEl["_private"]["ids"][cyFIL[i]["_private"]["data"]["id"]]["_private"]["selected"] ?
+              this.unselectElement(cyEl.json()) : this.selectElement(cyEl.json())
+          }, 0)
+        }
 
         }
         console.log("LOOP ENDED");

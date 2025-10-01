@@ -22,7 +22,23 @@ export default class WindowPortal extends React.Component {
     const baseHref = (typeof document !== 'undefined' && document.baseURI) ? document.baseURI : (window.location.origin + '/')
     try {
       this.externalWindow.document.open()
-      this.externalWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title || ''}</title><base href="${baseHref}"></head><body style="margin:0;background:#37474F;color:#F2EFE9;font-family:sans-serif;"><div id="__popup_root" style="padding:10px">Loading…</div></body></html>`)
+      const injectedStyle = `
+        html, body.__popup_theme { background:#37474F; color:#F2EFE9; font-family:Arial,Helvetica,sans-serif; }
+        /* Make C3/SVG text readable on dark bg */
+        body.__popup_theme svg text, body.__popup_theme .c3 text, body.__popup_theme .c3-title,
+        body.__popup_theme .c3-axis-x g.tick text, body.__popup_theme .c3-axis-y g.tick text,
+        body.__popup_theme .c3-legend-item text { fill: #F2EFE9 !important; }
+        /* Axes/lines contrast */
+        body.__popup_theme .c3 path, body.__popup_theme .c3 line { stroke: #B0BEC5 !important; }
+        /* Tooltip styling for dark theme */
+        body.__popup_theme .c3-tooltip { background: rgba(33, 33, 33, 0.9) !important; color: #F2EFE9 !important; border: 1px solid #78909C !important; }
+        body.__popup_theme .c3-tooltip th, body.__popup_theme .c3-tooltip td { color: #F2EFE9 !important; }
+        /* Slight font bump for typical text containers inside pop-outs (helps Legend) */
+        body.__popup_theme .__popup_content, body.__popup_theme .__popup_content a,
+        body.__popup_theme .__popup_content td, body.__popup_theme .__popup_content tbody,
+        body.__popup_theme .__popup_content div { font-size: 12pt !important; }
+      `
+      this.externalWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title || ''}</title><base href="${baseHref}"><style>${injectedStyle}</style></head><body class="__popup_theme" style="margin:0;"><div id="__popup_root" style="padding:10px">Loading…</div></body></html>`)
       this.externalWindow.document.close()
     } catch (e) { /* ignore */ }
     try { this.externalWindow.focus() } catch (e) {}
