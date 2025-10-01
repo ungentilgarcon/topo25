@@ -27,6 +27,9 @@ class GeoMap extends React.Component {
       zoom : 2.4,
       position : [20.505, 22]
     }
+    // Track tile errors to detect blocked providers and auto-fallback
+    this._tileErrorCount = 0
+    this._lastTileKey = null
   }
 
   static propTypes = {
@@ -110,6 +113,18 @@ class GeoMap extends React.Component {
       maxZoom,
       ext
     } = mapTiles[geoMapTile]
+    // Clamp zoom to integer to avoid 404s on providers that don't serve fractional zoom
+    const intZoom = Math.max(minZoom || 0, Math.min(maxZoom || 22, Math.round(this.state.zoom)))
+    if (intZoom !== this.state.zoom) {
+      // Update once to round zoom, avoiding render loops by only setting when different
+      this.state.zoom = intZoom
+    }
+    const tileKey = `${geoMapTile}:${url || 'none'}`
+    if (this._lastTileKey !== tileKey) {
+      // Reset error counter when switching tile providers
+      this._tileErrorCount = 0
+      this._lastTileKey = tileKey
+    }
 
     const chevOn = (!this.props.ui || this.props.ui.showChevrons !== false)
     return (
@@ -121,8 +136,8 @@ class GeoMap extends React.Component {
           key={`map-${chevOn ? 'with' : 'no'}-chev`}
           center={position}
           zoom={zoom}
-          zoomSnap= "0.01"
-           zoomDelta= "0.05"
+          zoomSnap={1}
+          zoomDelta={1}
           zoomControl= {false}
 
 
@@ -157,17 +172,28 @@ class GeoMap extends React.Component {
               :
               null
           }
-          <TileLayer
-            url={url}
-            attribution={attribution}
-            minZoom={minZoom}
-            maxZoom={maxZoom}
-            ext={ext}
-            crossOrigin={'anonymous'}
-            subdomains={mapTiles[geoMapTile] && mapTiles[geoMapTile].subdomains}
-            errorTileUrl={"data:image/gif;base64,R0lGODlhAQABAAAAACw="}
-            referrerPolicy={'no-referrer'}
-          />
+          {url ? (
+            <TileLayer
+              url={url}
+              attribution={attribution}
+              minZoom={minZoom}
+              maxZoom={maxZoom}
+              ext={ext}
+              crossOrigin={'anonymous'}
+              subdomains={mapTiles[geoMapTile] && mapTiles[geoMapTile].subdomains}
+              errorTileUrl={"data:image/gif;base64,R0lGODlhAQABAAAAACw="}
+              detectRetina={false}
+              tms={mapTiles[geoMapTile] && mapTiles[geoMapTile].tms}
+              onTileerror={() => {
+                this._tileErrorCount += 1
+                if (this._tileErrorCount >= 6) {
+                  try { console.warn('Tile errors detected; falling back to default base map') } catch(e) {}
+                  this.props.updateUI && this.props.updateUI('geoMapTile', 'default')
+                  this._tileErrorCount = 0
+                }
+              }}
+            />
+          ) : null}
           <ScaleControl
             position='bottomright'
           />
