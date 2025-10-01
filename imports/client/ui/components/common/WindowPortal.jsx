@@ -55,6 +55,34 @@ export default class WindowPortal extends React.Component {
           if (this.externalWindow.requestAnimationFrame) this.externalWindow.requestAnimationFrame(fire)
           setTimeout(fire, 50)
         } catch (e) { /* ignore */ }
+
+        // Attempt to resize the external window to fit content nicely
+        const adjustToContent = () => {
+          try {
+            if (!this.externalWindow || this.externalWindow.closed) return
+            const doc = this.externalWindow.document
+            const body = doc && doc.body
+            const container = this.containerEl
+            if (!body || !container) return
+            const aw = this.externalWindow.screen ? (this.externalWindow.screen.availWidth || this.externalWindow.innerWidth || 1280) : (this.externalWindow.innerWidth || 1280)
+            const ah = this.externalWindow.screen ? (this.externalWindow.screen.availHeight || this.externalWindow.innerHeight || 800) : (this.externalWindow.innerHeight || 800)
+            // Measure desired content size (include some padding for header/margins)
+            const desiredW = Math.min(aw - 60, Math.max(720, (container.scrollWidth || container.offsetWidth || 800) + 40))
+            const desiredH = Math.min(ah - 80, Math.max(560, (container.scrollHeight || container.offsetHeight || 600) + 80))
+            // Resize and center
+            try { this.externalWindow.resizeTo(desiredW, desiredH) } catch (e) {}
+            try {
+              const l = Math.max(0, Math.round((aw - desiredW) / 2))
+              const t = Math.max(0, Math.round((ah - desiredH) / 2))
+              this.externalWindow.moveTo(l, t)
+            } catch (e) {}
+            // Trigger a final layout after resizing
+            try { this.externalWindow.dispatchEvent(new this.externalWindow.Event('resize')) } catch (e) {}
+          } catch (e) { /* ignore */ }
+        }
+        // Run once soon and once after a short delay to catch late layout
+        setTimeout(adjustToContent, 120)
+        setTimeout(adjustToContent, 450)
       } catch (e) {
         // best effort
       }
