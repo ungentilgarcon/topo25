@@ -146,7 +146,7 @@ export default class Popup extends React.Component {
         if (!dynamicFeatures && typeof window !== 'undefined' && window.screen) {
           const aw = window.screen.availWidth || window.innerWidth || 1280
           const ah = window.screen.availHeight || window.innerHeight || 800
-          const w = Math.min(aw - 100, Math.max(700, Math.round(aw * 0.75)))
+          const w = Math.min(aw - 140, Math.max(760, Math.round(aw * 0.6)))
           const h = Math.min(ah - 120, Math.max(560, Math.round(ah * 0.8)))
           const l = Math.max(0, Math.round((aw - w) / 2))
           const t = Math.max(0, Math.round((ah - h) / 2))

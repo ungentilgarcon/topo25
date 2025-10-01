@@ -30,6 +30,8 @@ export default class WindowPortal extends React.Component {
       this.externalWindow.document.open()
       const injectedStyle = `
         html, body.__popup_theme { background:#37474F; color:#F2EFE9; font-family:Arial,Helvetica,sans-serif; }
+        /* Constrain content width for better readability in pop-outs */
+        body.__popup_theme .__popup_content { max-width: 1100px; margin: 0 auto; }
         /* Make C3/SVG text readable on dark bg */
   body.__popup_theme svg text, body.__popup_theme .c3 text, body.__popup_theme .c3-title,
   body.__popup_theme .c3-axis-x g.tick text, body.__popup_theme .c3-axis-y g.tick text,
@@ -78,7 +80,7 @@ export default class WindowPortal extends React.Component {
             const aw = this.externalWindow.screen ? (this.externalWindow.screen.availWidth || this.externalWindow.innerWidth || 1280) : (this.externalWindow.innerWidth || 1280)
             const ah = this.externalWindow.screen ? (this.externalWindow.screen.availHeight || this.externalWindow.innerHeight || 800) : (this.externalWindow.innerHeight || 800)
             // Measure desired content size (include some padding for header/margins)
-            const desiredW = Math.min(aw - 60, Math.max(720, (container.scrollWidth || container.offsetWidth || 800) + 40))
+            const desiredW = Math.min(Math.round(aw * 0.85), Math.max(760, Math.min(1100, (container.scrollWidth || container.offsetWidth || 900) + 40)))
             const desiredH = Math.min(ah - 80, Math.max(560, (container.scrollHeight || container.offsetHeight || 600) + 80))
             // Resize and center
             try { this.externalWindow.resizeTo(desiredW, desiredH) } catch (e) {}

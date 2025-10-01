@@ -725,7 +725,7 @@ return (
   }}
   />
 </div>
-<div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 28px' }}>
+<div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 46px' }}>
   <RaisedButton
     backgroundColor="#546E7A"
     labelColor="#F2EFE9"
