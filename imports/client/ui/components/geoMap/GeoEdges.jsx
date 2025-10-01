@@ -114,6 +114,7 @@ export default class GeoEdges extends React.Component {
       map.set(bucket, n + 1)
       return offset
     }
+    // Decide behavior per toggle: when chevrons are off, draw direct single segments
     this.props.edges.forEach( (e,i) => {
       const label = i + 1
       const color = e.selected ? 'yellow' : (e.data.color ? e.data.color : 'purple')
@@ -125,8 +126,25 @@ export default class GeoEdges extends React.Component {
         e.data.group.includes("DASHED-1")? "1,5,1,5,1":
         ""
       ) : ""
-
-  const { segments, chevrons } = this.buildSegmentsAndChevrons(e.coords, color, e.selected, label)
+      // Read UI toggle once per edge to drive splitting behavior
+      const showChevrons = !this.props.ui || this.props.ui.showChevrons !== false
+      let segments = []
+      let chevrons = []
+      if (showChevrons) {
+        const built = this.buildSegmentsAndChevrons(e.coords, color, e.selected, label)
+        segments = built.segments
+        chevrons = built.chevrons
+      } else {
+        // Direct connection: a single segment without splitting/chevrons
+        if (e.coords && e.coords.length === 2) {
+          let [[lat1, lng1], [lat2, lng2]] = e.coords
+          lat1 = parseFloat(lat1); lng1 = parseFloat(lng1)
+          lat2 = parseFloat(lat2); lng2 = parseFloat(lng2)
+          if (isFinite(lat1) && isFinite(lng1) && isFinite(lat2) && isFinite(lng2)) {
+            segments = [ [[lat1, lng1], [lat2, lng2]] ]
+          }
+        }
+      }
       if (segments && segments.length) {
         segments.forEach((seg, sIdx) => {
           children.push(
@@ -158,8 +176,9 @@ export default class GeoEdges extends React.Component {
           )
         })
       }
-  const showChevrons = !this.props.ui || this.props.ui.showChevrons !== false
-      if (showChevrons && chevrons && chevrons.length) {
+      // Only render chevrons when enabled
+      const showChevronsRender = !this.props.ui || this.props.ui.showChevrons !== false
+      if (showChevronsRender && chevrons && chevrons.length) {
         chevrons.forEach((ch, cIdx) => {
           let lat = parseFloat(ch.position[0])
           let lng = parseFloat(ch.position[1])
@@ -182,8 +201,10 @@ export default class GeoEdges extends React.Component {
       }
     })
 
+    const uiKey = (!this.props.ui || this.props.ui.showChevrons !== false) ? 'with-chevrons' : 'no-chevrons'
     return (
       <FeatureGroup name="GeoEdges"
+        key={`edges-${uiKey}`}
         ref="edgesGroup">
         {children}
       </FeatureGroup>
