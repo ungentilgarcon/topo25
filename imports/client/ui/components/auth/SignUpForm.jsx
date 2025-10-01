@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 
 import { CardActions, CardHeader, CardText } from 'material-ui/Card'
-import RaisedButton from 'material-ui/RaisedButton'
+import Button from '@mui/material/Button'
 import TextField from 'material-ui/TextField'
 
 import AuthLayout from './AuthLayout.jsx'
@@ -68,11 +68,13 @@ const SignUpForm = ({
 
       </CardText>
       <CardActions>
-        <RaisedButton
+        <Button
           type="submit"
-          label="Create New Account"
-          primary={true}
-        />
+          variant="contained"
+          color="primary"
+        >
+          Create New Account
+        </Button>
       </CardActions>
     </form>
     <CardText>

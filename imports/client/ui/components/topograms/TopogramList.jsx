@@ -7,7 +7,7 @@ import TopogramListItem from './TopogramListItem.jsx'
 import ui from 'redux-ui'
 import { defineMessages, injectIntl } from 'react-intl'
 import AutoComplete from 'material-ui/AutoComplete'
-import RaisedButton from 'material-ui/RaisedButton'
+import Button from '@mui/material/Button'
 import './TopogramList.css'
 const messages = defineMessages({
   hint : {
@@ -188,17 +188,20 @@ class TopogramList extends React.Component {
                     >
                     {topogramItems.slice(0+128*this.state.pageTopos,128+128*this.state.pageTopos)}
                   </GridList>
-                  <RaisedButton
-                    style={{backgroundColor: "#aa8dc6 !important"}}
-                    label="previous"
-                    primary={true}
+                  <Button
+                    variant="contained"
                     onClick={() => this.handlePageTopoDown(numbTopopages)}
-                    />
-                  <RaisedButton
-                    label="next"
-                    primary={true}
+                    sx={{ bgcolor: '#aa8dc6', '&:hover': { bgcolor: '#9a7cb6' } }}
+                  >
+                    previous
+                  </Button>
+                  <Button
+                    variant="contained"
                     onClick={() => this.handlePageTopoUp({pageTopos},numbTopopages)}
-                    />
+                    sx={{ ml: 1, bgcolor: '#aa8dc6', '&:hover': { bgcolor: '#9a7cb6' } }}
+                  >
+                    next
+                  </Button>
                   <p>{this.state.pageTopos}/{numbTopopages} </p>
                 </div>
                 :

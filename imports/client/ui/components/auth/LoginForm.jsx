@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 
 import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 // import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton'
+import Button from '@mui/material/Button'
 import TextField from 'material-ui/TextField'
 
 import AuthLayout from './AuthLayout.jsx'
@@ -49,11 +49,13 @@ const LoginForm = ({
         </div>
       </CardText>
       <CardActions>
-        <RaisedButton
+        <Button
           type="submit"
-          label="Log in"
-          primary={true}
-        />
+          variant="contained"
+          color="primary"
+        >
+          Log in
+        </Button>
       </CardActions>
     </form>
     <CardText>

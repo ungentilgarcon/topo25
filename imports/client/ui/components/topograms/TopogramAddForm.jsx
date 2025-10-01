@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { TextField, RaisedButton } from 'material-ui'
+import { TextField } from 'material-ui'
+import Button from '@mui/material/Button'
 import { defineMessages, injectIntl } from 'react-intl'
 
 import { topogramCreate } from '../../../../api/topograms/topogramsMethods.js'
@@ -65,12 +66,14 @@ class TopogramAddForm extends React.Component {
             hintText={formatMessage(messages.hint)}
           />
 
-          <RaisedButton
+          <Button
             type="submit"
-            label="Create"
-            primary={true}
+            variant="contained"
+            color="primary"
             style={buttonStyle}
-          />
+          >
+            Create
+          </Button>
         </form>
       </section>
     )

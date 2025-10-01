@@ -10,7 +10,7 @@ import { Card, CardActions, CardTitle, CardHeader } from 'material-ui/Card'
 // import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 // import Settings from '../settings/Settings.jsx'
 
-import RaisedButton from 'material-ui/FlatButton'
+import Button from '@mui/material/Button'
 
 // const messages = defineMessages({
 //   browse : {
@@ -55,17 +55,13 @@ const TopogramListItem = ({
 
 />
     <CardActions>
-      <RaisedButton
-
-
-      style={{
-        color:"black", backgroundColor:"#A98CC5"
-      }}
-        //href={`/topograms/${topogramId}`}
-        // labelPosition="before"
+      <Button
+        variant="contained"
         onClick={ ()=>window.open(`/topograms/${topogramId}`, '_blank')}
-        label="Check its tours"
-      />
+        sx={{ bgcolor: '#A98CC5', color: 'black', '&:hover': { bgcolor: '#9b7eb7' } }}
+      >
+        Check its tours
+      </Button>
     </CardActions>
 
   </Card>
