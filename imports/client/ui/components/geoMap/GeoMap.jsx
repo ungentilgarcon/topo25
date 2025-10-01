@@ -82,20 +82,26 @@ class GeoMap extends React.Component {
 
     const nodes = this.props.nodes
       .map( n => {
-        const coords = [n.data.lat,n.data.lng]
+        const lat = parseFloat(n.data.lat)
+        const lng = parseFloat(n.data.lng)
+        if (!isFinite(lat) || !isFinite(lng)) return null
+        const coords = [lat, lng]
         const node = { ...n, coords }
         nodesById[n.data.id] = node // store for edges
         return node
       })
+      .filter(Boolean)
 
     const edges = this.props.edges
       .map( e => {
-        const source = nodesById[e.data.source],
-          target = nodesById[e.data.target],
-          coords = [source.coords, target.coords],
-          selected = e.data.selected
+        const source = nodesById[e.data.source]
+        const target = nodesById[e.data.target]
+        if (!source || !target) return null
+        const coords = [source.coords, target.coords]
+        const selected = e.data.selected
         return { ...e, source, target, coords, selected }
       })
+      .filter(Boolean)
 
     const {
       url,
@@ -105,12 +111,14 @@ class GeoMap extends React.Component {
       ext
     } = mapTiles[geoMapTile]
 
+    const chevOn = (!this.props.ui || this.props.ui.showChevrons !== false)
     return (
       <div
         id={MAP_DIV_ID}
         style={Object.assign({}, divMapStyle,{ left, height })}
       >
         <Map
+          key={`map-${chevOn ? 'with' : 'no'}-chev`}
           center={position}
           zoom={zoom}
           zoomSnap= "0.01"
@@ -123,6 +131,7 @@ class GeoMap extends React.Component {
           {
             edges.length ?
               <GeoEdges
+                key={`geoedges-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
                 edges={edges}
                 isolateMode={isolateMode}
                 handleClickGeoElement={

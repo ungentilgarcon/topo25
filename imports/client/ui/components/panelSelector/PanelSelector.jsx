@@ -13,7 +13,7 @@ const buttonStyle = {
   color:'#F2EFE9 !important'
 }
 
-@ui()
+@ui({ key: 'PanelSettings', state: { showChevrons: (typeof window !== 'undefined' && window.localStorage && window.localStorage.getItem('topo.showChevrons') !== null) ? JSON.parse(window.localStorage.getItem('topo.showChevrons')) : true } })
 export default class PanelSelector extends React.Component {
 
   static propTypes = {
@@ -33,6 +33,23 @@ export default class PanelSelector extends React.Component {
   }
   toggleLegend() {
     this.props.updateUI( 'legendVisible', !this.props.ui.legendVisible )
+  }
+
+  toggleChevrons() {
+    const cur = this.props.ui.showChevrons
+    const next = cur === false ? true : !cur
+    this.props.updateUI('showChevrons', next)
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('topo.showChevrons', JSON.stringify(next))
+      }
+      if (typeof window !== 'undefined') {
+        const evt = new CustomEvent('topo:showChevronsChanged', { detail: { value: next } })
+        window.dispatchEvent(evt)
+      }
+    } catch (e) {
+      // no-op if storage unavailable
+    }
   }
 
 
@@ -55,7 +72,8 @@ export default class PanelSelector extends React.Component {
       geoMapVisible,
       graphVisible,
       chartsVisible,
-      legendVisible
+      legendVisible,
+      showChevrons
     } = this.props.ui
 
     const {
@@ -72,14 +90,12 @@ export default class PanelSelector extends React.Component {
         color:'#F2EFE9',}}
         >
         <MenuItem style={buttonStyle}>
-          <Checkbox style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-          color:'#F2EFE9',}}
+          <Checkbox
             label={ 'Graph'}
             labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
             color:'#F2EFE9',}}
             checked={graphVisible}
             onClick={ () => this.toggleGraph()}
-            style={{fill : '#D3E8E6 !important' }}
           />
         </MenuItem>
         <MenuItem style={buttonStyle}>
@@ -92,7 +108,22 @@ export default class PanelSelector extends React.Component {
             onClick={ () => this.toggleGeo()}
           />
         </MenuItem>
-        <MenuItem style={buttonStyle}>
+  <MenuItem style={{...buttonStyle, paddingLeft: 48, paddingTop: 0, paddingBottom: 0, marginBottom: -2}}>
+          <Checkbox
+            label={'Chevrons'}
+            style={{ marginLeft: 0, marginTop: -6, marginBottom: -6 }}
+            labelStyle={{
+              backgroundColor: 'rgba(69,90,100 ,0.9)',
+              color:'#F2EFE9',
+              fontSize: 11,
+              lineHeight: '14px'
+            }}
+            iconStyle={{ transform: 'scale(0.8)', transformOrigin: 'left center' }}
+            checked={showChevrons !== false}
+            onClick={ () => this.toggleChevrons()}
+          />
+        </MenuItem>
+  <MenuItem style={{...buttonStyle, paddingTop: 0, marginTop: -2}}>
           <Checkbox
             label={'Time'}
             labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
