@@ -25,9 +25,9 @@ export default class WindowPortal extends React.Component {
       const injectedStyle = `
         html, body.__popup_theme { background:#37474F; color:#F2EFE9; font-family:Arial,Helvetica,sans-serif; }
         /* Make C3/SVG text readable on dark bg */
-        body.__popup_theme svg text, body.__popup_theme .c3 text, body.__popup_theme .c3-title,
-        body.__popup_theme .c3-axis-x g.tick text, body.__popup_theme .c3-axis-y g.tick text,
-        body.__popup_theme .c3-legend-item text { fill: #F2EFE9 !important; }
+  body.__popup_theme svg text, body.__popup_theme .c3 text, body.__popup_theme .c3-title,
+  body.__popup_theme .c3-axis-x g.tick text, body.__popup_theme .c3-axis-y g.tick text,
+  body.__popup_theme .c3-legend-item text, body.__popup_theme .c3-chart-arc text { fill: #F2EFE9 !important; }
         /* Axes/lines contrast */
         body.__popup_theme .c3 path, body.__popup_theme .c3 line { stroke: #B0BEC5 !important; }
         /* Tooltip styling for dark theme */

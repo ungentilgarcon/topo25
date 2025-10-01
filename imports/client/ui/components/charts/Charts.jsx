@@ -667,9 +667,9 @@ return (
     <CardTitle
 
       title='Charts'
-      titleStyle={{ fontSize : '12pt', lineHeight : '1em' }}
+      titleStyle={{ fontSize : '12pt', lineHeight : '1em', color: '#F2EFE9' }}
       subtitle='Nodes repartition (how often the band has played the same venue)'
-      subtitleStyle={{ fontSize : '8pt', lineHeight : '1em' }}
+      subtitleStyle={{ fontSize : '9pt', lineHeight : '1.2em', color: '#F2EFE9' }}
 
     />
 
@@ -694,7 +694,7 @@ return (
       //title='Charts'
       //titleStyle={{ fontSize : '12pt', lineHeight : '1em' }}
       subtitle='Edges repartition (how often the band has followed the same route)'
-      subtitleStyle={{ fontSize : '8pt', lineHeight : '1em' }}
+      subtitleStyle={{ fontSize : '9pt', lineHeight : '1.2em', color: '#F2EFE9' }}
   />
   <C3Chart
   data={data2}

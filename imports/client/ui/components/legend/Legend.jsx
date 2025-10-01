@@ -120,10 +120,10 @@ return (
     </tbody>
 </table>
 <Divider/>
-  <a style={{ fontSize : '8pt',textStyle:'bold' }}>Map Legends</a>
+  <a style={{ display:'inline-block', marginTop:'10px', fontSize : '9pt', fontWeight:'bold' }}>Map Legends</a>
 <Divider/>
 
-<div  style= {{fontSize: "8pt" ,textAlign:'center'}}> map scale =&gt; bottom right</div>
+<div  style= {{fontSize: "8pt" ,textAlign:'center', marginTop:'6px'}}> map scale =&gt; bottom right</div>
 <br/>
 
     <table>
