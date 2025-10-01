@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import UserMenu from '../components/UserMenu.jsx'
 
 const style = {
@@ -14,7 +15,6 @@ const TopogramsLayout = ({
 }) => (
   <div>
     <UserMenu
-      style={style}
       router={router}
       user={user}
       style={style}

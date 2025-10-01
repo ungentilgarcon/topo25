@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 
 // import { messages } from '../../../i18n.js'
 
@@ -91,8 +92,6 @@ export default class UserMenu extends React.Component {
             {
               isLoggedIn ?
                 <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-                color:'#F2EFE9',}}
-                style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                 color:'#F2EFE9',}}
                   primaryText="My Topograms"
                   onClick={() => this.props.router.push('/topograms')}

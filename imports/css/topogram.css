@@ -109,11 +109,15 @@ table { border-collapse: collapse; border-spacing: 0; }
 /* TYPOGRAPHY (from _typo.scss, flattened) */
 @font-face {
   font-family: 'Roboto';
-  src: url('/fonts/roboto/Roboto-Regular.eot');
-  src: url('/fonts/roboto/Roboto-Regular.eot?#iefix') format('embedded-opentype'),
+  src: url('/fonts/roboto/Roboto-Regular.eot'); /* IE9 Compat Modes */
+  src: url('/fonts/roboto/Roboto-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       local('Roboto'), local('Roboto-Regular'),
+       url('/fonts/roboto/Roboto-Regular.woff2') format('woff2'), /* Modern Browsers */
        url('/fonts/roboto/Roboto-Regular.woff') format('woff'),
-       url('/fonts/roboto/Roboto-Regular.ttf') format('truetype'),
-       url('/fonts/roboto/Roboto-Regular.svg#svgFontName') format('svg');
+       url('/fonts/roboto/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 html { font-size: 16px; font-weight: 100; line-height: 1.5; }
 @media (max-width: 1200px) { html { font-size: 15px; } }

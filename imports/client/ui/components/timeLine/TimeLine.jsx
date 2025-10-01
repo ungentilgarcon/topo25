@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 import moment from 'moment'
 
@@ -44,7 +45,7 @@ export default class TimeLine extends React.Component {
     //console.log("seconds",seconds)
     var tempo = Math.floor(seconds);
     // var valueRange=[Math.round(this.props.ui.minTime),Math.round(this.props.ui.minTime)+10*tempo]
-    console.log(tempo,"tempo");
+  // console.debug('timeline tempo', tempo)
     this.originalTempo = tempo
 
     this.state = {

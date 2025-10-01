@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 import d3 from 'd3'
-import { Map, TileLayer,ScaleControl,ZoomControl } from 'react-leaflet'
+import { Map, TileLayer,ScaleControl,ZoomControl, Pane } from 'react-leaflet'
 //import {smoothZoom} from 'leaflet.smoothzoom'
 
 import 'leaflet/dist/leaflet.css'
@@ -145,33 +145,31 @@ class GeoMap extends React.Component {
           ref="map"
         >
           {
-            edges.length ?
-              <GeoEdges
-                key={`geoedges-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
-                edges={edges}
-                isolateMode={isolateMode}
-                handleClickGeoElement={
-                  (e)=>this.handleClickGeoElement(e)
-                }
-                onFocusElement={onFocusElement}
-                onUnfocusElement={onUnfocusElement}
-              />
-              :
-              null
+            edges.length ? (
+              <Pane name="edgesPane" style={{ zIndex: 600 }}>
+                <GeoEdges
+                  key={`geoedges-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+                  edges={edges}
+                  isolateMode={isolateMode}
+                  handleClickGeoElement={(e) => this.handleClickGeoElement(e)}
+                  onFocusElement={onFocusElement}
+                  onUnfocusElement={onUnfocusElement}
+                />
+              </Pane>
+            ) : null
           }
           {
-            nodes.length ?
-              <GeoNodes
-                nodes={nodes}
-                isolateMode={isolateMode}
-                handleClickGeoElement={
-                  (e) => this.handleClickGeoElement(e)
-                }
-                onFocusElement={onFocusElement}
-                onUnfocusElement={onUnfocusElement}
-              />
-              :
-              null
+            nodes.length ? (
+              <Pane name="nodesPane" style={{ zIndex: 650 }}>
+                <GeoNodes
+                  nodes={nodes}
+                  isolateMode={isolateMode}
+                  handleClickGeoElement={(e) => this.handleClickGeoElement(e)}
+                  onFocusElement={onFocusElement}
+                  onUnfocusElement={onUnfocusElement}
+                />
+              </Pane>
+            ) : null
           }
           {url ? (
             <TileLayer
