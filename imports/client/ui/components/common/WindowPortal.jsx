@@ -32,17 +32,20 @@ export default class WindowPortal extends React.Component {
         html, body.__popup_theme { background:#37474F; color:#F2EFE9; font-family:Arial,Helvetica,sans-serif; }
         /* Constrain content width for better readability in pop-outs */
         body.__popup_theme .__popup_content { max-width: 1100px; margin: 0 auto; }
-        /* Make C3/SVG text readable on dark bg */
-  body.__popup_theme svg text, body.__popup_theme .c3 text, body.__popup_theme .c3-title,
-  body.__popup_theme .c3-axis-x g.tick text, body.__popup_theme .c3-axis-y g.tick text,
-  body.__popup_theme .c3-legend-item text, body.__popup_theme .c3-chart-arc text { fill: #F2EFE9 !important; }
+  /* Make C3 text readable on dark bg without overriding legend item colors */
+  body.__popup_theme .c3 .c3-title,
+  body.__popup_theme .c3 .c3-axis-x g.tick text,
+  body.__popup_theme .c3 .c3-axis-y g.tick text,
+  body.__popup_theme .c3 .c3-chart-arc text { fill: #F2EFE9 !important; }
+  /* Preserve legend item text color (per-series) */
+  body.__popup_theme .c3 .c3-legend-item text { fill: inherit !important; }
         /* Axes/lines contrast */
-        body.__popup_theme .c3 path, body.__popup_theme .c3 line { stroke: #B0BEC5 !important; }
+  body.__popup_theme .c3 path, body.__popup_theme .c3 line { stroke: #B0BEC5 !important; }
         /* Tooltip styling for dark theme */
         body.__popup_theme .c3-tooltip { background: rgba(33, 33, 33, 0.9) !important; color: #F2EFE9 !important; border: 1px solid #78909C !important; }
         body.__popup_theme .c3-tooltip th, body.__popup_theme .c3-tooltip td { color: #F2EFE9 !important; }
   /* Ensure legend tiles are visible on dark background */
-  body.__popup_theme .c3-legend-item-tile { stroke: #37474F !important; }
+  body.__popup_theme .c3-legend-item-tile { stroke: #B0BEC5 !important; }
         /* Material RaisedButton tweaks inside pop-out */
         body.__popup_theme .mui-raised-button, body.__popup_theme .mui-raised-button > button {
           background: #546E7A !important; color: #F2EFE9 !important;

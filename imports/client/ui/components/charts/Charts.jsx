@@ -667,7 +667,8 @@ const sample = [1, 2, 3, 4, 19, 5, 6, 6, 15, 50, 23, 14, 45];
 //const mountNode = document.getElementById('react-c3js');
 
 // Use a stable color pattern so legend tiles receive explicit fills
-const c3Colors = { pattern: ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f'] }
+// Palette aligned with app theme: blue, orange, green, red, purple, teal, yellow, grey
+const c3Colors = { pattern: ['#1976D2','#FB8C00','#43A047','#E53935','#8E24AA','#00897B','#FDD835','#78909C'] }
 
 // Compute an initial size that fits most viewports without needing a drag
 const vw = (typeof window !== 'undefined') ? window.innerWidth : 1200
