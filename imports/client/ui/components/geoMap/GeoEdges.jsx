@@ -85,8 +85,8 @@ export default class GeoEdges extends React.Component {
     })
 
     const chevrons = [
-      { position: seamA, icon: makeIcon(glyph, color, label), key: `chev-a-${latInt}-${boundaryLng}` },
-      { position: seamB, icon: makeIcon(glyph, color, label), key: `chev-b-${latInt}-${otherBoundaryLng}` }
+      { position: seamA, icon: makeIcon(glyph, color, label), key: `chev-a-${latInt}-${boundaryLng}` , boundary: boundaryLng },
+      { position: seamB, icon: makeIcon(glyph, color, label), key: `chev-b-${latInt}-${otherBoundaryLng}`, boundary: otherBoundaryLng }
     ]
 
     return { segments, chevrons }
@@ -101,6 +101,19 @@ export default class GeoEdges extends React.Component {
      } = this.props
 
     const children = []
+    const seamSlots = { '180': new Map(), '-180': new Map() }
+    const getOffsetLat = (boundary, lat) => {
+      const key = boundary === 180 ? '180' : '-180'
+      const bucket = Math.round(lat * 10) / 10 // 0.1° buckets
+      const map = seamSlots[key]
+      const n = map.has(bucket) ? map.get(bucket) : 0
+      const step = 0.12 // degrees of latitude per slot
+      const mult = Math.floor(n / 2) + 1
+      const sign = (n % 2 === 0) ? 1 : -1
+      const offset = mult * step * sign
+      map.set(bucket, n + 1)
+      return offset
+    }
     this.props.edges.forEach( (e,i) => {
       const label = i + 1
       const color = e.selected ? 'yellow' : (e.data.color ? e.data.color : 'purple')
@@ -145,11 +158,17 @@ export default class GeoEdges extends React.Component {
           )
         })
       }
-      if (chevrons && chevrons.length) {
+      const showChevrons = (this.props.ui && this.props.ui.showChevrons !== false)
+      if (showChevrons && chevrons && chevrons.length) {
         chevrons.forEach((ch, cIdx) => {
-          const lat = parseFloat(ch.position[0])
-          const lng = parseFloat(ch.position[1])
+          let lat = parseFloat(ch.position[0])
+          let lng = parseFloat(ch.position[1])
           if (!isFinite(lat) || !isFinite(lng)) return
+          // Apply small stacking offset in latitude to improve visibility
+          const boundary = ch.boundary
+          if (boundary === 180 || boundary === -180) {
+            lat = lat + getOffsetLat(boundary, lat)
+          }
           children.push(
             <Marker
               key={`${ch.key}-${i}-${cIdx}`}

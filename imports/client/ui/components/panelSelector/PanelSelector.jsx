@@ -35,6 +35,11 @@ export default class PanelSelector extends React.Component {
     this.props.updateUI( 'legendVisible', !this.props.ui.legendVisible )
   }
 
+  toggleChevrons() {
+    const cur = this.props.ui.showChevrons
+    this.props.updateUI('showChevrons', cur === false ? true : !cur)
+  }
+
 
 
   toggleGraph() {
@@ -55,7 +60,8 @@ export default class PanelSelector extends React.Component {
       geoMapVisible,
       graphVisible,
       chartsVisible,
-      legendVisible
+      legendVisible,
+      showChevrons
     } = this.props.ui
 
     const {
@@ -72,14 +78,12 @@ export default class PanelSelector extends React.Component {
         color:'#F2EFE9',}}
         >
         <MenuItem style={buttonStyle}>
-          <Checkbox style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-          color:'#F2EFE9',}}
+          <Checkbox
             label={ 'Graph'}
             labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
             color:'#F2EFE9',}}
             checked={graphVisible}
             onClick={ () => this.toggleGraph()}
-            style={{fill : '#D3E8E6 !important' }}
           />
         </MenuItem>
         <MenuItem style={buttonStyle}>
@@ -90,6 +94,15 @@ export default class PanelSelector extends React.Component {
             checked={geoMapVisible}
             disabled={!hasGeoInfo}
             onClick={ () => this.toggleGeo()}
+          />
+        </MenuItem>
+        <MenuItem style={buttonStyle}>
+          <Checkbox
+            label={'Chevrons'}
+            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
+            color:'#F2EFE9',}}
+            checked={showChevrons !== false}
+            onClick={ () => this.toggleChevrons()}
           />
         </MenuItem>
         <MenuItem style={buttonStyle}>
@@ -120,6 +133,15 @@ export default class PanelSelector extends React.Component {
             checked={legendVisible}
             //disabled={!legendVisible}
             onClick={ () => this.toggleLegend()}
+          />
+        </MenuItem>
+        <MenuItem style={buttonStyle}>
+          <Checkbox
+            label={'Chevrons'}
+            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
+            color:'#F2EFE9',}}
+            checked={showChevrons !== false}
+            onClick={ () => this.toggleChevrons()}
           />
         </MenuItem>
         {/* <MenuItem style={buttonStyle}>
