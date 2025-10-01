@@ -43,6 +43,16 @@ meteor --port 3020
 More details in docs/Quickstart.md.
 
 
+### Troubleshooting
+
+If you get a "Can't listen on port 3024" error (another process is using the port), free it with:
+
+```sh
+# Stop whatever is bound to 3024
+lsof -ti :3024 | xargs -r kill -9
+```
+
+
 ### Test & Code quality
 
 There is 2 sorts of tests here :
