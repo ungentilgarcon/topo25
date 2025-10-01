@@ -9,6 +9,7 @@ import { messages } from '../../../i18n.js'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { green500, indigo700, redA200 } from 'material-ui/styles/colors'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import MuiV5Provider from '/imports/startup/client/MuiV5Provider.jsx'
 
 // react-tap-event-plugin removed; use standard onClick handlers instead
 
@@ -42,11 +43,13 @@ export class App extends React.Component {
     return (
       <IntlProvider locale={locale}
         messages={messages}>
-        <MuiThemeProvider muiTheme={muiTheme}>
-          <div className={ classNames }>
-            {React.cloneElement(children, {user, router})}
-          </div>
-        </MuiThemeProvider>
+        <MuiV5Provider>
+          <MuiThemeProvider muiTheme={muiTheme}>
+            <div className={ classNames }>
+              {React.cloneElement(children, {user, router})}
+            </div>
+          </MuiThemeProvider>
+        </MuiV5Provider>
       </IntlProvider>
     )
   }
