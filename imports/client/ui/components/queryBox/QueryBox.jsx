@@ -38,20 +38,32 @@ class QueryBox extends React.Component {
   render() {
     const { formatMessage } = this.props.intl
 
-    const dataSource = this.props.nodes.map( n => (
-      {
-        value : n.data.id,
-        text : n.data.name,
-        node :n
-      }
-    ))
+    // Map incoming nodes to options and dedupe by unique id to avoid duplicate keys
+    const seen = new Set()
+    const dataSource = []
+    for (const n of this.props.nodes) {
+      const id = n?.data?.id
+      if (id == null || seen.has(id)) continue
+      seen.add(id)
+      dataSource.push({
+        value: id,
+        text: n?.data?.name || String(id),
+        node: n,
+      })
+    }
 
     return (
       <MUIAutocomplete
         options={dataSource}
         getOptionLabel={(o) => o.text || ''}
+        isOptionEqualToValue={(opt, val) => opt.value === val.value}
         sx={{ width: '100%' }}
         onChange={(e, value) => value && this.handleNewRequest(value)}
+        renderOption={(props, option) => (
+          <li {...props} key={option.value}>
+            {option.text}
+          </li>
+        )}
         renderInput={(params) => (
           <TextField
             {...params}
