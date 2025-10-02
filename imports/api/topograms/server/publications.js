@@ -15,7 +15,8 @@ Meteor.publish('topograms.public', function topogramsPublic() {
   const self = this
   ;(async () => {
     try {
-      const cursor = Topograms.find({ sharedPublic: true }, { sort: { createdAt: -1 } })
+      // Support both legacy numeric 1 and boolean true values for sharedPublic
+      const cursor = Topograms.find({ sharedPublic: { $in: [true, 1] } }, { sort: { createdAt: -1 } })
       const list = await cursor.fetchAsync()
       for (const t of list) {
         let author = {}
@@ -23,7 +24,9 @@ Meteor.publish('topograms.public', function topogramsPublic() {
           const u = await Meteor.users.findOneAsync({ _id: t.userId }, { fields: { username: 1, createdAt: 1 } })
           if (u) author = { username: u.username, createdAt: u.createdAt }
         }
-        self.added('topograms', t._id, { ...t, author })
+        const { _id, ...fields } = t
+        // Never include _id inside fields for self.added
+        self.added('topograms', _id, { ...fields, author })
       }
       self.ready()
     } catch (e) {
