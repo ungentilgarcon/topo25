@@ -1,7 +1,12 @@
 *.test.js
 imports/plugins
 oldies
-imports/ui/pages/**/*.js
+imports/**
+client/**
+server/**
+tests/**
+public/**
+.meteor/**
 gulpfile.js
 package.json
 saveSVG.js
