@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ui from '/imports/client/legacyUi'
 import { CardCompat as Card, CardTitleCompat as CardTitle, CardActionsCompat as CardActions } from '/imports/startup/client/muiCompat'
-import C3Chart from 'react-c3js';
+import C3Chart from './C3ChartCompat.jsx';
 import Button from '@mui/material/Button'
 import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
@@ -528,25 +528,46 @@ console.log(ArrayresweigEdgesUniquesPoidsDATA);
 
   const statistical = require('statistical-js');
   try{
-const summaryNodes = statistical.methods.summary(resweig);
-const summaryEdges = statistical.methods.summary(resweigEdges);
+    const summaryNodes = statistical.methods.summary(resweig);
+    const summaryEdges = statistical.methods.summary(resweigEdges);
 
-console.log(" SUMMARY NODES  RESULTS",summaryNodes);
-console.log(" SUMMARY EDGES  RESULTS",summaryEdges);
-const ttestN = statistical.methods.tTestOneSample(resweig, 4)
-console.log("Student NW",ttestN);
-const ttestE = statistical.methods.tTestOneSample(resweigEdges, 4)
-console.log("Student EW",ttestE);
+    console.log(" SUMMARY NODES  RESULTS",summaryNodes);
+    console.log(" SUMMARY EDGES  RESULTS",summaryEdges);
+    const ttestN = statistical.methods.tTestOneSample(resweig, 4)
+    console.log("Student NW",ttestN);
+    const ttestE = statistical.methods.tTestOneSample(resweigEdges, 4)
+    console.log("Student EW",ttestE);
 
+    const distributionType = statistical.methods.poisson;
+    const distributionTypeEdges = statistical.methods.poisson;
 
-const distributionType = statistical.methods.poisson;
-const distributionTypeEdges = statistical.methods.poisson;
+    const chiSquaredGoodnessOfFit = statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigUniquesPoids, distributionType, 0.005);
+    console.log("chi2 Nodes",chiSquaredGoodnessOfFit);
+    const chiSquaredGoodnessOfFitEdges = statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigEdgesUniquesPoids, distributionTypeEdges, 0.005);
+    console.log("chi2 Edges",chiSquaredGoodnessOfFitEdges);
 
-const chiSquaredGoodnessOfFit = statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigUniquesPoids, distributionType, 0.005);
-console.log("chi2 Nodes",chiSquaredGoodnessOfFit);
-const chiSquaredGoodnessOfFitEdges = statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigEdgesUniquesPoids, distributionTypeEdges, 0.005);
-console.log("chi2 Edges",chiSquaredGoodnessOfFitEdges);
-}
+    // Save a compact stats snapshot for rendering
+    this._stats = {
+      nodes: {
+        mean: summaryNodes.mean,
+        stdev: summaryNodes.standardDeviation || summaryNodes.stddev || summaryNodes.sd,
+        n: summaryNodes.count || summaryNodes.n,
+        t: ttestN && (ttestN.t || ttestN.statistic),
+        p: ttestN && (ttestN.p || ttestN.pvalue || ttestN.pValue)
+      },
+      edges: {
+        mean: summaryEdges.mean,
+        stdev: summaryEdges.standardDeviation || summaryEdges.stddev || summaryEdges.sd,
+        n: summaryEdges.count || summaryEdges.n,
+        t: ttestE && (ttestE.t || ttestE.statistic),
+        p: ttestE && (ttestE.p || ttestE.pvalue || ttestE.pValue)
+      },
+      chi2: {
+        nodes: chiSquaredGoodnessOfFit,
+        edges: chiSquaredGoodnessOfFitEdges
+      }
+    }
+  }
 catch(error)
 {//console.log(error);
 }
@@ -764,6 +785,20 @@ return (
     size: { width :10}
     }}
     />
+    {/* Show compact stats summary for nodes */}
+    {this._stats && this._stats.nodes ? (
+      <div style={{ color:'#F2EFE9', fontSize:'9pt', marginTop: 8 }}>
+        <strong>Nodes stats:</strong>
+        <span style={{ marginLeft: 8 }}>n={this._stats.nodes.n}</span>
+        <span style={{ marginLeft: 8 }}>mean={Number(this._stats.nodes.mean).toFixed(3)}</span>
+        <span style={{ marginLeft: 8 }}>sd={Number(this._stats.nodes.stdev || 0).toFixed(3)}</span>
+        <span style={{ marginLeft: 8 }}>t≈{this._stats.nodes.t != null ? Number(this._stats.nodes.t).toFixed(3) : '—'}</span>
+        <span style={{ marginLeft: 8 }}>p≈{this._stats.nodes.p != null ? Number(this._stats.nodes.p).toExponential(2) : '—'}</span>
+        {this._stats.chi2 && this._stats.chi2.nodes ? (
+          <span style={{ marginLeft: 8 }}>chi2={JSON.stringify(this._stats.chi2.nodes)}</span>
+        ) : null}
+      </div>
+    ) : null}
     </div>
     <div>
     <CardTitle
@@ -786,6 +821,20 @@ return (
   size: { width :10}
   }}
   />
+  {/* Show compact stats summary for edges */}
+  {this._stats && this._stats.edges ? (
+    <div style={{ color:'#F2EFE9', fontSize:'9pt', marginTop: 8 }}>
+      <strong>Edges stats:</strong>
+      <span style={{ marginLeft: 8 }}>n={this._stats.edges.n}</span>
+      <span style={{ marginLeft: 8 }}>mean={Number(this._stats.edges.mean).toFixed(3)}</span>
+      <span style={{ marginLeft: 8 }}>sd={Number(this._stats.edges.stdev || 0).toFixed(3)}</span>
+      <span style={{ marginLeft: 8 }}>t≈{this._stats.edges.t != null ? Number(this._stats.edges.t).toFixed(3) : '—'}</span>
+      <span style={{ marginLeft: 8 }}>p≈{this._stats.edges.p != null ? Number(this._stats.edges.p).toExponential(2) : '—'}</span>
+      {this._stats.chi2 && this._stats.chi2.edges ? (
+        <span style={{ marginLeft: 8 }}>chi2={JSON.stringify(this._stats.chi2.edges)}</span>
+      ) : null}
+    </div>
+  ) : null}
 </div>
 <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 46px' }}>
   <Button

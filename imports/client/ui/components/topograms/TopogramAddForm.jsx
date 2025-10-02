@@ -51,7 +51,6 @@ class TopogramAddForm extends React.Component {
   }
 
   render() {
-
     const { formatMessage } = this.props.intl
     return (
       <section className="home-create-section">
