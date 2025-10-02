@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
 import { DialogCompat as Dialog, TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 
-import AccountIcon from 'material-ui/svg-icons/action/account-circle'
+import AccountIcon from '@mui/icons-material/AccountCircle'
 
 import { updateUserName } from '../../../../api/users/userMethods.js'
 

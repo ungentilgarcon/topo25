@@ -6,8 +6,8 @@ import MainViz from '/imports/client/ui/components/mainViz/MainViz.jsx'
 import TitleBox from '/imports/client/ui/components/titlebox/TitleBox.jsx'
 import SidePanel from '/imports/client/ui/components/SidePanel/SidePanel.jsx'
 
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ExploreIcon from 'material-ui/svg-icons/action/explore';
+import Fab from '@mui/material/Fab'
+import ExploreIcon from '@mui/icons-material/Explore'
 import '../../../css/TopogramViewComponent.css'
 
 // UI state default values
@@ -452,42 +452,30 @@ render() {
   const nodeIds = nodes.map(n => n.data.id)
 
   const edges = this.props.edges
-
-  .filter(e =>
-
-
-    hasTimeInfo ?
-    new Date(e.data.start) >= new Date(this.props.ui.minTime)
-    && new Date(this.props.ui.valueRange[1]) >= new Date(e.data.start)
-    && new Date(this.props.ui.valueRange[0]) < new Date(e.data.end)
-
-    && nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
-    :
-    nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
-
-  )
-
-  // console.log(this.props.userId, this.props.topogram.userId, this.props.isLoggedIn);
-  // console.log(this.props.userId === this.props.topogram.userId && this.props.isLoggedIn);
-
+    .filter(e =>
+      hasTimeInfo ? (
+        new Date(e.data.start) >= new Date(this.props.ui.minTime)
+        && new Date(this.props.ui.valueRange[1]) >= new Date(e.data.start)
+        && new Date(this.props.ui.valueRange[0]) < new Date(e.data.end)
+        && nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
+      ) : (
+        nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
+      )
+    )
   return (
     <div>
 
-      <FloatingActionButton
+      <Fab
         style={{
           position: 'fixed',
           right: '-22px',
           top: '-22px',
-          scaleType:"center",
-          //NotWorking
-          size: '10px',
-
+          // scaleType:"center",
         }}
         onClick={this.handleToggleSelectionMode}
         >
-        <ExploreIcon
-          />
-      </FloatingActionButton>
+        <ExploreIcon />
+      </Fab>
 
 
       <MainViz

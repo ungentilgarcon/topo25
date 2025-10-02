@@ -1,8 +1,8 @@
 import React from 'react'
 import ui from 'redux-ui'
 
-import MenuItem from 'material-ui/MenuItem'
-import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right'
+import { MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 
 const layouts = [
   'preset',
@@ -59,7 +59,7 @@ export default class NetworkOptions extends React.Component {
         color:'#F2EFE9',}}
           primaryText="Network Layout"
           onChange={(e, i, value) => this.handleSelectLayout(e, i, value)}
-          rightIcon={<ArrowDropRight />}
+          rightIcon={<ArrowRightIcon />}
           // secondaryText={this.props.ui.layoutName}
           menuItems={layoutMenuItems}
         />
@@ -68,7 +68,7 @@ export default class NetworkOptions extends React.Component {
         color:'#F2EFE9',}}
           primaryText="Node Radius"
           onChange={(e, i, value) => this.handleSelectNodeRadius(e, i, value)}
-          rightIcon={<ArrowDropRight />}
+          rightIcon={<ArrowRightIcon />}
           // secondaryText={this.props.ui.nodeRadius}
           menuItems={NodeRadiusMenuItems}
         />

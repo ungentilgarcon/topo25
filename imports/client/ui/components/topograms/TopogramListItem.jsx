@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 // import { defineMessages, injectIntl } from 'react-intl'
 
-import { Card, CardActions, CardTitle, CardHeader } from 'material-ui/Card'
+import { CardCompat as Card, CardActionsCompat as CardActions, CardTitleCompat as CardTitle, CardTitleCompat as CardHeader } from '/imports/startup/client/muiCompat'
 
 // import IconMenu from 'material-ui/IconMenu'
 // import IconButton from 'material-ui/IconButton'

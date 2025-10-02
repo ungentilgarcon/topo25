@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 
 // import { messages } from '../../../i18n.js'
 
-import Divider from 'material-ui/Divider'
-import IconMenu from 'material-ui/IconMenu'
+import Divider from '@mui/material/Divider'
+import Menu from '@mui/material/Menu'
 import { SubheaderCompat as Subheader, MenuItemCompat as MenuItem, IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
-import Home from 'material-ui/svg-icons/action/home'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import Home from '@mui/icons-material/Home'
 
 import About from './About.jsx'
 import UserNameEdit from './users/UserNameEdit.jsx'
@@ -18,7 +18,7 @@ export default class UserMenu extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      open : false,
+      anchorEl: null,
       userNameOpen :false
      }
   }
@@ -42,6 +42,8 @@ export default class UserMenu extends React.Component {
 
   render() {
     const { isLoggedIn } = this.props.user
+    const { anchorEl } = this.state
+    const menuOpen = Boolean(anchorEl)
     // const currentLanguage = 'en'
     // const languageMenuItems = Object.keys(messages).map( l => {
     //   const abbr = l.split('-')[0]
@@ -63,22 +65,35 @@ export default class UserMenu extends React.Component {
             handleClose={() => this.setState({userNameOpen : false})}
             />
 
-          <IconMenu
-            iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+          <IconButton
+            onClick={(e) => this.setState({ anchorEl: e.currentTarget })}
             style={this.props.style}
-            open={this.state.open}
-            anchorOrigin={{vertical: 'top', horizontal: 'left'}}
-            // onClick={() => this.setState({open : true})}
-            onRequestChange={()=> this.setState({open : !this.state.open})}
+            aria-controls={menuOpen ? 'user-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={menuOpen ? 'true' : undefined}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="user-menu"
+            anchorEl={anchorEl}
+            open={menuOpen}
+            onClose={() => this.setState({ anchorEl: null })}
+            anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+            keepMounted
+            PaperProps={{ sx: { backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9' } }}
           >
             <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
             color:'#F2EFE9',}}
               primaryText="Home"
               leftIcon={<Home />}
-              onClick={() => this.props.router.push('/')}
+              onClick={() => { this.setState({ anchorEl: null }); this.props.router.push('/') }}
             />
-            <About style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}/>
+            <About
+              style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9'}}
+              onOpen={() => this.setState({ anchorEl: null })}
+            />
             {/*
           <Divider />
           <MenuItem
@@ -98,8 +113,7 @@ export default class UserMenu extends React.Component {
                 null
             }
 
-            <Divider style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}/>
+            <Divider sx={{ borderColor: 'rgba(69,90,100 ,0.9)' }} />
             {
               !isLoggedIn
                 ?
@@ -109,12 +123,12 @@ export default class UserMenu extends React.Component {
                   style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                   color:'#F2EFE9',}}
                     primaryText="Login"
-                    onClick={() => this.props.router.push('/login')}
+                    onClick={() => { this.setState({ anchorEl: null }); this.props.router.push('/login') }}
                   />
                   <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                   color:'#F2EFE9',}}
                     primaryText="Sign Up"
-                    onClick={() => this.props.router.push('/signup')}
+                    onClick={() => { this.setState({ anchorEl: null }); this.props.router.push('/signup') }}
                   />
                 </span>
                 :
@@ -129,21 +143,16 @@ export default class UserMenu extends React.Component {
                   <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                   color:'#F2EFE9',}}
                     primaryText="Change Username"
-                    onClick={() => this.setState({
-                      userNameOpen : true,
-                      open: false
-                    })}
+                    onClick={() => this.setState({ userNameOpen: true, anchorEl: null })}
                   />
                   <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                   color:'#F2EFE9',}}
                     primaryText="Sign out"
-                    onClick={() => this.logout()}
+                    onClick={() => { this.setState({ anchorEl: null }); this.logout() }}
                   />
                 </span>
             }
-
-
-          </IconMenu>
+          </Menu>
         </span>
       )
   }

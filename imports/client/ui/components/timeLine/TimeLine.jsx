@@ -3,14 +3,13 @@ import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 import moment from 'moment'
 
-import { Card, CardText, CardHeader } from 'material-ui/Card'
+import { CardCompat as Card, CardTextCompat as CardText, CardTitleCompat as CardHeader, DividerCompat as Divider, DatePickerCompat as DatePicker } from '/imports/startup/client/muiCompat'
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
-import DatePicker from 'material-ui/DatePicker'
 import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
-import PlayCircleFilled from 'material-ui/svg-icons/av/play-circle-filled';
-import Pause from 'material-ui/svg-icons/av/pause';
-import Stop from 'material-ui/svg-icons/av/stop';
-import SkipNext from 'material-ui/svg-icons/av/skip-next';
+import PlayCircleFilled from '@mui/icons-material/PlayCircleFilled'
+import Pause from '@mui/icons-material/Pause'
+import Stop from '@mui/icons-material/Stop'
+import SkipNext from '@mui/icons-material/SkipNext'
 import TimeSlider from './TimeSlider.jsx'
 
 const styleTimeLine = {

@@ -1,8 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { DialogCompat as Dialog, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 import Button from '@mui/material/Button'
-import InfoIcon from 'material-ui/svg-icons/action/info'
+import InfoIcon from '@mui/icons-material/Info'
 import Version from './Version.jsx'
 
 
@@ -15,6 +16,7 @@ class About extends React.Component {
 
   handleOpen = () => {
     this.setState({ open: true })
+    if (this.props.onOpen) this.props.onOpen()
   }
 
   handleClose = () => {
@@ -71,6 +73,10 @@ class About extends React.Component {
       </div>
     )
   }
+}
+
+About.propTypes = {
+  onOpen: PropTypes.func
 }
 
 export default About

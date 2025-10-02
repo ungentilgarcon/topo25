@@ -1,15 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ui from 'redux-ui'
-import { Card, CardTitle, CardActions } from 'material-ui/Card'
+import { CardCompat as Card, CardTitleCompat as CardTitle, CardActionsCompat as CardActions } from '/imports/startup/client/muiCompat'
 // FlatButton removed in favor of MUI v5 Button
 import Button from '@mui/material/Button'
-import ClearIcon from 'material-ui/svg-icons/content/clear'
-import FocusIcon from 'material-ui/svg-icons/image/center-focus-strong'
+import ClearIcon from '@mui/icons-material/Clear'
+import FocusIcon from '@mui/icons-material/CenterFocusStrong'
 
 import SelectionChips from '../selectionItem/SelectionChips.jsx'
 import SelectedItem from '../selectionItem/SelectedItem.jsx'
-import SvgIcon from 'material-ui/SvgIcon'
+// SvgIcon not used anymore; using @mui/icons-material
 import Modal from './Modal';
 import './TitleBox.css'
 

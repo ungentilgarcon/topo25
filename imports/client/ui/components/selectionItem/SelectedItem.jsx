@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card'
-import ClearIcon from 'material-ui/svg-icons/content/clear'
+import { CardCompat as Card, CardTitleCompat as CardTitle, CardTextCompat as CardText, IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
+import ClearIcon from '@mui/icons-material/Clear'
 
 import Markdown from 'react-remarkable'
 import 'github-markdown-css'
@@ -34,20 +34,22 @@ const SelectedItem = ({
         opacity: "0.7"
 
       }}
-      onExpandChange={() => onUnfocusElement(el)}
       >
       <CardTitle
 
 
         style={{fontSize: "11pt", fontWeight: 'bold' }}
-        showExpandableButton={true}
         title={title}
         titleStyle={{
           lineHeight :'1.2em',
           fontSize:'0.8em'
         }}
         subtitle={el.group}
-        closeIcon={<ClearIcon />}
+        action={
+          <IconButton onClick={() => onUnfocusElement(el)}>
+            <ClearIcon />
+          </IconButton>
+        }
       />
     <CardText style={{fontSize: "9pt",color:"white"}}>
         {/* {

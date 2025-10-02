@@ -1,13 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Snackbar from 'material-ui/Snackbar'
+import { SnackbarCompat as Snackbar } from '/imports/startup/client/muiCompat'
 
 import { FormattedMessage, defineMessages } from 'react-intl'
 
 import TopogramsLayout from './TopogramsLayout.jsx'
 
 import TopogramList from '/imports/client/ui/components/topograms/TopogramList.jsx'
-import CardText from 'material-ui/Card'
 
 import '../../../css/video-react.css'
 

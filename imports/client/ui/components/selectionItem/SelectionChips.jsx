@@ -1,9 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import {CardText} from 'material-ui/Card'
-import Chip from 'material-ui/Chip';
-import MenuItem from 'material-ui/MenuItem'
+import { CardTextCompat as CardText, ChipCompat as Chip, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 
 import { colors } from '/imports/client/helpers/colors.js'
 import { textEllipsis } from '/imports/client/helpers/ellipsis.js'

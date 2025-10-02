@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 import { defineMessages, injectIntl } from 'react-intl'
-
-import AutoComplete from 'material-ui/AutoComplete'
+import MUIAutocomplete from '@mui/material/Autocomplete'
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 
 const messages = defineMessages({
   hint : {
@@ -47,31 +47,19 @@ class QueryBox extends React.Component {
     ))
 
     return (
-      <AutoComplete
-        ref={el => { this._queryBox = el }}
-        filter={AutoComplete.fuzzyFilter}
-        dataSource={dataSource}
-        maxSearchResults={7}
-        floatingLabelStyle= {{
-          color: '#fff !important',
-        }}
-
-        underlineStyle={{
-          display:"none",
-
-
-        }}
-
-        fullWidth={true}
-        style={this.props.style}
-        menuProps={{desktop:true}}
-        hintText={formatMessage(messages.hint)}
-
-        floatingLabelText={formatMessage(messages.label)}
-        onNewRequest={this.handleNewRequest}
-        // onUpdateInput={this.handleUpdateInput}
+      <MUIAutocomplete
+        options={dataSource}
+        getOptionLabel={(o) => o.text || ''}
+        sx={{ width: '100%' }}
+        onChange={(e, value) => value && this.handleNewRequest(value)}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            floatingLabelText={formatMessage(messages.label)}
+            hintText={formatMessage(messages.hint)}
+          />
+        )}
       />
-
     )
   }
 }

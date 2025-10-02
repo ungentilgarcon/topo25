@@ -4,11 +4,11 @@ import ui from 'redux-ui'
 
 // import SelectField from 'material-ui/SelectField';
 
-import Menu from 'material-ui/Menu';
-import Divider from 'material-ui/Divider';
-import { SubheaderCompat as Subheader, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
+import Menu from '@mui/material/Menu'
+import List from '@mui/material/List'
+import { DividerCompat as Divider, SubheaderCompat as Subheader, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 
-import LensIcon from 'material-ui/svg-icons/image/lens'
+import LensIcon from '@mui/icons-material/Lens'
 import { colors } from '/imports/client/helpers/colors.js'
 
 @ui()
@@ -48,18 +48,11 @@ export default class NodeCategoriesMenu extends React.Component {
     ))
 
     return (
-        <Menu
-          desktop={true}
-          style={{maxWidth : '100%'}}
-          // multiple={true}
-          // value={selectedNodeCategories}
-          // floatingLabelText={`Selected categories (${selectedNodeCategories.length}/${nodeCategories.length})`}
-          // floatingLabelFixed={true}
-        >
-          <Subheader>Categories</Subheader>
-            {menuItems}
-          <Divider/>
-        </Menu>
+      <List sx={{ maxWidth: '100%' }}>
+        <Subheader>Categories</Subheader>
+        {menuItems}
+        <Divider />
+      </List>
     )
   }
 }

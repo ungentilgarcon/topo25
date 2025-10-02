@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
-import ClearIcon from 'material-ui/svg-icons/content/clear'
+import ClearIcon from '@mui/icons-material/Clear'
 class Modal extends React.Component {
   render() {
     // Render nothing if the "show" prop is false

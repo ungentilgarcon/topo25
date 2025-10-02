@@ -1,8 +1,8 @@
 import React from 'react'
 import ui from 'redux-ui'
 
-import MenuItem from 'material-ui/MenuItem'
-import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right'
+import { MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 
 import mapTiles from '../geoMap/mapTiles'
 
@@ -33,7 +33,7 @@ export default class GeoMapOptions extends React.Component {
         color:'#F2EFE9',}}
         value={this.props.ui.geoMapTile}
         menuItems={mapTilesMenuItems}
-        rightIcon={<ArrowDropRight />}
+  rightIcon={<ArrowRightIcon />}
       />
     )
   }

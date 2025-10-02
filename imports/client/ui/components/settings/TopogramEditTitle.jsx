@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
+import ModeEdit from '@mui/icons-material/ModeEdit'
 import { DialogCompat as Dialog, TextFieldCompat as TextField, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 import Button from '@mui/material/Button'
 

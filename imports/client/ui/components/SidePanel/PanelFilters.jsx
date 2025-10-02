@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { CardText } from 'material-ui/Card'
+import { CardTextCompat as CardText } from '/imports/startup/client/muiCompat'
 
 import NodeCategoriesMenu from '../filters/NodeCategoriesMenu.jsx'
 import QueryBox from '../queryBox/QueryBox.jsx'

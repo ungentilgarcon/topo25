@@ -1,13 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 //import { topogramTogglePublic } from '../../../../api/topograms/topogramsMethods.js'
-//import WorldIcon from 'material-ui/svg-icons/social/public'
-import CheckedIcon from 'material-ui/svg-icons/navigation/check'
-import { MenuItemCompat as MenuItem, SubheaderCompat as Subheader } from '/imports/startup/client/muiCompat'
+//import WorldIcon from '@mui/icons-material/Public'
+import CheckIcon from '@mui/icons-material/Check'
+import { MenuItemCompat as MenuItem, SubheaderCompat as Subheader, CheckboxCompat as Checkbox } from '/imports/startup/client/muiCompat'
 // Importing compat wrappers for fast migration
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 import ui from 'redux-ui'
-import Checkbox from 'material-ui/Checkbox'
 
 
 @ui()

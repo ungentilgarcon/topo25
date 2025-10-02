@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 
 import { MenuItemCompat as MenuItem, DialogCompat as Dialog } from '/imports/startup/client/muiCompat'
 import Button from '@mui/material/Button'
-import Delete from 'material-ui/svg-icons/action/delete'
+import Delete from '@mui/icons-material/Delete'
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl'
-import { red500 } from 'material-ui/styles/colors'
+import { red } from '@mui/material/colors'
 
 import { topogramDelete } from '../../../../api/topograms/topogramsMethods.js'
 
@@ -63,7 +63,7 @@ class TopogramDelete extends React.Component {
           style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9',}}
           primaryText={formatMessage(messages.delete)}
           onClick={this.handleOpen}
-          leftIcon={<Delete color={red500} />}
+          leftIcon={<Delete sx={{ color: red[500] }} />}
         />
         <Dialog
           title={this.props.topogramTitle}

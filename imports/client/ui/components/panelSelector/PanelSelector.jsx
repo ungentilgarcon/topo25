@@ -2,9 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ui from 'redux-ui'
 
-import Menu from 'material-ui/Menu'
-import { MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
-import Checkbox from 'material-ui/Checkbox'
+// Render simple blocks; use CheckboxCompat for MUI v5
+import { CheckboxCompat as Checkbox } from '/imports/startup/client/muiCompat'
 import './PanelSelector.css'
 
 const buttonStyle = {
@@ -85,85 +84,77 @@ export default class PanelSelector extends React.Component {
     } = this.props
 
     return (
-      <Menu
-        desktop={true}
-        style={{maxWidth:'100%',backgroundColor: 'rgba(69,90,100 ,0.9)',
-        color:'#F2EFE9',}}
-        >
-        <MenuItem style={buttonStyle}>
+      <div style={{ maxWidth: '100%', backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}>
+        <div style={buttonStyle}>
           <Checkbox
-            label={ 'Graph'}
-            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}
+            label={'Graph'}
+            labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={graphVisible}
-            onClick={ () => this.toggleGraph()}
+            onClick={() => this.toggleGraph()}
           />
-        </MenuItem>
-        <MenuItem style={buttonStyle}>
+        </div>
+        <div style={buttonStyle}>
           <Checkbox
             label={'Geo'}
-            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}
+            labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={geoMapVisible}
             disabled={!hasGeoInfo}
-            onClick={ () => this.toggleGeo()}
+            onClick={() => this.toggleGeo()}
           />
-        </MenuItem>
-  <MenuItem style={{...buttonStyle, paddingLeft: 48, paddingTop: 0, paddingBottom: 0, marginBottom: -2}}>
+        </div>
+        <div style={{ ...buttonStyle, paddingLeft: 48, paddingTop: 0, paddingBottom: 0, marginBottom: -2 }}>
           <Checkbox
             label={'Chevrons'}
             style={{ marginLeft: 0, marginTop: -6, marginBottom: -6 }}
             labelStyle={{
               backgroundColor: 'rgba(69,90,100 ,0.9)',
-              color:'#F2EFE9',
+              color: '#F2EFE9',
               fontSize: 11,
               lineHeight: '14px'
             }}
             iconStyle={{ transform: 'scale(0.8)', transformOrigin: 'left center' }}
             checked={showChevrons !== false}
-            onClick={ () => this.toggleChevrons()}
+            onClick={() => this.toggleChevrons()}
           />
-        </MenuItem>
-  <MenuItem style={{...buttonStyle, paddingTop: 0, marginTop: -2}}>
+        </div>
+        <div style={{ ...buttonStyle, paddingTop: 0, marginTop: -2 }}>
           <Checkbox
             label={'Time'}
-            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}
+            labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={timeLineVisible}
             disabled={!hasTimeInfo}
-            onClick={ () => this.toggleTimeline()}
+            onClick={() => this.toggleTimeline()}
           />
-        </MenuItem>
-        <MenuItem style={buttonStyle}>
+        </div>
+        <div style={buttonStyle}>
           <Checkbox
             label={'Charts'}
-            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}
+            labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={chartsVisible}
             //disabled={!chartsVisible}
-            onClick={ () => this.toggleCharts()}
+            onClick={() => this.toggleCharts()}
           />
-        </MenuItem>
-        <MenuItem style={buttonStyle}>
+        </div>
+        <div style={buttonStyle}>
           <Checkbox
             label={'Legend'}
-            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}
+            labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={legendVisible}
             //disabled={!legendVisible}
-            onClick={ () => this.toggleLegend()}
+            onClick={() => this.toggleLegend()}
           />
-        </MenuItem>
-        {/* <MenuItem style={buttonStyle}>
+        </div>
+        {/*
+        <div style={buttonStyle}>
           <Checkbox
             label={"Selection"}
-            labelStyle={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-            color:'#F2EFE9',}}
+            labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={selectionPanelPinned}
-            onClick={ () => this.toggleSelectionPanel()}
+            onClick={() => this.toggleSelectionPanel()}
           />
-        </MenuItem> */}
-      </Menu>
+        </div>
+        */}
+      </div>
     )
   }
 }

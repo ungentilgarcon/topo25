@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { CardTitle, CardText } from 'material-ui/Card'
+import { CardTitleCompat as CardTitle, CardTextCompat as CardText, DividerCompat as Divider } from '/imports/startup/client/muiCompat'
 import moment from 'moment'
-import Divider from 'material-ui/Divider'
 import ReactDOM from 'react-dom'
 
 class Portal extends React.Component {

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 
-import { CardActions, CardHeader, CardText } from 'material-ui/Card'
+import { CardActionsCompat as CardActions, CardTitleCompat as CardHeader, CardTextCompat as CardText } from '/imports/startup/client/muiCompat'
 import Button from '@mui/material/Button'
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 
