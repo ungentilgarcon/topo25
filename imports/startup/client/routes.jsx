@@ -2,8 +2,7 @@ import React from 'react'
 // Ensure jQuery plugin is registered early if any component needs it
 import './typeahead-shim'
 import { Provider } from 'react-redux'
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
-// v6 (parallel, behind flag)
+// v6 router
 import { BrowserRouter, Routes, Route as V6Route, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import AppV6 from '/imports/client/ui/containers/AppV6.jsx'
@@ -28,13 +27,6 @@ import { LoginPage } from '/imports/client/ui/pages/LoginPage.jsx'
 import Page404 from '/imports/client/ui/pages/Page404.jsx'
 import ErrorBoundary from '/imports/client/ui/components/common/ErrorBoundary.jsx'
 
-// Simple HOC to wrap a component with ErrorBoundary in react-router v3
-const withBoundary = (Comp) => (props) => (
-  <ErrorBoundary>
-    <Comp {...props} />
-  </ErrorBoundary>
-)
-
 // v6 wrapper to inject params and a v3-like router prop into class components
 const V6Compat = ({ Component, ...rest }) => {
   const params = useParams()
@@ -57,32 +49,7 @@ const V6Compat = ({ Component, ...rest }) => {
 }
 
 export const renderRoutes = () => {
-  const forceV3 = (typeof window !== 'undefined') && window.__USE_ROUTER_V3__ === true
-
-  if (forceV3) {
-    // Legacy router v3
-    return (
-      <Provider store={store}>
-        <Router history={browserHistory}>
-          <Route path="/" component={App}>
-            <IndexRoute component={HomeContainer} />
-            <Route path="topograms" component={TopogramsPrivateListContainer} />
-            <Route path="topograms/:topogramId" component={withBoundary(TopogramViewContainer)} />
-            <Route path="topograms/:topogramId/view" component={withBoundary(TopogramViewContainer)} />
-            <Route path="topograms/:topogramId/map" component={withBoundary(TopogramViewContainerForMapScreenshots)} />
-            <Route path="topograms/:topogramId/map_without_tiles" component={withBoundary(TopogramViewContainerForMapScreenshotsNoTiles)} />
-            <Route path="topograms/:topogramId/map_without_tiles_highlighted" component={withBoundary(TopogramViewContainerForMapScreenshotsNoTilesWithMainVenuesHighlighted)} />
-            <Route path="topograms/:topogramId/network" component={withBoundary(TopogramViewContainerForNetScreenshots)} />
-            <Route path="/signup" component={SignUpPage} />
-            <Route path="/login" component={LoginPage} />
-            <Route path="*" component={Page404} />
-          </Route>
-        </Router>
-      </Provider>
-    )
-  }
-
-  // Default: router v6 (browser history)
+  // Router v6 (browser history)
   return (
     <Provider store={store}>
       <BrowserRouter>

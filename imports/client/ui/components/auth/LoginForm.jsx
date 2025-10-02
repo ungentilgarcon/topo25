@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 import { CardActionsCompat as CardActions, CardTitleCompat as CardHeader, CardTextCompat as CardText } from '/imports/startup/client/muiCompat'
 // import FlatButton from 'material-ui/FlatButton';
