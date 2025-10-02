@@ -369,32 +369,46 @@ componentDidUpdate(prevProps) {
     minWeight,
   } = this.props
 
-  if (hasTimeInfo && !ui.minTime && !ui.maxTime) {
-    // pass value to UI as default
+  // Initialize time bounds once when available
+  if (
+    hasTimeInfo &&
+    (ui.minTime == null || ui.maxTime == null) &&
+    (minTime != null && maxTime != null)
+  ) {
     this.props.updateUI('minTime', minTime)
     this.props.updateUI('maxTime', maxTime)
-
   }
-  if (hasTimeInfo && ui.valueRange && ui.valueRange.some(function (el) {
-    return el == null;
-  }))
 
-  {
-    // pass value to UI as default
-    this.props.updateUI('valueRange', [Math.round(minTime),Math.round(maxTime)])
-
-
+  // Initialize valueRange when either bound is null and source times exist
+  if (
+    hasTimeInfo &&
+    Array.isArray(ui.valueRange) &&
+    ui.valueRange.some((el) => el == null) &&
+    (minTime != null && maxTime != null)
+  ) {
+    this.props.updateUI('valueRange', [Math.round(minTime), Math.round(maxTime)])
   }
-  if (nodeCategories && (!prevProps.ui || (ui.minWeight !== prevProps.ui.minWeight || ui.maxWeight !== prevProps.ui.maxWeight)) && !ui.minWeight && !ui.maxWeight){
+
+  // Initialize weight bounds once when available
+  if (
+    nodeCategories &&
+    (ui.minWeight == null || ui.maxWeight == null) &&
+    (typeof minWeight === 'number' && typeof maxWeight === 'number')
+  ) {
     this.props.updateUI('minWeight', minWeight)
     this.props.updateUI('maxWeight', maxWeight)
-
   }
 
 
   // default value to all
-  if (nodeCategories && ui.selectedNodeCategories && !ui.selectedNodeCategories.length)
-  this.props.updateUI('selectedNodeCategories', nodeCategories)
+    if (
+      Array.isArray(nodeCategories) &&
+      nodeCategories.length > 0 &&
+      Array.isArray(ui.selectedNodeCategories) &&
+      ui.selectedNodeCategories.length === 0
+    ) {
+      this.props.updateUI('selectedNodeCategories', nodeCategories)
+    }
 
 }
 

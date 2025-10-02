@@ -43,7 +43,13 @@ export default function ui(options = {}) {
     class UICompat extends React.Component {
       componentDidMount() {
         if (options && options.state) {
-          this.props.__initUI(options.state)
+          // Only dispatch init if at least one key is missing in current UI
+          const defaults = options.state
+          const current = this.props.ui || {}
+          const needsInit = Object.keys(defaults).some((k) => typeof current[k] === 'undefined')
+          if (needsInit) {
+            this.props.__initUI(defaults)
+          }
         }
       }
       render() {
