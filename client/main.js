@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import { renderRoutes } from '/imports/startup/client/routes.jsx'
 
@@ -11,5 +11,13 @@ Meteor.startup(() => {
   const tree = enableStrict
     ? (<React.StrictMode>{renderRoutes()}</React.StrictMode>)
     : renderRoutes()
-  render(tree, document.getElementById('app'), document.getElementById('react-c3js'))
+
+  const container = document.getElementById('app')
+  if (!container) return
+
+  // Cache the root on window to avoid recreating it across hot reloads (Meteor HMR)
+  if (!window.__TOPOROOT__) {
+    window.__TOPOROOT__ = createRoot(container)
+  }
+  window.__TOPOROOT__.render(tree)
 })
