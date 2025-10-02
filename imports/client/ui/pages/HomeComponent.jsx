@@ -8,9 +8,7 @@ import TopogramsLayout from './TopogramsLayout.jsx'
 
 import TopogramList from '/imports/client/ui/components/topograms/TopogramList.jsx'
 
-import '../../../css/video-react.css'
-
-import { Player } from 'video-react';
+// Removed video-react; use native video tag instead to avoid legacy context/defaultProps warnings
 
 
 const messages = defineMessages({
@@ -183,11 +181,15 @@ Video below shows the evolution of the sector over the 10 years between 2007 and
 <div>
 <p style={{ color: '#aa8dc6',fontSize : '38pt', lineHeight : '1em' }}>
    Evolution of the music tours sold on internet between 2007 and 2017</p>
-    <Player
+    <video
+      controls
       playsInline
       poster="/evolution_poster.png"
-      src="/DaybyDayALLBANDS.mp4"
-    />
+      style={{ maxWidth: '100%', height: 'auto', outline: 'none' }}
+    >
+      <source src="/DaybyDayALLBANDS.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
 </div>
 
 
@@ -198,11 +200,15 @@ Video below shows the evolution of the sector over the 10 years between 2007 and
    <p style={{ color: '#aa8dc6',fontSize : '8pt', lineHeight : '1em' }}>
    Shows clusters of tours that are similar according to 15 centroids using UMAP.
    </p>
-    <Player
+    <video
+      controls
       playsInline
       poster="/cluster_poster.png"
-      src="/CLSTD_MAPS_4500_Wmap_35clstrs_WMKD.mp4"
-    />
+      style={{ maxWidth: '100%', height: 'auto', outline: 'none' }}
+    >
+      <source src="/CLSTD_MAPS_4500_Wmap_35clstrs_WMKD.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
 </div>
 
       </TopogramsLayout>
