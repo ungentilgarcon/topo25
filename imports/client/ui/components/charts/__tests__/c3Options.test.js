@@ -22,4 +22,17 @@ describe('buildC3Options', () => {
     expect(opts.axis).to.deep.equal(axis)
     expect(opts.tooltip).to.deep.equal(tooltip)
   })
+
+  it('merges dataLabels into data.labels', () => {
+    const opts = buildC3Options({ data: { columns: [] }, dataLabels: { format: (v) => String(v) } })
+    expect(opts.data).to.have.property('labels')
+    expect(opts.data.labels).to.be.an('object')
+    expect(opts.data.labels).to.have.property('format')
+  })
+
+  it('sets legendPosition via convenience prop without overwriting legend object', () => {
+    const opts = buildC3Options({ data: { columns: [] }, legend: { show: true }, legendPosition: 'right' })
+    expect(opts.legend && opts.legend.show).to.equal(true)
+    expect(opts.legend && opts.legend.position).to.equal('right')
+  })
 })

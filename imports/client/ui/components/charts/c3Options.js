@@ -17,6 +17,9 @@ function buildC3Options({
   transition,
   pie,
   donut,
+  // Convenience props for common tweaks
+  dataLabels,
+  legendPosition,
   // Event hooks
   oninit,
   onrender,
@@ -45,6 +48,18 @@ function buildC3Options({
     onmouseout,
     onresize,
     onresized,
+  }
+
+  // Merge data.labels if provided via top-level convenience prop
+  if (typeof dataLabels !== 'undefined') {
+    opts.data = Object.assign({}, opts.data, {
+      labels: dataLabels,
+    })
+  }
+
+  // Merge legend position convenience prop without clobbering provided legend config
+  if (typeof legendPosition === 'string' && legendPosition) {
+    opts.legend = Object.assign({}, opts.legend, { position: legendPosition })
   }
 
   // Donut title convenience when using donut chart type

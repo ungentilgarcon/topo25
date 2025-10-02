@@ -13,6 +13,11 @@ export default function C3ChartCompat({
   className,
   style,
   onReady,
+  // Convenience props
+  dataLabels,
+  legendPosition,
+  // Provide access to container element for export features
+  onContainer,
   // Additional c3 config passthroughs
   axis,
   tooltip,
@@ -61,6 +66,8 @@ export default function C3ChartCompat({
       legend,
       size,
       title,
+      dataLabels,
+      legendPosition,
       axis,
       tooltip,
       grid,
@@ -101,6 +108,13 @@ export default function C3ChartCompat({
     if (typeof window !== 'undefined') window.addEventListener('resize', handler)
     return () => { if (typeof window !== 'undefined') window.removeEventListener('resize', handler) }
   }, [])
+
+  // Expose container element for export/download use-cases
+  useEffect(() => {
+    if (typeof onContainer === 'function' && ref.current) {
+      try { onContainer(ref.current) } catch (e) {}
+    }
+  }, [onContainer, ref.current])
 
   return (
     <div className={className} style={style} role="img" aria-label={title ? String(title) : 'chart'}>

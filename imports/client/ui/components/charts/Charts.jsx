@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import ui from '/imports/client/legacyUi'
 import { CardCompat as Card, CardTitleCompat as CardTitle, CardActionsCompat as CardActions } from '/imports/startup/client/muiCompat'
 import C3Chart from './C3ChartCompat.jsx';
+import { buildSparklinePath } from './sparkline'
 import Button from '@mui/material/Button'
 import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
@@ -48,7 +49,10 @@ class Charts extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      hasCharts : true
+      hasCharts : true,
+      alpha: 0.05,
+      showT: true,
+      showChi2: true
     }
   }
 
@@ -550,16 +554,16 @@ console.log(ArrayresweigEdgesUniquesPoidsDATA);
   try { ttestE = statistical.methods.tTestOneSample(edgesArr, 4) } catch (_) {}
     console.log("Student EW",ttestE);
 
-    const distributionType = statistical.methods.poisson;
-    const distributionTypeEdges = statistical.methods.poisson;
+  const distributionType = statistical.methods.poisson;
+  const distributionTypeEdges = statistical.methods.poisson;
 
     // Chi-squared expects observed counts per bin; ensure non-empty
     const chiSquaredGoodnessOfFit = ArrayresweigUniquesPoids.length
-      ? statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigUniquesPoids, distributionType, 0.005)
+      ? statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigUniquesPoids, distributionType, this.state.alpha)
       : null;
     console.log("chi2 Nodes",chiSquaredGoodnessOfFit);
     const chiSquaredGoodnessOfFitEdges = ArrayresweigEdgesUniquesPoids.length
-      ? statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigEdgesUniquesPoids, distributionTypeEdges, 0.005)
+      ? statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigEdgesUniquesPoids, distributionTypeEdges, this.state.alpha)
       : null;
     console.log("chi2 Edges",chiSquaredGoodnessOfFitEdges);
 
@@ -621,6 +625,7 @@ catch(error)
   const {
     chartsVisible
   } = this.state
+  const { alpha, showT, showChi2 } = this.state
 /*var colorsNode= scaleLinear(schemeCategory10)
   .domain(ArrayresweigUniquesPoidsDATA)
   .range([5,15])*/
@@ -797,8 +802,12 @@ return (
     key={`nodes-${this._nodesBinsKey || 'none'}`}
     legend={legendNodes}
     title={"nodes"}
+    dataLabels={{ show: false }}
+    legendPosition="right"
     tooltip={{ grouped: false }}
     axis={{ x: { show: false }, y: { show: false } }}
+    onContainer={(el) => { this._nodesContainer = el }}
+    onReady={(chart) => { this._nodesChart = chart }}
     unselectAllElements={this.unselectAllElements}
     unselectElement={this.unselectElement}
     selectElement={this.selectElement}
@@ -820,11 +829,25 @@ return (
         <span style={{ marginLeft: 8 }}>p25={this._stats.nodes.p25 != null ? Number(this._stats.nodes.p25).toFixed(2) : '—'}</span>
         <span style={{ marginLeft: 8 }}>p50={this._stats.nodes.median != null ? Number(this._stats.nodes.median).toFixed(2) : '—'}</span>
         <span style={{ marginLeft: 8 }}>p75={this._stats.nodes.p75 != null ? Number(this._stats.nodes.p75).toFixed(2) : '—'}</span>
-        <span style={{ marginLeft: 8 }}>t≈{this._stats.nodes.t != null ? Number(this._stats.nodes.t).toFixed(3) : '—'}</span>
-        <span style={{ marginLeft: 8 }}>p≈{this._stats.nodes.p != null ? Number(this._stats.nodes.p).toExponential(2) : '—'}</span>
-        {this._stats.chi2 && this._stats.chi2.nodes ? (
+        {showT ? (
+          <>
+            <span style={{ marginLeft: 8 }}>t≈{this._stats.nodes.t != null ? Number(this._stats.nodes.t).toFixed(3) : '—'}</span>
+            <span style={{ marginLeft: 8 }}>p≈{this._stats.nodes.p != null ? Number(this._stats.nodes.p).toExponential(2) : '—'}</span>
+          </>
+        ) : null}
+        {showChi2 && this._stats.chi2 && this._stats.chi2.nodes ? (
           <span style={{ marginLeft: 8 }}>chi2={JSON.stringify(this._stats.chi2.nodes)}</span>
         ) : null}
+        {/* sparkline for nodes */}
+        {Array.isArray(resweig) && resweig.length > 0 ? (() => {
+          const numeric = resweig.filter(v => typeof v === 'number' && isFinite(v))
+          const s = buildSparklinePath(numeric)
+          return (
+            <svg width={s.width} height={s.height} style={{ marginLeft: 8, verticalAlign: 'middle' }}>
+              <path d={s.path} stroke="#80CBC4" strokeWidth="1.5" fill="none" />
+            </svg>
+          )
+        })() : null}
       </div>
     ) : null}
     </div>
@@ -842,8 +865,12 @@ return (
   key={`edges-${this._edgesBinsKey || 'none'}`}
   legend={legendEdges}
   title={"edges"}
+  dataLabels={{ show: false }}
+  legendPosition="right"
   tooltip={{ grouped: false }}
   axis={{ x: { show: false }, y: { show: false } }}
+  onContainer={(el) => { this._edgesContainer = el }}
+  onReady={(chart) => { this._edgesChart = chart }}
   style={{
 
 
@@ -861,15 +888,42 @@ return (
       <span style={{ marginLeft: 8 }}>p25={this._stats.edges.p25 != null ? Number(this._stats.edges.p25).toFixed(2) : '—'}</span>
       <span style={{ marginLeft: 8 }}>p50={this._stats.edges.median != null ? Number(this._stats.edges.median).toFixed(2) : '—'}</span>
       <span style={{ marginLeft: 8 }}>p75={this._stats.edges.p75 != null ? Number(this._stats.edges.p75).toFixed(2) : '—'}</span>
-      <span style={{ marginLeft: 8 }}>t≈{this._stats.edges.t != null ? Number(this._stats.edges.t).toFixed(3) : '—'}</span>
-      <span style={{ marginLeft: 8 }}>p≈{this._stats.edges.p != null ? Number(this._stats.edges.p).toExponential(2) : '—'}</span>
-      {this._stats.chi2 && this._stats.chi2.edges ? (
+      {showT ? (
+        <>
+          <span style={{ marginLeft: 8 }}>t≈{this._stats.edges.t != null ? Number(this._stats.edges.t).toFixed(3) : '—'}</span>
+          <span style={{ marginLeft: 8 }}>p≈{this._stats.edges.p != null ? Number(this._stats.edges.p).toExponential(2) : '—'}</span>
+        </>
+      ) : null}
+      {showChi2 && this._stats.chi2 && this._stats.chi2.edges ? (
         <span style={{ marginLeft: 8 }}>chi2={JSON.stringify(this._stats.chi2.edges)}</span>
       ) : null}
+      {/* sparkline for edges */}
+      {Array.isArray(resweigEdges) && resweigEdges.length > 0 ? (() => {
+        const numeric = resweigEdges.filter(v => typeof v === 'number' && isFinite(v))
+        const s = buildSparklinePath(numeric)
+        return (
+          <svg width={s.width} height={s.height} style={{ marginLeft: 8, verticalAlign: 'middle' }}>
+            <path d={s.path} stroke="#FFCC80" strokeWidth="1.5" fill="none" />
+          </svg>
+        )
+      })() : null}
     </div>
   ) : null}
 </div>
-<div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 46px' }}>
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, margin: '18px 0 46px', flexWrap: 'wrap' }}>
+  {/* Controls */}
+  <div style={{ display: 'flex', alignItems: 'center', gap: 10, color:'#F2EFE9' }}>
+    <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      alpha
+      <input type="number" step="0.005" min="0.0001" max="0.5" value={alpha} onChange={(e)=> this.setState({ alpha: Math.max(0.0001, Math.min(0.5, Number(e.target.value) || 0.05)) })} style={{ width: 70, padding: '2px 4px', background: '#263238', color:'#F2EFE9', border:'1px solid #455A64' }} />
+    </label>
+    <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <input type="checkbox" checked={showT} onChange={(e)=> this.setState({ showT: !!e.target.checked })} /> t-test
+    </label>
+    <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <input type="checkbox" checked={showChi2} onChange={(e)=> this.setState({ showChi2: !!e.target.checked })} /> chi-square
+    </label>
+  </div>
   <Button
     variant="contained"
     onClick={this.unselectAllElements}
@@ -888,6 +942,42 @@ return (
     }}
   >
     Reset selection
+  </Button>
+  <Button
+    variant="outlined"
+    onClick={() => {
+      // Export current nodes chart as PNG; best-effort
+      try {
+        const container = this._nodesContainer
+        if (!container) return
+        const svg = container.querySelector('svg')
+        if (!svg) return
+        const clone = svg.cloneNode(true)
+        // Inline styles for better fidelity may be added here if needed
+        const xml = new XMLSerializer().serializeToString(clone)
+        const svgBlob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' })
+        const url = URL.createObjectURL(svgBlob)
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          canvas.width = img.width
+          canvas.height = img.height
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0)
+          URL.revokeObjectURL(url)
+          canvas.toBlob((blob) => {
+            const a = document.createElement('a')
+            a.href = URL.createObjectURL(blob)
+            a.download = 'nodes-chart.png'
+            a.click()
+          }, 'image/png')
+        }
+        img.src = url
+      } catch (_) {}
+    }}
+    sx={{ color:'#F2EFE9', borderColor:'#546E7A', height: 40 }}
+  >
+    Export PNG
   </Button>
 </div>
 
