@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { TextField } from 'material-ui'
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 import Button from '@mui/material/Button'
 import { defineMessages, injectIntl } from 'react-intl'
 

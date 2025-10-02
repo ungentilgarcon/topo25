@@ -31,9 +31,8 @@ export default class GeoMapOptions extends React.Component {
         color="#D3E8E6"
         style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
         color:'#F2EFE9',}}
-        value={this.props.ui.geoMapTile}
+        endAdornment={<ArrowRightIcon />}
         menuItems={mapTilesMenuItems}
-  rightIcon={<ArrowRightIcon />}
       />
     )
   }

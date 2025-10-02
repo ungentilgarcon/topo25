@@ -58,18 +58,14 @@ export default class NetworkOptions extends React.Component {
         style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
         color:'#F2EFE9',}}
           primaryText="Network Layout"
-          onChange={(e, i, value) => this.handleSelectLayout(e, i, value)}
-          rightIcon={<ArrowRightIcon />}
-          // secondaryText={this.props.ui.layoutName}
+          endAdornment={<ArrowRightIcon />}
           menuItems={layoutMenuItems}
         />
         <MenuItem
         style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
         color:'#F2EFE9',}}
           primaryText="Node Radius"
-          onChange={(e, i, value) => this.handleSelectNodeRadius(e, i, value)}
-          rightIcon={<ArrowRightIcon />}
-          // secondaryText={this.props.ui.nodeRadius}
+          endAdornment={<ArrowRightIcon />}
           menuItems={NodeRadiusMenuItems}
         />
       </div>

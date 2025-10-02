@@ -5,10 +5,12 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
 import ListSubheader from '@mui/material/ListSubheader'
 import MUIIconButton from '@mui/material/IconButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
+import Box from '@mui/material/Box'
 import MUITextField from '@mui/material/TextField'
 import MUICard from '@mui/material/Card'
 import MUICardHeader from '@mui/material/CardHeader'
@@ -54,20 +56,79 @@ DialogCompat.propTypes = {
   children: PropTypes.node
 }
 
-export function MenuItemCompat({ primaryText, leftIcon, style, children, ...rest }) {
+export function MenuItemCompat(props) {
+  const {
+    primaryText,
+    leftIcon,
+    endAdornment,
+    rightIcon, // legacy alias, will be ignored for DOM and mapped to endAdornment
+    menuItems, // legacy nested menu API (array of MenuItem/compat)
+    style,
+    children,
+    onClick,
+    sx: sxProp,
+    // strip legacy/unknown props to avoid leaking to DOM
+    onKeyboardFocus, // eslint-disable-line no-unused-vars
+    onTouchTap, // eslint-disable-line no-unused-vars
+    ...rest
+  } = props
+
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const open = Boolean(anchorEl)
+  const handleParentClick = (e) => {
+    if (menuItems && menuItems.length) {
+      setAnchorEl(e.currentTarget)
+    } else if (onClick) {
+      onClick(e)
+    }
+  }
+  const handleClose = () => setAnchorEl(null)
+
+  const sx = style ? { ...sxProp, ...style } : sxProp
+  const adornment = endAdornment || rightIcon
+
   return (
-    <MenuItem {...rest} sx={style || {}}>
-      {leftIcon ? <ListItemIcon>{leftIcon}</ListItemIcon> : null}
-      {primaryText ? <ListItemText primary={primaryText} /> : (children || null)}
-    </MenuItem>
+    <>
+      <MenuItem {...rest} sx={sx} onClick={handleParentClick}>
+        {leftIcon ? <ListItemIcon>{leftIcon}</ListItemIcon> : null}
+        {primaryText ? <ListItemText primary={primaryText} /> : (children || null)}
+        {adornment ? <Box sx={{ ml: 'auto' }}>{adornment}</Box> : null}
+      </MenuItem>
+      {menuItems && menuItems.length ? (
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          keepMounted
+        >
+          {React.Children.map(menuItems, (item) => {
+            if (!React.isValidElement(item)) return item
+            const origOnClick = item.props && item.props.onClick
+            return React.cloneElement(item, {
+              onClick: (e) => {
+                if (origOnClick) origOnClick(e)
+                handleClose()
+              }
+            })
+          })}
+        </Menu>
+      ) : null}
+    </>
   )
 }
 
 MenuItemCompat.propTypes = {
   primaryText: PropTypes.node,
   leftIcon: PropTypes.node,
+  endAdornment: PropTypes.node,
+  rightIcon: PropTypes.node, // deprecated alias
+  menuItems: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
   style: PropTypes.object,
-  children: PropTypes.node
+  children: PropTypes.node,
+  onClick: PropTypes.func,
+  sx: PropTypes.object
 }
 
 export class TextFieldCompat extends React.Component {
