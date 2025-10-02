@@ -2,7 +2,10 @@ import React from 'react'
 // Ensure jQuery plugin is registered early if any component needs it
 import './typeahead-shim'
 import { Provider } from 'react-redux'
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+// v6 router
+import { BrowserRouter, Routes, Route as V6Route, useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import AppV6 from '/imports/client/ui/containers/AppV6.jsx'
 
 import store from '/imports/client/store'
 
@@ -24,41 +27,48 @@ import { LoginPage } from '/imports/client/ui/pages/LoginPage.jsx'
 import Page404 from '/imports/client/ui/pages/Page404.jsx'
 import ErrorBoundary from '/imports/client/ui/components/common/ErrorBoundary.jsx'
 
-// Simple HOC to wrap a component with ErrorBoundary in react-router v3
-const withBoundary = (Comp) => (props) => (
-  <ErrorBoundary>
-    <Comp {...props} />
-  </ErrorBoundary>
-)
+// v6 wrapper to inject params and a v3-like router prop into class components
+const V6Compat = ({ Component, ...rest }) => {
+  const params = useParams()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const user = useSelector((state) => state.user)
+  const router = React.useMemo(() => ({
+    push: (path, state) => navigate(path, { replace: false, state }),
+    replace: (path, state) => navigate(path, { replace: true, state }),
+    go: (n) => window.history.go(n),
+    location,
+    params
+  }), [navigate, location, params])
+  const Comp = Component
+  return (
+    <ErrorBoundary>
+      <Comp {...rest} params={params} router={router} user={user} />
+    </ErrorBoundary>
+  )
+}
 
-export const renderRoutes = () => (
-  <Provider store={store}>
-    <Router history={browserHistory}>
-      <Route path="/"
-        component={App}>
-        <IndexRoute component={HomeContainer}/>
-        <Route path="topograms"
-          component={TopogramsPrivateListContainer}/>
-        <Route path="topograms/:topogramId"
-          component={withBoundary(TopogramViewContainer)}/>
-        <Route path="topograms/:topogramId/view"
-          component={withBoundary(TopogramViewContainer)}/>
-        <Route path="topograms/:topogramId/map"
-            component={withBoundary(TopogramViewContainerForMapScreenshots)}/>
-        <Route path="topograms/:topogramId/map_without_tiles"
-                component={withBoundary(TopogramViewContainerForMapScreenshotsNoTiles)}/>
-        <Route path="topograms/:topogramId/map_without_tiles_highlighted"
-                        component={withBoundary(TopogramViewContainerForMapScreenshotsNoTilesWithMainVenuesHighlighted)}/>
-        <Route path="topograms/:topogramId/network"
-            component={withBoundary(TopogramViewContainerForNetScreenshots)}/>
-
-        <Route path="/signup"
-          component={SignUpPage}/>
-        <Route path="/login"
-          component={LoginPage}/>
-        <Route path="*"
-          component={Page404}/>
-      </Route>
-    </Router>
-  </Provider>
-)
+export const renderRoutes = () => {
+  // Router v6 (browser history)
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <V6Route path="/" element={<AppV6 />}> 
+            <V6Route index element={<HomeContainer />} />
+            <V6Route path="topograms" element={<V6Compat Component={TopogramsPrivateListContainer} />} />
+            <V6Route path="topograms/:topogramId" element={<V6Compat Component={TopogramViewContainer} />} />
+            <V6Route path="topograms/:topogramId/view" element={<V6Compat Component={TopogramViewContainer} />} />
+            <V6Route path="topograms/:topogramId/map" element={<V6Compat Component={TopogramViewContainerForMapScreenshots} />} />
+            <V6Route path="topograms/:topogramId/map_without_tiles" element={<V6Compat Component={TopogramViewContainerForMapScreenshotsNoTiles} />} />
+            <V6Route path="topograms/:topogramId/map_without_tiles_highlighted" element={<V6Compat Component={TopogramViewContainerForMapScreenshotsNoTilesWithMainVenuesHighlighted} />} />
+            <V6Route path="topograms/:topogramId/network" element={<V6Compat Component={TopogramViewContainerForNetScreenshots} />} />
+            <V6Route path="signup" element={<V6Compat Component={SignUpPage} />} />
+            <V6Route path="login" element={<V6Compat Component={LoginPage} />} />
+            <V6Route path="*" element={<Page404 />} />
+          </V6Route>
+        </Routes>
+      </BrowserRouter>
+    </Provider>
+  )
+}

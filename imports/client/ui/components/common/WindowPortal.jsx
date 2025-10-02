@@ -65,10 +65,11 @@ export default class WindowPortal extends React.Component {
     // Defer initialization until the external window is ready
     const init = () => {
       try {
-        // Copy styles after skeleton is ready
+  // Copy styles after skeleton is ready
         copyStyles(document, this.externalWindow.document)
-        this.containerEl = this.externalWindow.document.getElementById('__popup_root')
-        this._renderSubtree()
+  this.containerEl = this.externalWindow.document.getElementById('__popup_root')
+  // Trigger an initial render into the external window via React portal
+  try { this.forceUpdate() } catch (e) {}
         // Nudge layouts (like C3) inside the pop-out to compute to the new window size
         try {
           const fire = () => { try { this.externalWindow.dispatchEvent(new this.externalWindow.Event('resize')) } catch (e) {} }
@@ -146,6 +147,8 @@ export default class WindowPortal extends React.Component {
   }
 
   componentDidUpdate() { this._renderSubtree() }
+  // With portals we don't need imperative re-rendering; keep for backward safety
+  // componentDidUpdate() { /* no-op */ }
 
   componentWillUnmount() {
     this._teardown()
@@ -169,30 +172,12 @@ export default class WindowPortal extends React.Component {
     this.externalWindow = null
   }
 
-  _renderSubtree() {
-    if (!this.containerEl) return
-    try {
-      let content = this.props.children
-      // React 15 requires a single root element; wrap arrays in a container
-      if (Array.isArray(content)) {
-        content = React.createElement('div', null, content)
-      }
-      // Clear any fallback content before mounting
-      this.containerEl.innerHTML = ''
-      ReactDOM.unstable_renderSubtreeIntoContainer(this, content, this.containerEl)
-    } catch (e) {
-      // If rendering fails (e.g., devtools sourcemap worker errors), no-op rather than crash
-      // Keep a friendly fallback visible for the user
-      try {
-        this.containerEl.innerHTML = '<div style="padding:10px;color:#F2EFE9">Failed to render content in this window. If you use a popup/script blocker, please allow this site and retry.</div>'
-        // Also log in the opener console for diagnostics
-        if (typeof window !== 'undefined' && window.console) {
-          // eslint-disable-next-line no-console
-          console.warn('WindowPortal render error:', e)
-        }
-      } catch (_) { /* ignore */ }
-    }
-  }
+  _renderSubtree() { /* legacy no-op */ }
 
-  render() { return null }
+  render() {
+    if (!this.containerEl) return null
+    let content = this.props.children
+    if (Array.isArray(content)) content = React.createElement('div', null, content)
+    return ReactDOM.createPortal(content, this.containerEl)
+  }
 }

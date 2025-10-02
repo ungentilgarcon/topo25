@@ -23,6 +23,15 @@ export default class UserMenu extends React.Component {
      }
   }
 
+  navigateTo = (path) => {
+    const { router } = this.props
+    if (router && typeof router.push === 'function') {
+      router.push(path)
+    } else if (typeof window !== 'undefined') {
+      window.location.assign(path)
+    }
+  }
+
   static propTypes = {
     router : PropTypes.shape({
       push : PropTypes.func
@@ -41,7 +50,8 @@ export default class UserMenu extends React.Component {
   }
 
   render() {
-    const { isLoggedIn } = this.props.user
+    const user = this.props.user || { isLoggedIn: false, username: '' }
+    const isLoggedIn = !!user.isLoggedIn
     const { anchorEl } = this.state
     const menuOpen = Boolean(anchorEl)
     // const currentLanguage = 'en'
@@ -60,7 +70,7 @@ export default class UserMenu extends React.Component {
       return (
         <span >
           <UserNameEdit
-            userName={this.props.user.username}
+            userName={user.username}
             open={this.state.userNameOpen}
             handleClose={() => this.setState({userNameOpen : false})}
             />
@@ -88,7 +98,7 @@ export default class UserMenu extends React.Component {
             color:'#F2EFE9',}}
               primaryText="Home"
               leftIcon={<Home />}
-              onClick={() => { this.setState({ anchorEl: null }); this.props.router.push('/') }}
+              onClick={() => { this.setState({ anchorEl: null }); this.navigateTo('/') }}
             />
             <About
               style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9'}}
@@ -107,7 +117,7 @@ export default class UserMenu extends React.Component {
                 <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                 color:'#F2EFE9',}}
                   primaryText="My Topograms"
-                  onClick={() => this.props.router.push('/topograms')}
+                  onClick={() => this.navigateTo('/topograms')}
                 />
                 :
                 null
@@ -123,12 +133,12 @@ export default class UserMenu extends React.Component {
                   style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                   color:'#F2EFE9',}}
                     primaryText="Login"
-                    onClick={() => { this.setState({ anchorEl: null }); this.props.router.push('/login') }}
+                    onClick={() => { this.setState({ anchorEl: null }); this.navigateTo('/login') }}
                   />
                   <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                   color:'#F2EFE9',}}
                     primaryText="Sign Up"
-                    onClick={() => { this.setState({ anchorEl: null }); this.props.router.push('/signup') }}
+                    onClick={() => { this.setState({ anchorEl: null }); this.navigateTo('/signup') }}
                   />
                 </span>
                 :
@@ -137,7 +147,7 @@ export default class UserMenu extends React.Component {
                   <Subheader style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                   color:'#F2EFE9',}}>
                     {
-                      this.props.user.username
+                      user.username
                     }
                   </Subheader>
                   <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
