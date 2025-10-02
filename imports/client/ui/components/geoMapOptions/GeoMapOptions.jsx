@@ -14,6 +14,8 @@ export default class GeoMapOptions extends React.Component {
   }
 
   render() {
+    const { geoMapTile } = this.props.ui
+
     const mapTilesMenuItems = Object.keys(mapTiles).map( d => (
       <MenuItem
       style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
@@ -21,6 +23,7 @@ export default class GeoMapOptions extends React.Component {
         value={d}
         key={d}
         primaryText={d.charAt(0).toUpperCase() + d.slice(1)}
+        selected={geoMapTile === d}
         onClick={() => this.handleSelectGeoMapTile(d)}
       />
     ))
@@ -28,6 +31,7 @@ export default class GeoMapOptions extends React.Component {
     return (
       <MenuItem
         primaryText="Map Background"
+        secondaryText={geoMapTile ? geoMapTile : undefined}
         color="#D3E8E6"
         style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
         color:'#F2EFE9',}}

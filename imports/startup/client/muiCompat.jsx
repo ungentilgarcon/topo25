@@ -59,15 +59,16 @@ DialogCompat.propTypes = {
 export function MenuItemCompat(props) {
   const {
     primaryText,
+    secondaryText,
     leftIcon,
     endAdornment,
-    rightIcon, // legacy alias, will be ignored for DOM and mapped to endAdornment
-    menuItems, // legacy nested menu API (array of MenuItem/compat)
+    rightIcon, // legacy alias
+    menuItems,
+    selected,
     style,
     children,
     onClick,
     sx: sxProp,
-    // strip legacy/unknown props to avoid leaking to DOM
     onKeyboardFocus, // eslint-disable-line no-unused-vars
     onTouchTap, // eslint-disable-line no-unused-vars
     ...rest
@@ -75,11 +76,23 @@ export function MenuItemCompat(props) {
 
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
-  const handleParentClick = (e) => {
-    if (menuItems && menuItems.length) {
+  const hasSubmenu = !!(menuItems && menuItems.length)
+
+  const handleParentActivate = (e) => {
+    if (hasSubmenu) setAnchorEl(e.currentTarget)
+    else if (onClick) onClick(e)
+  }
+  const handleMouseEnter = (e) => {
+    if (hasSubmenu) setAnchorEl(e.currentTarget)
+  }
+  const handleKeyDown = (e) => {
+    if (hasSubmenu && (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault()
       setAnchorEl(e.currentTarget)
-    } else if (onClick) {
-      onClick(e)
+    }
+    if (open && e.key === 'Escape') {
+      e.preventDefault()
+      setAnchorEl(null)
     }
   }
   const handleClose = () => setAnchorEl(null)
@@ -89,12 +102,21 @@ export function MenuItemCompat(props) {
 
   return (
     <>
-      <MenuItem {...rest} sx={sx} onClick={handleParentClick}>
+      <MenuItem
+        {...rest}
+        sx={sx}
+        onClick={handleParentActivate}
+        onMouseEnter={handleMouseEnter}
+        onKeyDown={handleKeyDown}
+        aria-haspopup={hasSubmenu ? 'menu' : undefined}
+        aria-expanded={hasSubmenu ? (open ? 'true' : 'false') : undefined}
+        selected={!!selected}
+      >
         {leftIcon ? <ListItemIcon>{leftIcon}</ListItemIcon> : null}
-        {primaryText ? <ListItemText primary={primaryText} /> : (children || null)}
+        <ListItemText primary={primaryText || children} secondary={secondaryText} />
         {adornment ? <Box sx={{ ml: 'auto' }}>{adornment}</Box> : null}
       </MenuItem>
-      {menuItems && menuItems.length ? (
+      {hasSubmenu ? (
         <Menu
           anchorEl={anchorEl}
           open={open}
@@ -102,6 +124,7 @@ export function MenuItemCompat(props) {
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'left' }}
           keepMounted
+          MenuListProps={{ autoFocusItem: open }}
         >
           {React.Children.map(menuItems, (item) => {
             if (!React.isValidElement(item)) return item
@@ -121,10 +144,12 @@ export function MenuItemCompat(props) {
 
 MenuItemCompat.propTypes = {
   primaryText: PropTypes.node,
+  secondaryText: PropTypes.node,
   leftIcon: PropTypes.node,
   endAdornment: PropTypes.node,
-  rightIcon: PropTypes.node, // deprecated alias
+  rightIcon: PropTypes.node,
   menuItems: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
+  selected: PropTypes.bool,
   style: PropTypes.object,
   children: PropTypes.node,
   onClick: PropTypes.func,

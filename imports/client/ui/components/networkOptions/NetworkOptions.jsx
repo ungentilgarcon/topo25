@@ -30,6 +30,7 @@ export default class NetworkOptions extends React.Component {
   }
 
   render() {
+    const { layoutName, nodeRadius } = this.props.ui
 
     const layoutMenuItems = layouts.map( d => (
       <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
@@ -37,6 +38,7 @@ export default class NetworkOptions extends React.Component {
         value={d}
         key={d}
         primaryText={d.charAt(0).toUpperCase() + d.slice(1)}
+        selected={layoutName === d}
         onClick={() => this.handleSelectLayout(d)}
       />
     ))
@@ -48,6 +50,7 @@ export default class NetworkOptions extends React.Component {
           value={d}
           key={d}
           primaryText={d.charAt(0).toUpperCase() + d.slice(1)}
+          selected={nodeRadius === d}
           onClick={() => this.handleSelectNodeRadius(d)}
         />
       ))
@@ -58,6 +61,7 @@ export default class NetworkOptions extends React.Component {
         style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
         color:'#F2EFE9',}}
           primaryText="Network Layout"
+          secondaryText={layoutName ? layoutName : undefined}
           endAdornment={<ArrowRightIcon />}
           menuItems={layoutMenuItems}
         />
@@ -65,6 +69,7 @@ export default class NetworkOptions extends React.Component {
         style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
         color:'#F2EFE9',}}
           primaryText="Node Radius"
+          secondaryText={nodeRadius ? nodeRadius : undefined}
           endAdornment={<ArrowRightIcon />}
           menuItems={NodeRadiusMenuItems}
         />
