@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { CardCompat as Card, CardTitleCompat as CardTitle, CardTextCompat as CardText, IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 import ClearIcon from '@mui/icons-material/Clear'
 
-import Markdown from 'react-remarkable'
+import ReactMarkdown from 'react-markdown'
+import gfm from 'remark-gfm'
 import 'github-markdown-css'
 
 const SelectedItem = ({
@@ -58,12 +59,11 @@ const SelectedItem = ({
             :
             <p>lat/lng : {`${lat}/${lng}`}</p>
         } */}
-        {
-          el.data.notes ?
-            <Markdown source={el.data.notes} />
-            :
-            null
-        }
+        {el.data.notes ? (
+          <div className="markdown-body">
+            <ReactMarkdown remarkPlugins={[gfm]}>{el.data.notes}</ReactMarkdown>
+          </div>
+        ) : null}
       </CardText>
     </Card>
   )
