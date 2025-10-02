@@ -1,7 +1,7 @@
 *.test.js
 imports/plugins
 oldies
-imports/ui/pages/**/*.js
+imports/**
 gulpfile.js
 package.json
 saveSVG.js
