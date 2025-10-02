@@ -1,8 +1,9 @@
 import React from 'react'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 
-import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right'
+import { MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 
 
 @ui()
@@ -23,12 +24,11 @@ export default class ChartOptions extends React.Component {
 //    ))
 //
     return (
- <MenuItem
-       primaryText="Map Background"
-
-      menuItems={}
-     rightIcon={<ArrowDropRight />}
-     />
-)
+      <MenuItem
+        primaryText="Chart Options"
+        disabled
+        rightIcon={<ArrowRightIcon />}
+      />
+    )
   }
 }

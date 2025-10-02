@@ -22,6 +22,14 @@ import { TopogramsPrivateListContainer } from '/imports/client/ui/containers/Top
 import { SignUpPage } from '/imports/client/ui/pages/SignUpPage.jsx'
 import { LoginPage } from '/imports/client/ui/pages/LoginPage.jsx'
 import Page404 from '/imports/client/ui/pages/Page404.jsx'
+import ErrorBoundary from '/imports/client/ui/components/common/ErrorBoundary.jsx'
+
+// Simple HOC to wrap a component with ErrorBoundary in react-router v3
+const withBoundary = (Comp) => (props) => (
+  <ErrorBoundary>
+    <Comp {...props} />
+  </ErrorBoundary>
+)
 
 export const renderRoutes = () => (
   <Provider store={store}>
@@ -32,17 +40,17 @@ export const renderRoutes = () => (
         <Route path="topograms"
           component={TopogramsPrivateListContainer}/>
         <Route path="topograms/:topogramId"
-          component={TopogramViewContainer}/>
+          component={withBoundary(TopogramViewContainer)}/>
         <Route path="topograms/:topogramId/view"
-          component={TopogramViewContainer}/>
+          component={withBoundary(TopogramViewContainer)}/>
         <Route path="topograms/:topogramId/map"
-            component={TopogramViewContainerForMapScreenshots}/>
+            component={withBoundary(TopogramViewContainerForMapScreenshots)}/>
         <Route path="topograms/:topogramId/map_without_tiles"
-                component={TopogramViewContainerForMapScreenshotsNoTiles}/>
+                component={withBoundary(TopogramViewContainerForMapScreenshotsNoTiles)}/>
         <Route path="topograms/:topogramId/map_without_tiles_highlighted"
-                        component={TopogramViewContainerForMapScreenshotsNoTilesWithMainVenuesHighlighted}/>
+                        component={withBoundary(TopogramViewContainerForMapScreenshotsNoTilesWithMainVenuesHighlighted)}/>
         <Route path="topograms/:topogramId/network"
-            component={TopogramViewContainerForNetScreenshots}/>
+            component={withBoundary(TopogramViewContainerForNetScreenshots)}/>
 
         <Route path="/signup"
           component={SignUpPage}/>

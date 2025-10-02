@@ -1,239 +1,157 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Toggle from 'material-ui/Toggle'
-import SubHeader from 'material-ui/Subheader'
-import { GridList } from 'material-ui/GridList'
-import TopogramListItem from './TopogramListItem.jsx'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import { defineMessages, injectIntl } from 'react-intl'
-import AutoComplete from 'material-ui/AutoComplete'
-import RaisedButton from 'material-ui/RaisedButton'
+import { SubheaderCompat as SubHeader, TextFieldCompat as TextField, CheckboxCompat as Toggle } from '/imports/startup/client/muiCompat'
+import MUIAutocomplete from '@mui/material/Autocomplete'
+import Button from '@mui/material/Button'
+import TopogramListItem from './TopogramListItem.jsx'
 import './TopogramList.css'
+
 const messages = defineMessages({
-  hint : {
-    'id': 'queryBox.hint',
-    'defaultMessage': 'Search for a Map',
-    'message': ''
+  hint: {
+    id: 'queryBox.hint',
+    defaultMessage: 'Search for a Map'
   },
-  label : {
-    'id': 'queryBox.label',
-    'defaultMessage': 'Map search',
-    'message': ''
+  label: {
+    id: 'queryBox.label',
+    defaultMessage: 'Map search'
   }
 })
 
-@ui()
 class TopogramList extends React.Component {
-
   constructor(props) {
     super(props)
-    this.state = { anonymousOnly : false ,
-      currentValue : null,
-      pageTopos : 1,
-      order : null,
-      direction : true,
-
+    this.state = {
+      anonymousOnly: false,
+      pageTopos: 1
     }
   }
 
   static propTypes = {
     title: PropTypes.string.isRequired,
-    showFilters : PropTypes.bool.isRequired,
+    showFilters: PropTypes.bool.isRequired,
     topograms: PropTypes.array.isRequired,
     router: PropTypes.object.isRequired,
-
-
+    ui: PropTypes.object
   }
 
   handleOnToggle = () => {
-    this.setState({ anonymousOnly : !this.state.anonymousOnly })
+    this.setState((s) => ({ anonymousOnly: !s.anonymousOnly }))
   }
 
-
-
-
-  handlePageTopoUp = (pageTopos,numbTopopages) => {
-
+  handlePageTopoUp = (pageTopos, numbTopopages) => {
     if (this.state.pageTopos < numbTopopages) {
-      var valuepageTopos=this.state.pageTopos
-      valuepageTopos+=1
+      this.setState((s) => ({ pageTopos: s.pageTopos + 1 }))
+    }
+  }
 
-      this.setState({
-        pageTopos :valuepageTopos
-      })
+  handlePageTopoDown = (pageTopos, numbTopopages) => {
+    if (this.state.pageTopos > 1) {
+      this.setState((s) => ({ pageTopos: s.pageTopos - 1 }))
+    }
+  }
 
-    }}
+  handleNewRequest = ({ value, text, topogram }, index) => {
+    window.open(`/topograms/${topogram._id}`, '_blank')
+  }
 
-    handlePageTopoDown = (pageTopos,numbTopopages) => {
-      if (pageTopos > 1) {
-        var valuepageTopos=this.state.pageTopos
-        valuepageTopos-=1
-        this.setState({
-          pageTopos :valuepageTopos
-        })
-      }}
+  render() {
+    const { formatMessage } = this.props.intl
+    const { anonymousOnly } = this.state
+    const { showFilters, title, topograms } = this.props
 
+    const dataSource = topograms
+      .filter((d) => (anonymousOnly ? d.userId === null : true))
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((n) => ({
+        value: n.title.substr(0, 20),
+        text: n.title.substr(0, 20),
+        topogram: n
+      }))
 
+    const topogramItems = topograms
+      .filter((d) => (anonymousOnly ? d.userId === null : true))
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((topogram) => (
+        <TopogramListItem
+          key={topogram._id}
+          topogramId={topogram._id}
+          topogramTitle={topogram.title.split(/\SBETA.*/gm).slice(0)[0]}
+          topogramDesc={topogram.title.split(/\SBETA.*/gm).slice(1)[0]}
+          topogramVersion={topogram.title.match(/BETA..../gm).slice(0)[0]}
+          author={topogram.author && topogram.author.username ? topogram.author.username : null}
+          topogramSharedPublic={topogram.sharedPublic}
+          router={this.props.router}
+          lastModified={topogram.createdAt}
+        />
+      ))
 
-      handleNewRequest = ({value, text, topogram}, index) => {
-        //const {selectElement} = this.props
-        console.log("VALUE",value)
-        console.log("TEXT",text)
-        console.log("topogram",topogram)
+    const numbTopopages = Math.ceil(topogramItems.length / 128)
 
-        const {win} = window.open(`/topograms/${topogram._id}`, '_blank');
-
-
-
-      }
-
-
-
-
-      render() {
-
-        const { formatMessage } = this.props.intl
-        const { pageTopos } = this.props.ui
-
-        //this.props.updateUI({pageTopos:1})
-        const { anonymousOnly } = this.state
-        const { showFilters, title, topograms } = this.props
-
-        const dataSource = topograms
-        .filter(d => anonymousOnly ? d.userId === null : true)
-        .sort( (a, b) => b.createdAt - a.createdAt)
-        .map( n => (
-          {
-            value : n.title.substr(0, 20),
-            text : n.title.substr(0, 20),
-            topogram : n
-          }
-        ))
-        //console.log("dataSource",dataSource);
-
-        const topogramItems = topograms
-        .filter(d => anonymousOnly ? d.userId === null : true)
-        .sort( (a, b) => b.createdAt - a.createdAt)
-        .map( topogram => (
-          <TopogramListItem
-            key={ topogram._id }
-            topogramId={ topogram._id }
-            topogramTitle={ topogram.title.split(/\SBETA.*/gm).slice(0)[0] }
-            topogramDesc={ topogram.title.split(/\SBETA.*/gm).slice(1)[0] }
-            //topogramDesc={topogram.title.split(/Distance totale parcourue par l'artiste: /gm).slice(1)[0].split(/km/gm).match() }
-            topogramVersion={ topogram.title.match(/BETA..../gm).slice(0)[0] }
-
-            author={topogram.author &&  topogram.author.username ? topogram.author.username : null}
-            topogramSharedPublic={topogram.sharedPublic}
-            router={this.props.router}
-            lastModified={ topogram.createdAt }
-            />
-
-        ))
-
-  const   numbTopopages = Math.ceil(topogramItems.length/128)
-
-        return (
-          <div style={{backgroundColor:'#D6EBE6',color: '#000  !important'}}>
-            <AutoComplete
-              ref="queryBox"
-              filter={AutoComplete.fuzzyFilter}
-              dataSource={dataSource}
-              maxSearchResults={70}
-              // fullWidth={true}
-              menuProps={{desktop:true}}
-               floatingLabelStyle= {{
-                 color: '#fff !important',
-               }}
-
-               underlineStyle={{
-                 display:"none",
-
-
-               }}
-
-
-
-              hintText={formatMessage(messages.hint)}
+    return (
+      <div style={{ backgroundColor: '#D6EBE6', color: '#000  !important' }}>
+        <MUIAutocomplete
+          options={dataSource}
+          getOptionLabel={(o) => o.text || ''}
+          onChange={(e, value) => value && this.handleNewRequest(value)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
               floatingLabelText={formatMessage(messages.label)}
-              onNewRequest={this.handleNewRequest}
-              // onUpdateInput={this.handleUpdateInput}
+              hintText={formatMessage(messages.hint)}
+            />
+          )}
+        />
 
-              />
+        <section className="home-public-list" style={{ width: '80vw', margin: '0 auto 1em auto' }}>
+          <SubHeader>{title}</SubHeader>
+          {showFilters ? (
+            <div style={{ maxWidth: 250, paddingBottom: '1em' }}>
+              <Toggle label="Show only anonymous" checked={anonymousOnly} onChange={this.handleOnToggle} />
+            </div>
+          ) : null}
 
-            <section
-              className="home-public-list"
-              style={{ width : '80vw', margin : '0 auto 1em auto' }}
+          {topogramItems.length > 128 ? (
+            <div>
+              <div className="gridlist" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                {topogramItems.slice(0 + 128 * this.state.pageTopos, 128 + 128 * this.state.pageTopos)}
+              </div>
+              <Button
+                variant="contained"
+                onClick={() => this.handlePageTopoDown(this.state.pageTopos, numbTopopages)}
+                sx={{ bgcolor: '#aa8dc6', '&:hover': { bgcolor: '#9a7cb6' } }}
               >
-              <SubHeader>{title}</SubHeader>
-              {
-                showFilters ?
-                <div style={{ maxWidth: 250, paddingBottom : '1em' }}>
-                  <Toggle
-                    label="Show only anonymous"
-                    toggled={anonymousOnly}
-                    onToggle={this.handleOnToggle}
-                    />
-                </div>
-                :
-                null
-              }
-              {
-                topogramItems.length > 128 ?
+                previous
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => this.handlePageTopoUp(this.state.pageTopos, numbTopopages)}
+                sx={{ ml: 1, bgcolor: '#aa8dc6', '&:hover': { bgcolor: '#9a7cb6' } }}
+              >
+                next
+              </Button>
+              <p>
+                {this.state.pageTopos}/{numbTopopages}{' '}
+              </p>
+            </div>
+          ) : topogramItems.length ? (
+            <div className="gridlist" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              {topogramItems}
+            </div>
+          ) : (
+            <p>No topograms yet!</p>
+          )}
+        </section>
+      </div>
+    )
+  }
+}
 
-                <div>
-                  <GridList
-                    cellHeight={240}
-                    cols={3}
-                    >
-                    {topogramItems.slice(0+128*this.state.pageTopos,128+128*this.state.pageTopos)}
-                  </GridList>
-                  <RaisedButton
-                    style={{backgroundColor: "#aa8dc6 !important"}}
-                    label="previous"
-                    primary={true}
-                    onClick={() => this.handlePageTopoDown(numbTopopages)}
-                    />
-                  <RaisedButton
-                    label="next"
-                    primary={true}
-                    onClick={() => this.handlePageTopoUp({pageTopos},numbTopopages)}
-                    />
-                  <p>{this.state.pageTopos}/{numbTopopages} </p>
-                </div>
-                :
-                topogramItems.length ?
-                <GridList
-                  cellHeight={240}
-                  cols={3}
-                  >
-                  {topogramItems}
-                </GridList>
-                :
-                <p>No topograms yet!</p>
-              }
-            </section>
-          </div>
-        )
-      }
-    }
+TopogramList.defaultProps = {
+  topogram: {},
+  nodes: [],
+  edges: []
+}
 
-    TopogramList.propTypes = {
-      // promptSnackbar: PropTypes.func,
-      topogram : PropTypes.object,
-      //nodes : PropTypes.array,
-      // edges : PropTypes.array,
-      // style : PropTypes.object,
-      // intl : PropTypes.shape({
-      //   formatMessage : PropTypes.func
-      // })
-    }
-
-    TopogramList.defaultProps = {
-      topogram : {},
-      nodes : [],
-      edges : [],
-      //pageTopos: 1
-    }
-
-    export default injectIntl(TopogramList)
+export default ui()(injectIntl(TopogramList))

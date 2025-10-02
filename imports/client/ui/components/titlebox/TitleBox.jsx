@@ -1,15 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
-import { Card, CardTitle, CardActions } from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
-import ClearIcon from 'material-ui/svg-icons/content/clear'
-import FocusIcon from 'material-ui/svg-icons/image/center-focus-strong'
+import ui from '/imports/client/legacyUi'
+import { CardCompat as Card, CardTitleCompat as CardTitle, CardActionsCompat as CardActions } from '/imports/startup/client/muiCompat'
+// FlatButton removed in favor of MUI v5 Button
+import Button from '@mui/material/Button'
+import ClearIcon from '@mui/icons-material/Clear'
+import FocusIcon from '@mui/icons-material/CenterFocusStrong'
 
 import SelectionChips from '../selectionItem/SelectionChips.jsx'
 import SelectedItem from '../selectionItem/SelectedItem.jsx'
-import SvgIcon from 'material-ui/SvgIcon'
+// SvgIcon not used anymore; using @mui/icons-material
 import Modal from './Modal';
 import './TitleBox.css'
 
@@ -109,7 +109,7 @@ return(
     />
 {this.state.isOpen?
   null:
-<RaisedButton style={{fontSize: "8pt" ,Width : "15px",height:"15px",backgroundColor:"#aa8dc6 !important",fontWeight:  'bold'}} onClick={this.toggleModal}>DATAS...</RaisedButton>
+<Button variant="contained" onClick={this.toggleModal} sx={{ fontSize: '8pt', width: '15px', height: '15px', bgcolor: '#aa8dc6', fontWeight: 'bold', '&:hover': { bgcolor: '#9a7cb6' } }}>DATAS...</Button>
 }
               <Modal style={{fontSize:"8pt"}}show={this.state.isOpen}
                 onClose={this.toggleModal}>
@@ -138,12 +138,9 @@ return(
     {
       isolateMode ?
       <div>
-        <FlatButton
-          label="Clear"
-          labelPosition="before"
-          icon={<ClearIcon />}
-          onClick={handleExitIsolateMode}
-          />
+        <Button variant="text" onClick={handleExitIsolateMode} startIcon={<ClearIcon />} sx={{ color: '#F2EFE9' }}>
+          Clear
+        </Button>
         {/*
           <RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
             label="Save selection"
@@ -162,22 +159,13 @@ return(
       </div>
         :
         <div>
-        <RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
-          label="Focus and rearrange"
+        <Button variant="contained" onClick={handleEnterIsolateMode} sx={{ fontSize: '6pt', width: '15px', height: '15px', mr: 1 }}>
+          Focus and rearrange
+        </Button>
 
-          width="50%"
-          labelPosition="before"
-          //icon={<FocusIcon />}
-          onClick={handleEnterIsolateMode}
-
-          />
-
-          <RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
-            label="Focus only"
-            labelPosition="before"
-            //icon={<FocusIcon />}
-            onClick={handleEnterExtractMode}
-            />
+          <Button variant="outlined" onClick={handleEnterExtractMode} sx={{ fontSize: '6pt', width: '15px', height: '15px' }}>
+            Focus only
+          </Button>
             {/* <RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
               label="Save selection"
               labelPosition="before"

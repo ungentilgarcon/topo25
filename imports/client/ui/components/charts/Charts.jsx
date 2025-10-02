@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
-import { Card, CardTitle, CardActions } from 'material-ui/Card'
+import ui from '/imports/client/legacyUi'
+import { CardCompat as Card, CardTitleCompat as CardTitle, CardActionsCompat as CardActions } from '/imports/startup/client/muiCompat'
 import C3Chart from 'react-c3js';
-import RaisedButton from 'material-ui/RaisedButton'
+import Button from '@mui/material/Button'
 import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
 
@@ -788,16 +788,25 @@ return (
   />
 </div>
 <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0 46px' }}>
-  <RaisedButton
-    backgroundColor="#546E7A"
-    labelColor="#F2EFE9"
-    style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.3)' }}
-    buttonStyle={{ height: 40, lineHeight: '40px', padding: '0 18px', borderRadius: 4 }}
-    labelStyle={{ fontSize: '12pt', fontWeight: 'bold', letterSpacing: '0.3px' }}
-    label="Reset selection"
-    labelPosition="before"
+  <Button
+    variant="contained"
     onClick={this.unselectAllElements}
-  />
+    sx={{
+      bgcolor: '#546E7A',
+      color: '#F2EFE9',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+      height: 40,
+      lineHeight: '40px',
+      px: 2,
+      borderRadius: 1,
+      fontSize: '12pt',
+      fontWeight: 'bold',
+      letterSpacing: '0.3px',
+      '&:hover': { bgcolor: '#455A64' }
+    }}
+  >
+    Reset selection
+  </Button>
 </div>
 
 

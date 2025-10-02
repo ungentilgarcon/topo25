@@ -1,11 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import TextField from 'material-ui/TextField'
-import MenuItem from 'material-ui/MenuItem'
+import ModeEdit from '@mui/icons-material/ModeEdit'
+import { DialogCompat as Dialog, TextFieldCompat as TextField, MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
+import Button from '@mui/material/Button'
 
 import { topogramUpdateTitle } from '../../../../api/topograms/topogramsMethods.js'
 
@@ -48,19 +46,8 @@ export default class TopogramEditTitle extends React.Component {
   render() {
 
     const actions = [
-      <FlatButton
-        label="Cancel"
-        key="cancel"
-        primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        label="Update Title"
-        key="update"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this.handleClickUpdateTitle}
-      />
+      <Button key="cancel" variant="text" onClick={this.handleClose}>Cancel</Button>,
+      <Button key="update" variant="contained" onClick={this.handleClickUpdateTitle}>Update Title</Button>
     ]
 
     return (
@@ -69,7 +56,7 @@ export default class TopogramEditTitle extends React.Component {
           style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
           color:'#F2EFE9',}}
           primaryText="Update Title"
-          onTouchTap={this.handleOpen}
+          onClick={this.handleOpen}
           leftIcon={<ModeEdit />}
         />
         <Dialog

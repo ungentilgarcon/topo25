@@ -1,16 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import moment from 'moment'
 
-import { Card, CardText, CardHeader } from 'material-ui/Card'
-import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker'
-import IconButton from 'material-ui/IconButton'
-import PlayCircleFilled from 'material-ui/svg-icons/av/play-circle-filled';
-import Pause from 'material-ui/svg-icons/av/pause';
-import Stop from 'material-ui/svg-icons/av/stop';
-import SkipNext from 'material-ui/svg-icons/av/skip-next';
+import { CardCompat as Card, CardTextCompat as CardText, CardTitleCompat as CardHeader, DividerCompat as Divider, DatePickerCompat as DatePicker } from '/imports/startup/client/muiCompat'
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
+import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
+import PlayCircleFilled from '@mui/icons-material/PlayCircleFilled'
+import Pause from '@mui/icons-material/Pause'
+import Stop from '@mui/icons-material/Stop'
+import SkipNext from '@mui/icons-material/SkipNext'
 import TimeSlider from './TimeSlider.jsx'
 
 const styleTimeLine = {
@@ -71,11 +70,19 @@ export default class TimeLine extends React.Component {
   }
 
   openMinDatePicker = () => {
-    this.refs.minDatePicker.focus()
+    if (this._minDatePicker && typeof this._minDatePicker.openDialog === 'function') {
+      this._minDatePicker.openDialog()
+    } else if (this._minDatePicker && typeof this._minDatePicker.focus === 'function') {
+      this._minDatePicker.focus()
+    }
   }
 
   openMaxDatePicker = () => {
-    this.refs.maxDatePicker.focus()
+    if (this._maxDatePicker && typeof this._maxDatePicker.openDialog === 'function') {
+      this._maxDatePicker.openDialog()
+    } else if (this._maxDatePicker && typeof this._maxDatePicker.focus === 'function') {
+      this._maxDatePicker.focus()
+    }
   }
 
   pause = () => {
@@ -293,14 +300,14 @@ export default class TimeLine extends React.Component {
                     <span>
                       <DatePicker
                         onChange={this.handleChangeMinTime}
-                        ref="minDatePicker"
+                        ref={el => { this._minDatePicker = el }}
                         autoOk={true}
                         textFieldStyle={{ display: 'none' }}
                         floatingLabelText="Min Date"
                         value={minTime}
                         />
                       <DatePicker
-                        ref="maxDatePicker"
+                        ref={el => { this._maxDatePicker = el }}
                         textFieldStyle={{ display: 'none' }}
                         onChange={this.handleChangeMaxTime}
                         autoOk={true}

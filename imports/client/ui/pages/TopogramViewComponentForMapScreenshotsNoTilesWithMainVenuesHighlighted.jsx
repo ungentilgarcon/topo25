@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 import MainViz from '/imports/client/ui/components/mainViz/MainViz.jsx'
 
@@ -351,7 +351,7 @@ handleRequestClose() {
   })
 }
 
-componentWillUpdate(nextProps) {
+componentDidUpdate(prevProps) {
 
   // // show timeline if time info
   // if (this.props.hasTimeInfo)
@@ -369,32 +369,41 @@ componentWillUpdate(nextProps) {
     minWeight,
   } = this.props
 
-  if (hasTimeInfo && !ui.minTime && !ui.maxTime) {
-    // pass value to UI as default
-    this.props.updateUI('minTime', minTime)
-    this.props.updateUI('maxTime', maxTime)
-
+  const init = {}
+  if (
+    hasTimeInfo &&
+    (ui.minTime == null || ui.maxTime == null) &&
+    (minTime != null && maxTime != null)
+  ) {
+    init.minTime = minTime
+    init.maxTime = maxTime
   }
-  if (hasTimeInfo && ui.valueRange.some(function (el) {
-    return el == null;
-  }))
-
-  {
-    // pass value to UI as default
-    this.props.updateUI('valueRange', [Math.round(minTime),Math.round(maxTime)])
-
-
+  if (
+    hasTimeInfo &&
+    Array.isArray(ui.valueRange) &&
+    ui.valueRange.some((el) => el == null) &&
+    (minTime != null && maxTime != null)
+  ) {
+    init.valueRange = [Math.round(minTime), Math.round(maxTime)]
   }
-  if (nodeCategories && !ui.minWeight && !ui.maxWeight){
-    this.props.updateUI('minWeight', minWeight)
-    this.props.updateUI('maxWeight', maxWeight)
-
+  if (
+    (ui.minWeight == null || ui.maxWeight == null) &&
+    (typeof minWeight === 'number' && typeof maxWeight === 'number')
+  ) {
+    init.minWeight = minWeight
+    init.maxWeight = maxWeight
   }
-
-
-  // default value to all
-  if (nodeCategories && !ui.selectedNodeCategories.length)
-  this.props.updateUI('selectedNodeCategories', nodeCategories)
+  if (
+    Array.isArray(nodeCategories) &&
+    nodeCategories.length > 0 &&
+    Array.isArray(ui.selectedNodeCategories) &&
+    ui.selectedNodeCategories.length === 0
+  ) {
+    init.selectedNodeCategories = nodeCategories
+  }
+  if (Object.keys(init).length > 0) {
+    this.props.updateUI(init)
+  }
 
 }
 
@@ -436,26 +445,25 @@ render() {
   :
   true
 
-  const selectedIds = this.props.ui.selectedElements.map(d=>d.data.id)
-  //console.log("visible",timeLineVisible);
-  const nodes =  this.props.nodes.filter(n =>
-    //timeLineVisible?
-
-    filterTime(n)&& filterCategories(n)
-    // : filterCategories(n)
-
-  )
-  .map(n => {
-    //console.log(n.data.weight);
-    this.selected=  (parseFloat(n.data.weight) >= parseFloat(1.732)) ?  true:false
-
-
-    let selected = this.selected
-
-    let node = Object.assign( {}, n)
-    node.data.selected = selected
-    return node
+  const memoKey = JSON.stringify({
+    vr: this.props.ui.valueRange,
+    cats: this.props.ui.selectedNodeCategories,
+    len: this.props.nodes.length,
+    time: this.props.ui.minTime
   })
+  if (!this._memo) this._memo = {}
+  let nodes = this._memo[memoKey]
+  if (!nodes) {
+    nodes = this.props.nodes
+      .filter(n => filterTime(n) && filterCategories(n))
+      .map(n => {
+        const selected = (parseFloat(n.data.weight) >= parseFloat(1.732))
+        const node = Object.assign({}, n)
+        node.data.selected = selected
+        return node
+      })
+    this._memo[memoKey] = nodes
+  }
         //console.log(nodes);
 
   const nodeIds = nodes.map(n => n.data.id)

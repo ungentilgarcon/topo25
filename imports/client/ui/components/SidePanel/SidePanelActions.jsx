@@ -1,15 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import {Toolbar} from 'material-ui/Toolbar';
+import { ToolbarCompat as Toolbar } from '/imports/startup/client/muiCompat'
 
-import {CardActions} from 'material-ui/Card'
-import Drawer from 'material-ui/Drawer'
-import IconButton from 'material-ui/IconButton'
-
-import ActionHome from 'material-ui/svg-icons/action/home';
-import SettingsIcon from 'material-ui/svg-icons/action/settings';
-import InfoIcon from 'material-ui/svg-icons/action/info';
+import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
+import HomeIcon from '@mui/icons-material/Home'
+import SettingsIcon from '@mui/icons-material/Settings'
+import InfoIcon from '@mui/icons-material/Info'
 
 import UserMenu from '../UserMenu.jsx'
 
@@ -30,7 +27,7 @@ const SidePanelActions = ({
       <SettingsIcon />
     </IconButton>
     <IconButton onClick={() => setPanelName('main')}>
-      <ActionHome />
+      <HomeIcon />
     </IconButton>
 
     <IconButton onClick={() => setPanelName('about')}>

@@ -3,10 +3,11 @@ import './timeline.css'
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import moment from 'moment'
 import Tooltip from 'rc-tooltip';
 import Slider from 'rc-slider';
+import debounce from 'lodash/debounce'
 
 
 import './indexRCSLIDER.css';
@@ -29,15 +30,16 @@ export default class TimeSlider extends React.Component {
     maxTime : PropTypes.number
   }
 
+  constructor(props) {
+    super(props)
+    // debounce UI updates to avoid thrashing during drags
+    this._debouncedUpdate = debounce((value) => {
+      this.props.updateUI({ valueRange: value })
+    }, 80)
+  }
+
   onSliderChange = (value) => {
-    this.props.updateUI({ //currentSliderTime : value[1],
-      //currentSliderTimeMin : value[0],
-      valueRange : value
-
-     })
-     console.log(this.props.ui.valueRange)
-     //console.log(value[1],value[0])
-
+    this._debouncedUpdate(value)
   }
 
 
@@ -45,9 +47,10 @@ export default class TimeSlider extends React.Component {
   render() {
     const { minTime, maxTime
      } = this.props
-    const { valueRange
-
-   } = this.props.ui
+    const { valueRange } = this.props.ui
+    const rangeValid = Array.isArray(valueRange) && valueRange.length === 2 &&
+      isFinite(valueRange[0]) && isFinite(valueRange[1])
+    const currentRange = rangeValid ? valueRange : [minTime, maxTime]
 
     const minYear = moment(minTime).year(),
       maxYear = moment(maxTime).year()
@@ -70,7 +73,7 @@ export default class TimeSlider extends React.Component {
             <Range
             defaultValue={[minTime,maxTime]}
             style={{ zIndex : 1000 }}
-            value={valueRange}
+            value={currentRange}
             min={minTime}
             max={maxTime}
             //defaultValue={[ 1281214800000, 1284866786842 ]}

@@ -1,12 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import TextField from 'material-ui/TextField'
-import MenuItem from 'material-ui/MenuItem'
+import Button from '@mui/material/Button'
+import { DialogCompat as Dialog, TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 
-import AccountIcon from 'material-ui/svg-icons/action/account-circle'
+import AccountIcon from '@mui/icons-material/AccountCircle'
 
 import { updateUserName } from '../../../../api/users/userMethods.js'
 
@@ -41,19 +39,8 @@ export default class UserNameEdit extends React.Component {
   render() {
 
     const actions = [
-      <FlatButton
-        label="Cancel"
-        key="cancel"
-        primary={true}
-        onTouchTap={this.props.handleClose}
-      />,
-      <FlatButton
-        label="Change Username"
-        key="update"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this.handleClickUpdateUsername}
-      />
+      <Button key="cancel" variant="text" onClick={this.props.handleClose}>Cancel</Button>,
+      <Button key="update" variant="contained" onClick={this.handleClickUpdateUsername}>Change Username</Button>
     ]
 
     return (

@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 import MainViz from '/imports/client/ui/components/mainViz/MainViz.jsx'
 import TitleBox from '/imports/client/ui/components/titlebox/TitleBox.jsx'
 import SidePanel from '/imports/client/ui/components/SidePanel/SidePanel.jsx'
 
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ExploreIcon from 'material-ui/svg-icons/action/explore';
+import Fab from '@mui/material/Fab'
+import ExploreIcon from '@mui/icons-material/Explore'
 import '../../../css/TopogramViewComponent.css'
 
 // UI state default values
@@ -349,7 +349,7 @@ handleRequestClose() {
   })
 }
 
-componentWillUpdate(nextProps) {
+componentDidUpdate(prevProps) {
 
   // // show timeline if time info
   // if (this.props.hasTimeInfo)
@@ -367,32 +367,47 @@ componentWillUpdate(nextProps) {
     minWeight,
   } = this.props
 
-  if (hasTimeInfo && !ui.minTime && !ui.maxTime) {
-    // pass value to UI as default
-    this.props.updateUI('minTime', minTime)
-    this.props.updateUI('maxTime', maxTime)
+  // Build a single initialization payload to reduce re-renders
+  const init = {}
 
-  }
-  if (hasTimeInfo && ui.valueRange.some(function (el) {
-    return el == null;
-  }))
-
-  {
-    // pass value to UI as default
-    this.props.updateUI('valueRange', [Math.round(minTime),Math.round(maxTime)])
-
-
-  }
-  if (nodeCategories && !ui.minWeight && !ui.maxWeight){
-    this.props.updateUI('minWeight', minWeight)
-    this.props.updateUI('maxWeight', maxWeight)
-
+  if (
+    hasTimeInfo &&
+    (ui.minTime == null || ui.maxTime == null) &&
+    (minTime != null && maxTime != null)
+  ) {
+    init.minTime = minTime
+    init.maxTime = maxTime
   }
 
+  if (
+    hasTimeInfo &&
+    Array.isArray(ui.valueRange) &&
+    ui.valueRange.some((el) => el == null) &&
+    (minTime != null && maxTime != null)
+  ) {
+    init.valueRange = [Math.round(minTime), Math.round(maxTime)]
+  }
 
-  // default value to all
-  if (nodeCategories && !ui.selectedNodeCategories.length)
-  this.props.updateUI('selectedNodeCategories', nodeCategories)
+  if (
+    (ui.minWeight == null || ui.maxWeight == null) &&
+    (typeof minWeight === 'number' && typeof maxWeight === 'number')
+  ) {
+    init.minWeight = minWeight
+    init.maxWeight = maxWeight
+  }
+
+  if (
+    Array.isArray(nodeCategories) &&
+    nodeCategories.length > 0 &&
+    Array.isArray(ui.selectedNodeCategories) &&
+    ui.selectedNodeCategories.length === 0
+  ) {
+    init.selectedNodeCategories = nodeCategories
+  }
+
+  if (Object.keys(init).length > 0) {
+    this.props.updateUI(init)
+  }
 
 }
 
@@ -432,62 +447,56 @@ render() {
   :
   true
 
-  const selectedIds = this.props.ui.selectedElements.map(d=>d.data.id)
-  //console.log("visible",timeLineVisible);
-  const nodes =  this.props.nodes.filter(n =>
-    //timeLineVisible?
-
-    filterTime(n)&& filterCategories(n)
-    // : filterCategories(n)
-
-  )
-  .map(n => {
-    let selected = selectedIds.includes(n.data.id)
-    let node = Object.assign( {}, n)
-    node.data.selected = selected
-    return node
+  // Memoize filtered nodes by valueRange + selectedNodeCategories
+  const memoKey = JSON.stringify({
+    vr: this.props.ui.valueRange,
+    cats: this.props.ui.selectedNodeCategories,
+    len: this.props.nodes.length,
+    time: this.props.ui.minTime
   })
+  if (!this._memo) this._memo = {}
+  let nodes = this._memo[memoKey]
+  if (!nodes) {
+    const selectedIds = this.props.ui.selectedElements.map(d=>d.data.id)
+    nodes = this.props.nodes
+      .filter(n => filterTime(n) && filterCategories(n))
+      .map(n => {
+        const selected = selectedIds.includes(n.data.id)
+        const node = Object.assign({}, n)
+        node.data.selected = selected
+        return node
+      })
+    this._memo[memoKey] = nodes
+  }
   //      console.log(nodes);
 
   const nodeIds = nodes.map(n => n.data.id)
 
   const edges = this.props.edges
-
-  .filter(e =>
-
-
-    hasTimeInfo ?
-    new Date(e.data.start) >= new Date(this.props.ui.minTime)
-    && new Date(this.props.ui.valueRange[1]) >= new Date(e.data.start)
-    && new Date(this.props.ui.valueRange[0]) < new Date(e.data.end)
-
-    && nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
-    :
-    nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
-
-  )
-
-  // console.log(this.props.userId, this.props.topogram.userId, this.props.isLoggedIn);
-  // console.log(this.props.userId === this.props.topogram.userId && this.props.isLoggedIn);
-
+    .filter(e =>
+      hasTimeInfo ? (
+        new Date(e.data.start) >= new Date(this.props.ui.minTime)
+        && new Date(this.props.ui.valueRange[1]) >= new Date(e.data.start)
+        && new Date(this.props.ui.valueRange[0]) < new Date(e.data.end)
+        && nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
+      ) : (
+        nodeIds.includes(e.data.source) && nodeIds.includes(e.data.target)
+      )
+    )
   return (
     <div>
 
-      <FloatingActionButton
+      <Fab
         style={{
           position: 'fixed',
           right: '-22px',
           top: '-22px',
-          scaleType:"center",
-          //NotWorking
-          size: '10px',
-
+          // scaleType:"center",
         }}
         onClick={this.handleToggleSelectionMode}
         >
-        <ExploreIcon
-          />
-      </FloatingActionButton>
+        <ExploreIcon />
+      </Fab>
 
 
       <MainViz

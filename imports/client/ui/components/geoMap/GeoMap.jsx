@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import d3 from 'd3'
 import { Map, TileLayer,ScaleControl,ZoomControl, Pane } from 'react-leaflet'
 //import {smoothZoom} from 'leaflet.smoothzoom'
@@ -142,7 +142,7 @@ class GeoMap extends React.Component {
           zoomControl= {false}
 
 
-          ref="map"
+          ref={el => { this._map = el }}
         >
           {
             edges.length ? (

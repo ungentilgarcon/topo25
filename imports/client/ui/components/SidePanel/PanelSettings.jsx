@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { CardTitle } from 'material-ui/Card'
-import Subheader from 'material-ui/Subheader'
+import { SubheaderCompat as Subheader } from '/imports/startup/client/muiCompat'
 
 import PanelSelector from '../panelSelector/PanelSelector.jsx'
 

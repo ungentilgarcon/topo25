@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import Snackbar from 'material-ui/Snackbar'
+import { SnackbarCompat as Snackbar } from '/imports/startup/client/muiCompat'
 import LoginForm from '/imports/client/ui/components/auth/LoginForm.jsx'
 
 export class LoginPage extends React.Component {

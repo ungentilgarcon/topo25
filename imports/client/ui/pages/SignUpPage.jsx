@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { Accounts } from 'meteor/accounts-base'
 
-import Snackbar from 'material-ui/Snackbar'
+import { SnackbarCompat as Snackbar } from '/imports/startup/client/muiCompat'
 import SignUpForm from '/imports/client/ui/components/auth/SignUpForm.jsx'
 
 export class SignUpPage extends React.Component {

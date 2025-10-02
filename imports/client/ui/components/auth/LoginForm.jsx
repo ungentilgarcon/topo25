@@ -2,10 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 
-import { CardActions, CardHeader, CardText } from 'material-ui/Card'
+import { CardActionsCompat as CardActions, CardTitleCompat as CardHeader, CardTextCompat as CardText } from '/imports/startup/client/muiCompat'
 // import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton'
-import TextField from 'material-ui/TextField'
+import Button from '@mui/material/Button'
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 
 import AuthLayout from './AuthLayout.jsx'
 
@@ -49,11 +49,13 @@ const LoginForm = ({
         </div>
       </CardText>
       <CardActions>
-        <RaisedButton
+        <Button
           type="submit"
-          label="Log in"
-          primary={true}
-        />
+          variant="contained"
+          color="primary"
+        >
+          Log in
+        </Button>
       </CardActions>
     </form>
     <CardText>

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { FeatureGroup, Polyline, Marker } from 'react-leaflet'
 import L from 'leaflet'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 @ui({ key: 'PanelSettings' })
 export default class GeoEdges extends React.Component {
@@ -243,7 +243,7 @@ export default class GeoEdges extends React.Component {
       <FeatureGroup name="GeoEdges"
         pane="edgesPane"
         key={`edges-${uiKey}`}
-        ref="edgesGroup">
+        ref={(el) => { this._edgesGroup = el }}>
         {children}
       </FeatureGroup>
     )

@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import { defineMessages, injectIntl } from 'react-intl'
-
-import AutoComplete from 'material-ui/AutoComplete'
+import MUIAutocomplete from '@mui/material/Autocomplete'
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 
 const messages = defineMessages({
   hint : {
@@ -38,40 +38,40 @@ class QueryBox extends React.Component {
   render() {
     const { formatMessage } = this.props.intl
 
-    const dataSource = this.props.nodes.map( n => (
-      {
-        value : n.data.id,
-        text : n.data.name,
-        node :n
-      }
-    ))
+    // Map incoming nodes to options and dedupe by unique id to avoid duplicate keys
+    const seen = new Set()
+    const dataSource = []
+    for (const n of this.props.nodes) {
+      const id = n?.data?.id
+      if (id == null || seen.has(id)) continue
+      seen.add(id)
+      dataSource.push({
+        value: id,
+        text: n?.data?.name || String(id),
+        node: n,
+      })
+    }
 
     return (
-      <AutoComplete
-        ref="queryBox"
-        filter={AutoComplete.fuzzyFilter}
-        dataSource={dataSource}
-        maxSearchResults={7}
-        floatingLabelStyle= {{
-          color: '#fff !important',
-        }}
-
-        underlineStyle={{
-          display:"none",
-
-
-        }}
-
-        fullWidth={true}
-        style={this.props.style}
-        menuProps={{desktop:true}}
-        hintText={formatMessage(messages.hint)}
-
-        floatingLabelText={formatMessage(messages.label)}
-        onNewRequest={this.handleNewRequest}
-        // onUpdateInput={this.handleUpdateInput}
+      <MUIAutocomplete
+        options={dataSource}
+        getOptionLabel={(o) => o.text || ''}
+  isOptionEqualToValue={(opt, val) => (opt?.value ?? null) === (val?.value ?? null)}
+        sx={{ width: '100%' }}
+        onChange={(e, value) => value && this.handleNewRequest(value)}
+        renderOption={(props, option) => (
+          <li {...props} key={option.value}>
+            {option.text}
+          </li>
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            floatingLabelText={formatMessage(messages.label)}
+            hintText={formatMessage(messages.hint)}
+          />
+        )}
       />
-
     )
   }
 }

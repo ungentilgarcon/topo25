@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 import Network from '/imports/client/ui/components/network/Network.jsx'
 import GeoMap from '/imports/client/ui/components/geoMap/GeoMap.jsx'

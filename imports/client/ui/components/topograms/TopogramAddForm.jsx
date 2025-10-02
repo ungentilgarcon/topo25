@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { TextField, RaisedButton } from 'material-ui'
+import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
+import Button from '@mui/material/Button'
 import { defineMessages, injectIntl } from 'react-intl'
 
 import { topogramCreate } from '../../../../api/topograms/topogramsMethods.js'
@@ -31,7 +32,7 @@ class TopogramAddForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault()
 
-    const topogramTitle = this.refs.topogramTitle.getValue()
+    const topogramTitle = this._topogramTitle && this._topogramTitle.getValue ? this._topogramTitle.getValue() : ''
 
     if ( topogramTitle != '' ) {
       topogramCreate.call( {
@@ -60,17 +61,19 @@ class TopogramAddForm extends React.Component {
         >
           <TextField
             name="topogramTitle"
-            ref="topogramTitle"
+            ref={el => { this._topogramTitle = el }}
             floatingLabelText={formatMessage(messages.label)}
             hintText={formatMessage(messages.hint)}
           />
 
-          <RaisedButton
+          <Button
             type="submit"
-            label="Create"
-            primary={true}
+            variant="contained"
+            color="primary"
             style={buttonStyle}
-          />
+          >
+            Create
+          </Button>
         </form>
       </section>
     )

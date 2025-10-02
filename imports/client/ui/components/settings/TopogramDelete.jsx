@@ -1,12 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import MenuItem from 'material-ui/MenuItem'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import Delete from 'material-ui/svg-icons/action/delete'
+import { MenuItemCompat as MenuItem, DialogCompat as Dialog } from '/imports/startup/client/muiCompat'
+import Button from '@mui/material/Button'
+import Delete from '@mui/icons-material/Delete'
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl'
-import { red500 } from 'material-ui/styles/colors'
+import { red } from '@mui/material/colors'
 
 import { topogramDelete } from '../../../../api/topograms/topogramsMethods.js'
 
@@ -53,28 +52,18 @@ class TopogramDelete extends React.Component {
   render() {
     const { formatMessage } = this.props.intl
     const actions = [
-      <FlatButton
-        key="cancel"
-        label={formatMessage(messages.cancel)}
-        primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        key="delete"
-        style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9',}}
-        label={formatMessage(messages.delete)}
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this._deleteItem}
-      />,
+      <Button key="cancel" variant="text" onClick={this.handleClose}>{formatMessage(messages.cancel)}</Button>,
+      <Button key="delete" variant="contained" onClick={this._deleteItem} sx={{ bgcolor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9', '&:hover': { bgcolor: 'rgba(55,71,79,0.9)' }}}>
+        {formatMessage(messages.delete)}
+      </Button>,
     ]
     return (
       <div>
         <MenuItem
           style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9',}}
           primaryText={formatMessage(messages.delete)}
-          onTouchTap={this.handleOpen}
-          leftIcon={<Delete color={red500} />}
+          onClick={this.handleOpen}
+          leftIcon={<Delete sx={{ color: red[500] }} />}
         />
         <Dialog
           title={this.props.topogramTitle}

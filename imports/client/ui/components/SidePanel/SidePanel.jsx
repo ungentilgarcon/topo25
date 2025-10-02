@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
-import Drawer from 'material-ui/Drawer'
-import ClearIcon from 'material-ui/svg-icons/content/clear'
-import IconButton from 'material-ui/IconButton'
+import { DrawerCompat as Drawer } from '/imports/startup/client/muiCompat'
+import ClearIcon from '@mui/icons-material/Clear'
+import { IconButtonCompat as IconButton } from '/imports/startup/client/muiCompat'
 
 import SidePanelActions from './SidePanelActions.jsx'
 import PanelDescription from './PanelDescription.jsx'
