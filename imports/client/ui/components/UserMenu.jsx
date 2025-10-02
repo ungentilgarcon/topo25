@@ -117,7 +117,7 @@ export default class UserMenu extends React.Component {
                 <MenuItem style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
                 color:'#F2EFE9',}}
                   primaryText="My Topograms"
-                  onClick={() => this.navigateTo('/topograms')}
+                  onClick={() => { this.setState({ anchorEl: null }); this.navigateTo('/topograms') }}
                 />
                 :
                 null

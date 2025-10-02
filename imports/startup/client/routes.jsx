@@ -55,7 +55,7 @@ export const renderRoutes = () => {
       <BrowserRouter>
         <Routes>
           <V6Route path="/" element={<AppV6 />}> 
-            <V6Route index element={<HomeContainer />} />
+            <V6Route index element={<V6Compat Component={HomeContainer} />} />
             <V6Route path="topograms" element={<V6Compat Component={TopogramsPrivateListContainer} />} />
             <V6Route path="topograms/:topogramId" element={<V6Compat Component={TopogramViewContainer} />} />
             <V6Route path="topograms/:topogramId/view" element={<V6Compat Component={TopogramViewContainer} />} />
