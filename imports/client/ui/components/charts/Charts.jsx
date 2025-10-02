@@ -397,8 +397,8 @@ var regenerale= /.*/g;
 //  console.log("EDGES",edgesforCharts)
   //console.log(this.nodes[i]["_private"]["data"])
 
-  // Build clean numeric arrays
-  const resweig = nodesforCharts
+  // Build clean numeric arrays (safe defaults)
+  const resweig = (this.props.ui && this.props.ui.cy && this.props.ui.cy._private && this.props.ui.cy._private.initrender === false ? nodesforCharts : [])
     .map(n => Number.isFinite(n?.data?.weight) ? Math.round(Math.pow(n.data.weight, 2)) : null)
     .filter(v => typeof v === 'number' && isFinite(v))
 
@@ -464,7 +464,7 @@ ArrayValresweigUniquesPoids =Object.keys(resweigUniquesPoids)
 
 //===============================================================>
 
-  const resweigEdges = edgesforCharts
+  const resweigEdges = (this.props.ui && this.props.ui.cy && this.props.ui.cy._private && this.props.ui.cy._private.initrender === false ? edgesforCharts : [])
     .map(n => Number.isFinite(n?.data?.weight) ? Number(n.data.weight) : null)
     .filter(v => typeof v === 'number' && isFinite(v))
 
@@ -594,6 +594,9 @@ console.log(ArrayresweigEdgesUniquesPoidsDATA);
         edges: chiSquaredGoodnessOfFitEdges
       }
     }
+    // Keep pristine numeric series for sparklines before header mutations below
+    this._resweigRaw = Array.isArray(resweig) ? resweig.slice() : []
+    this._resweigEdgesRaw = Array.isArray(resweigEdges) ? resweigEdges.slice() : []
   }
 catch(error)
 {//console.log(error);
@@ -839,8 +842,8 @@ return (
           <span style={{ marginLeft: 8 }}>chi2={JSON.stringify(this._stats.chi2.nodes)}</span>
         ) : null}
         {/* sparkline for nodes */}
-        {Array.isArray(resweig) && resweig.length > 0 ? (() => {
-          const numeric = resweig.filter(v => typeof v === 'number' && isFinite(v))
+        {Array.isArray(this._resweigRaw) && this._resweigRaw.length > 0 ? (() => {
+          const numeric = this._resweigRaw.filter(v => typeof v === 'number' && isFinite(v))
           const s = buildSparklinePath(numeric)
           return (
             <svg width={s.width} height={s.height} style={{ marginLeft: 8, verticalAlign: 'middle' }}>
@@ -898,8 +901,8 @@ return (
         <span style={{ marginLeft: 8 }}>chi2={JSON.stringify(this._stats.chi2.edges)}</span>
       ) : null}
       {/* sparkline for edges */}
-      {Array.isArray(resweigEdges) && resweigEdges.length > 0 ? (() => {
-        const numeric = resweigEdges.filter(v => typeof v === 'number' && isFinite(v))
+      {Array.isArray(this._resweigEdgesRaw) && this._resweigEdgesRaw.length > 0 ? (() => {
+        const numeric = this._resweigEdgesRaw.filter(v => typeof v === 'number' && isFinite(v))
         const s = buildSparklinePath(numeric)
         return (
           <svg width={s.width} height={s.height} style={{ marginLeft: 8, verticalAlign: 'middle' }}>
