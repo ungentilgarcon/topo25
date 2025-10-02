@@ -4,7 +4,19 @@ import cytoscape from 'cytoscape'
 import panzoom from 'cytoscape-panzoom'
 import spread from 'cytoscape-spread'
 import './Cytoscape.css'
-import { scaleLinear } from 'd3-scale'
+// simple linear scaling to avoid pulling d3-scale dependency
+const linearScale = (domain, range) => {
+  const [d0, d1] = domain
+  const [r0, r1] = range
+  const span = d1 - d0
+  const outSpan = r1 - r0
+  if (span === 0) {
+    // avoid division by zero: return midpoint of range
+    const mid = r0 + outSpan / 2
+    return () => mid
+  }
+  return (x) => r0 + ((x - d0) / span) * outSpan
+}
 
 // register force layout
 spread(cytoscape)
@@ -134,9 +146,7 @@ class Cytoscape extends Component {
     // console.log("graph legend : min : ", min," max : ",max," units of weight");
     //onsole.log(max);
     // calculate radius range
-    const weightDomain = scaleLinear()
-      .domain([ min, max ])
-      .range([5,15])
+    const weightDomain = linearScale([min, max], [5, 15])
 
     // apply size
     this.cy.style()
@@ -153,10 +163,10 @@ class Cytoscape extends Component {
 
   updateRadiusByDegree() {
     // calculate radius range
-    const degreeDomain = scaleLinear().domain([
+    const degreeDomain = linearScale([
       this.cy.nodes().minDegree(),
       this.cy.nodes().maxDegree()
-    ]).range([6,40])
+    ], [6, 40])
     console.log("graph legend : min : ", this.cy.nodes().minDegree()," max : ",this.cy.nodes().maxDegree()," degrees");
     // apply size
     this.cy.style()
