@@ -59,7 +59,8 @@ class TopogramList extends React.Component {
   render() {
     const { formatMessage } = this.props.intl
     const { anonymousOnly } = this.state
-    const { showFilters, title, topograms } = this.props
+    const { showFilters, title } = this.props
+    const topograms = this.props.topograms || []
 
     const dataSource = topograms
       .filter((d) => (anonymousOnly ? d.userId === null : true))
@@ -146,12 +147,6 @@ class TopogramList extends React.Component {
       </div>
     )
   }
-}
-
-TopogramList.defaultProps = {
-  topogram: {},
-  nodes: [],
-  edges: []
 }
 
 export default ui()(injectIntl(TopogramList))

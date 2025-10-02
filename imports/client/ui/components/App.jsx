@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import '/imports/css/topogram.css'
 
 import { IntlProvider } from 'react-intl'
-import { messages } from '../../../i18n.js'
+import { messages as i18nMessages } from '../../../i18n.js'
 
 import MuiV5Provider from '/imports/startup/client/MuiV5Provider.jsx'
 
@@ -25,14 +25,14 @@ export class App extends React.Component {
     const {
      children,
      classNames,
-     locale,
-     messages,
      user,
      router
    } = this.props
+    const locale = this.props.locale || 'en'
+    const intlMessages = this.props.messages || i18nMessages['en']
     return (
       <IntlProvider locale={locale}
-        messages={messages}>
+        messages={intlMessages}>
         <MuiV5Provider>
             <div className={ classNames }>
               {React.cloneElement(children, {user, router})}
@@ -53,9 +53,6 @@ App.propTypes = {
   loadUser : PropTypes.func
 }
 
-App.defaultProps = {
-  locale: 'en',
-  messages : messages['en']
-}
+// default props removed; AppV6 supplies locale/messages; provide fallbacks in AppV6
 
 export default App

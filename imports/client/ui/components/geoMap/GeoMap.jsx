@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ui from '/imports/client/legacyUi'
 import d3 from 'd3'
-import { Map, TileLayer,ScaleControl,ZoomControl, Pane } from 'react-leaflet'
+import { MapContainer, TileLayer, ScaleControl, ZoomControl, Pane } from 'react-leaflet'
 //import {smoothZoom} from 'leaflet.smoothzoom'
 
 import 'leaflet/dist/leaflet.css'
@@ -79,12 +79,11 @@ class GeoMap extends React.Component {
       onUnfocusElement
     } = this.props
 
-    // resize dynamically using d3
-    d3.select('.leaflet-container')
-      .style('width', width)
-    const left = width === '50vw' ? '50vw' : 0
+    // Let container control sizing; MapContainer will fill parent
+  const left = width === '50vw' ? '50vw' : 0
+  const containerStyle = Object.assign({}, divMapStyle, { left, height, width })
 
-    const nodes = this.props.nodes
+    const nodes = (this.props.nodes || [])
       .map( n => {
         const lat = parseFloat(n.data.lat)
         const lng = parseFloat(n.data.lng)
@@ -96,7 +95,7 @@ class GeoMap extends React.Component {
       })
       .filter(Boolean)
 
-    const edges = this.props.edges
+    const edges = (this.props.edges || [])
       .map( e => {
         const source = nodesById[e.data.source]
         const target = nodesById[e.data.target]
@@ -111,8 +110,7 @@ class GeoMap extends React.Component {
       url,
       attribution,
       minZoom,
-      maxZoom,
-      ext
+      maxZoom
     } = mapTiles[geoMapTile]
     // Clamp zoom to integer to avoid 404s on providers that don't serve fractional zoom
     const intZoom = Math.max(minZoom || 0, Math.min(maxZoom || 22, Math.round(this.state.zoom)))
@@ -129,20 +127,15 @@ class GeoMap extends React.Component {
 
     const chevOn = (!this.props.ui || this.props.ui.showChevrons !== false)
     return (
-      <div
-        id={MAP_DIV_ID}
-        style={Object.assign({}, divMapStyle,{ left, height })}
-      >
-        <Map
+  <div id={MAP_DIV_ID} style={containerStyle}>
+        <MapContainer
           key={`map-${chevOn ? 'with' : 'no'}-chev`}
           center={position}
           zoom={zoom}
           zoomSnap={1}
           zoomDelta={1}
-          zoomControl= {false}
-
-
-          ref={el => { this._map = el }}
+          zoomControl={false}
+          whenCreated={(map) => { this._map = map }}
         >
           {
             edges.length ? (
@@ -177,18 +170,19 @@ class GeoMap extends React.Component {
               attribution={attribution}
               minZoom={minZoom}
               maxZoom={maxZoom}
-              ext={ext}
               crossOrigin={'anonymous'}
               subdomains={mapTiles[geoMapTile] && mapTiles[geoMapTile].subdomains}
               errorTileUrl={"data:image/gif;base64,R0lGODlhAQABAAAAACw="}
               detectRetina={false}
               tms={mapTiles[geoMapTile] && mapTiles[geoMapTile].tms}
-              onTileerror={() => {
-                this._tileErrorCount += 1
-                if (this._tileErrorCount >= 6) {
-                  try { console.warn('Tile errors detected; falling back to default base map') } catch(e) {}
-                  this.props.updateUI && this.props.updateUI('geoMapTile', 'default')
-                  this._tileErrorCount = 0
+              eventHandlers={{
+                tileerror: () => {
+                  this._tileErrorCount += 1
+                  if (this._tileErrorCount >= 6) {
+                    try { console.warn('Tile errors detected; falling back to default base map') } catch(e) {}
+                    this.props.updateUI && this.props.updateUI('geoMapTile', 'default')
+                    this._tileErrorCount = 0
+                  }
                 }
               }}
             />
@@ -200,17 +194,10 @@ class GeoMap extends React.Component {
         <ZoomControl
           position='bottomright'
           />
-        </Map>
+        </MapContainer>
       </div>
     )
   }
 }
 
-
-GeoMap.defaultProps = {
-  nodes : [],
-  nodesReady : false,
-  edges : [],
-  edgesReady : false
-}
 export default GeoMap

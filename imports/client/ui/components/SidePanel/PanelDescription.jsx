@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { CardTitleCompat as CardTitle, CardTextCompat as CardText, DividerCompat as Divider } from '/imports/startup/client/muiCompat'
 import moment from 'moment'
 import ReactDOM from 'react-dom'
+import Tooltip from '@mui/material/Tooltip'
 
 class Portal extends React.Component {
   componentDidMount() {
@@ -146,9 +147,10 @@ class PanelDescription extends React.Component {
           <p
             onClick={this.openHelp}
             style={{ color: '#aa8dc6', fontSize: '16px', fontWeight: 'bold', lineHeight: '1.35', cursor: 'pointer', textDecoration: 'underline' }}
-            title="Click to view help"
           >
-            How to use Bandstour?
+            <Tooltip title="Click to view help">
+              <span>How to use Bandstour?</span>
+            </Tooltip>
           </p>
         </CardText>
 
@@ -187,11 +189,15 @@ class PanelDescription extends React.Component {
                 >
                   <span>How to use Bandstour?</span>
                   <span>
-                    <button onClick={this.popOutWindow} title="Pop out"
-                      style={{ marginRight: 8, background:'transparent', color:'#F2EFE9', border:'1px solid #78909C', borderRadius:4, padding:'2px 6px' }}>
-                      Pop out
-                    </button>
-                    <span style={{ cursor: 'pointer', fontSize: 18, opacity: 0.85 }} onClick={this.closeHelp} title="Close">✕</span>
+                    <Tooltip title="Pop out">
+                      <button onClick={this.popOutWindow}
+                        style={{ marginRight: 8, background:'transparent', color:'#F2EFE9', border:'1px solid #78909C', borderRadius:4, padding:'2px 6px' }}>
+                        Pop out
+                      </button>
+                    </Tooltip>
+                    <Tooltip title="Close">
+                      <span style={{ cursor: 'pointer', fontSize: 18, opacity: 0.85 }} onClick={this.closeHelp}>✕</span>
+                    </Tooltip>
                   </span>
                 </div>
                 <div style={{ padding: '14px 16px', lineHeight: '1.6', fontSize: 15 }}>
@@ -210,20 +216,21 @@ class PanelDescription extends React.Component {
                     Under Title, Datas shows calculated optimisation of tour. Title box also get selected nodes/edges chips. Clicking on them reveals their datas. When some are selected, Focu and rearrange redraws a subGraph, ordered, whereas focus only just removes the other nodes/edges from the view. On timeline, pressing Stop set timedelta to 1 year. Pressing next button iterates 1 year slices. Otherwise play/pause button can allow animation. Charts has console output stats too, so use the inspector to reveal various Stats if need be.
                   </p>
                 </div>
-                <div
-                  onMouseDown={this.handleResizeStart}
-                  title="Resize"
-                  style={{
-                    position: 'absolute',
-                    width: 16,
-                    height: 16,
-                    right: 6,
-                    bottom: 6,
-                    cursor: 'nwse-resize',
-                    borderRight: '2px solid #B0BEC5',
-                    borderBottom: '2px solid #B0BEC5'
-                  }}
-                />
+                <Tooltip title="Resize">
+                  <div
+                    onMouseDown={this.handleResizeStart}
+                    style={{
+                      position: 'absolute',
+                      width: 16,
+                      height: 16,
+                      right: 6,
+                      bottom: 6,
+                      cursor: 'nwse-resize',
+                      borderRight: '2px solid #B0BEC5',
+                      borderBottom: '2px solid #B0BEC5'
+                    }}
+                  />
+                </Tooltip>
               </div>
             </Portal>
           ) : null

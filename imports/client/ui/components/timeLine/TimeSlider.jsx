@@ -5,18 +5,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ui from '/imports/client/legacyUi'
 import moment from 'moment'
-import Tooltip from 'rc-tooltip';
-import Slider from 'rc-slider';
+import Slider from '@mui/material/Slider'
 import debounce from 'lodash/debounce'
 
 
-import './indexRCSLIDER.css';
-
-
-const createSliderWithTooltip =   Slider.createSliderWithTooltip;
-const Range = createSliderWithTooltip(Slider.Range);
-
-//const SliderWithTooltip = createSliderWithTooltip(Slider)
+// rc-slider CSS and tooltip HOC removed; using MUI Slider with built-in value labels
 
 function dateFormatter(v) {
   return moment(v).format('MMM D, YYYY')
@@ -55,12 +48,11 @@ export default class TimeSlider extends React.Component {
     const minYear = moment(minTime).year(),
       maxYear = moment(maxTime).year()
 
-    // generate list of years (in ms)
-    const marksYears = {}
-    Array(maxYear-minYear+1)
+    // generate list of years (in ms) for MUI Slider marks
+    const marksYears = Array(maxYear - minYear + 1)
       .fill(0)
-      .map((n,i) => minYear+i)
-      .forEach(n => marksYears[new Date(n, 0, 1).getTime()] = n)
+      .map((_, i) => minYear + i)
+      .map((year) => ({ value: new Date(year, 0, 1).getTime(), label: String(year) }))
 
       //let valueRange = [{currentSliderTimeMin},{currentSliderTime}]
 
@@ -70,22 +62,16 @@ export default class TimeSlider extends React.Component {
 
           <div>
 
-            <Range
-            defaultValue={[minTime,maxTime]}
-            style={{ zIndex : 1000 }}
-            value={currentRange}
-            min={minTime}
-            max={maxTime}
-            //defaultValue={[ 1281214800000, 1284866786842 ]}
-            step={1}
-            marks={marksYears}
-            marksStyle={{ zIndex : 10 }}
-            tipFormatter={dateFormatter}
-            tipProps={{ overlayClassName: 'foo' }}
-            //onAfterChange={this.onSliderChange}
-            onChange={this.onSliderChange}
-            pushable={true}
-            allowCross={true}
+            <Slider
+              sx={{ zIndex: 1000 }}
+              value={currentRange}
+              min={minTime}
+              max={maxTime}
+              step={1}
+              marks={marksYears}
+              valueLabelDisplay="auto"
+              valueLabelFormat={dateFormatter}
+              onChange={(_, v) => this.onSliderChange(v)}
             />
           </div>
         </div>

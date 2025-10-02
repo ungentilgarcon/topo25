@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import WindowPortal from './WindowPortal.jsx'
+import Tooltip from '@mui/material/Tooltip'
 
 class Portal extends React.Component {
   componentDidMount() {
@@ -122,15 +123,18 @@ export default class Popup extends React.Component {
         <span>{title}</span>
         <span>
           {onPopOut ? (
-            <button
-              onClick={(e) => { e.stopPropagation(); this.setState({ poppedOut: true }); try { onPopOut() } catch (err) {} }}
-              title="Pop out"
-              style={{ marginRight: 8, background:'transparent', color:'#F2EFE9', border:'1px solid #78909C', borderRadius:4, padding:'2px 6px' }}
-            >
-              Pop out
-            </button>
+            <Tooltip title="Pop out">
+              <button
+                onClick={(e) => { e.stopPropagation(); this.setState({ poppedOut: true }); try { onPopOut() } catch (err) {} }}
+                style={{ marginRight: 8, background:'transparent', color:'#F2EFE9', border:'1px solid #78909C', borderRadius:4, padding:'2px 6px' }}
+              >
+                Pop out
+              </button>
+            </Tooltip>
           ) : null}
-          <span style={{ cursor: 'pointer', fontSize: 18, opacity: 0.85 }} onClick={onClose} title="Close">✕</span>
+          <Tooltip title="Close">
+            <span style={{ cursor: 'pointer', fontSize: 18, opacity: 0.85 }} onClick={onClose}>✕</span>
+          </Tooltip>
         </span>
       </div>
     )
@@ -190,20 +194,21 @@ export default class Popup extends React.Component {
           <div style={{ padding: '12px 14px' }}>
             {children}
           </div>
-          <div
-            onMouseDown={this.handleResizeStart}
-            title="Resize"
-            style={{
-              position: 'absolute',
-              width: 16,
-              height: 16,
-              right: 6,
-              bottom: 6,
-              cursor: 'nwse-resize',
-              borderRight: '2px solid #B0BEC5',
-              borderBottom: '2px solid #B0BEC5'
-            }}
-          />
+          <Tooltip title="Resize">
+            <div
+              onMouseDown={this.handleResizeStart}
+              style={{
+                position: 'absolute',
+                width: 16,
+                height: 16,
+                right: 6,
+                bottom: 6,
+                cursor: 'nwse-resize',
+                borderRight: '2px solid #B0BEC5',
+                borderBottom: '2px solid #B0BEC5'
+              }}
+            />
+          </Tooltip>
         </div>
       </Portal>
     )
