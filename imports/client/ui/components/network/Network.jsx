@@ -131,7 +131,7 @@ class Network extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-
+    // Ensure we always work with arrays, even if props are missing
     let shouldUpdate = false
 
     const {
@@ -142,7 +142,11 @@ class Network extends React.Component {
       isolateMode
     } = nextProps.ui
 
-    const { nodes, edges } = nextProps
+    const nodes = nextProps.nodes || []
+    const edges = nextProps.edges || []
+
+    const currNodes = this.props.nodes || []
+    const currEdges = this.props.edges || []
 
     if (nextProps.width !== this.props.width) return true
     if (nextProps.height !== this.props.height) return true
@@ -158,10 +162,10 @@ class Network extends React.Component {
 
     // list of checks
 
-    if ( this.props.ui.layoutName !== layoutName) shouldUpdate = true
-    if ( this.props.ui.nodeRadius !== nodeRadius) shouldUpdate = true
-    if ( this.props.nodes.length !== nodes.length) shouldUpdate = true
-    if ( this.props.edges.length !== edges.length) shouldUpdate = true
+  if ( this.props.ui.layoutName !== layoutName) shouldUpdate = true
+  if ( this.props.ui.nodeRadius !== nodeRadius) shouldUpdate = true
+  if ( currNodes.length !== nodes.length) shouldUpdate = true
+  if ( currEdges.length !== edges.length) shouldUpdate = true
     //FOR BANDSTOUR MAPS
     if ( this.props.nodes.style !== nodes.style) {
     console.log("styles of nodes not matching");
@@ -177,7 +181,7 @@ class Network extends React.Component {
     }
 
     // TODO : proper nodes/edges diff...
-    this.props.nodes.forEach((el, ix) => {
+    currNodes.forEach((el, ix) => {
                                 if ( JSON.stringify(el) != JSON.stringify(nodes[ix]) ) {
                                   shouldUpdate = true
                                 }
@@ -194,13 +198,13 @@ class Network extends React.Component {
   }
 
   render() {
-
+    // Guard against undefined props by falling back to empty arrays
     const {
-      nodes,
       height,
-      edges,
       width
     } = this.props
+    const nodes = this.props.nodes || []
+    const edges = this.props.edges || []
 
     const {
       layoutName,
@@ -248,12 +252,4 @@ Network.propTypes = {
   height: PropTypes.string.isRequired
 }
 
-Network.defaultProps = {
-  nodes : [],
-  nodesReady : false,
-  edges : [],
-  edgesReady : false,
-  style : NetworkDefaultStyle(),
-  layoutName : 'spread'
-}
 export default Network

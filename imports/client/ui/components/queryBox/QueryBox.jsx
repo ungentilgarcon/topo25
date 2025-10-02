@@ -41,7 +41,7 @@ class QueryBox extends React.Component {
     // Map incoming nodes to options and dedupe by unique id to avoid duplicate keys
     const seen = new Set()
     const dataSource = []
-    for (const n of this.props.nodes) {
+    for (const n of (this.props.nodes || [])) {
       const id = n?.data?.id
       if (id == null || seen.has(id)) continue
       seen.add(id)
@@ -87,10 +87,6 @@ QueryBox.propTypes = {
   })
 }
 
-QueryBox.defaultProps = {
-  topogram : {},
-  nodes : [],
-  edges : []
-}
+// default props removed; use safe fallbacks in render instead to avoid memo/defaultProps warning
 
 export default injectIntl(QueryBox)

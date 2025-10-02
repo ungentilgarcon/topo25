@@ -84,7 +84,7 @@ class GeoMap extends React.Component {
       .style('width', width)
     const left = width === '50vw' ? '50vw' : 0
 
-    const nodes = this.props.nodes
+    const nodes = (this.props.nodes || [])
       .map( n => {
         const lat = parseFloat(n.data.lat)
         const lng = parseFloat(n.data.lng)
@@ -96,7 +96,7 @@ class GeoMap extends React.Component {
       })
       .filter(Boolean)
 
-    const edges = this.props.edges
+    const edges = (this.props.edges || [])
       .map( e => {
         const source = nodesById[e.data.source]
         const target = nodesById[e.data.target]
@@ -206,11 +206,4 @@ class GeoMap extends React.Component {
   }
 }
 
-
-GeoMap.defaultProps = {
-  nodes : [],
-  nodesReady : false,
-  edges : [],
-  edgesReady : false
-}
 export default GeoMap
