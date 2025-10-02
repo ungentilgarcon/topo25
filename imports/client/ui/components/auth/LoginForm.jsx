@@ -33,7 +33,7 @@ const LoginForm = ({
             name="email"
             errorText={errors.email}
             onChange={onChange}
-            value={user.email}
+            value={user.email ?? ''}
           />
         </div>
 
@@ -44,7 +44,7 @@ const LoginForm = ({
             name="password"
             onChange={onChange}
             errorText={errors.password}
-            value={user.password}
+            value={user.password ?? ''}
           />
         </div>
       </CardText>

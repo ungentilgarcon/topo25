@@ -11,6 +11,7 @@ import Pause from '@mui/icons-material/Pause'
 import Stop from '@mui/icons-material/Stop'
 import SkipNext from '@mui/icons-material/SkipNext'
 import TimeSlider from './TimeSlider.jsx'
+import Tooltip from '@mui/material/Tooltip'
 
 const styleTimeLine = {
   //height: '100px',
@@ -235,41 +236,43 @@ export default class TimeLine extends React.Component {
                       </a>
 
                     </span>
-                    <IconButton
-                      size="small"
-                      onClick={
-                        this.state.playing ?
-                        () => this.pause()
-                        :
-                        () => this.play()
-                      }
-                      alt="Play/Resume"
-                      title="Play/Resume"
-
+                    <Tooltip title="Play/Resume">
+                      <IconButton
+                        size="small"
+                        onClick={
+                          this.state.playing ?
+                          () => this.pause()
+                          :
+                          () => this.play()
+                        }
+                        alt="Play/Resume"
                       >
-                      {
-                        this.state.playing ?
-                        <Pause />
-                        :
-                        <PlayCircleFilled />
-                      }
-                    </IconButton>
+                        {
+                          this.state.playing ?
+                          <Pause />
+                          :
+                          <PlayCircleFilled />
+                        }
+                      </IconButton>
+                    </Tooltip>
                     <IconButton
                       size="small"
                       onClick={() => this.next()}
                       alt="next year of tours"
-                      title="next year of tours"
                       >
-                      <SkipNext />
+                      <Tooltip title="next year of tours">
+                        <SkipNext />
+                      </Tooltip>
                     </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => this.stop()}
-                      alt="Stop/1st year of tour"
-                      title="Stop/1st year of tour"
-                      >
-                      <Stop />
-                    </IconButton>
+                    <Tooltip title="Stop/1st year of tour">
+                      <IconButton
+                        size="small"
+                        onClick={() => this.stop()}
+                        alt="Stop/1st year of tour"
+                        >
+                        <Stop />
+                      </IconButton>
+                    </Tooltip>
 
                     <TextField
                       className= 'textFTime'

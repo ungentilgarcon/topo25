@@ -30,7 +30,7 @@ const SignUpForm = ({
             name="username"
             errorText={errors.username}
             onChange={onChange}
-            value={user.username}
+            value={user.username ?? ''}
           />
         </div>
 
@@ -40,7 +40,7 @@ const SignUpForm = ({
             name="email"
             errorText={errors.email}
             onChange={onChange}
-            value={user.email}
+            value={user.email ?? ''}
           />
         </div>
 
@@ -51,7 +51,7 @@ const SignUpForm = ({
             name="password"
             onChange={onChange}
             errorText={errors.password}
-            value={user.password}
+            value={user.password ?? ''}
           />
         </div>
 
