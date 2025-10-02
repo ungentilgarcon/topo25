@@ -28,6 +28,18 @@ const divChartsStyle = {
 //const createSliderWithTooltip = Slider.createSliderWithTooltip;
 //const Range = createSliderWithTooltip(Slider.Range);
 
+// Robust percentile helper (0..1). Returns NaN for empty arrays.
+function percentile(arr, p) {
+  if (!Array.isArray(arr) || arr.length === 0) return NaN
+  const a = arr.slice().sort((x,y) => x - y)
+  const pos = (a.length - 1) * p
+  const lo = Math.floor(pos)
+  const hi = Math.ceil(pos)
+  if (lo === hi) return a[lo]
+  const h = pos - lo
+  return a[lo] * (1 - h) + a[hi] * h
+}
+
 
 
 @ui()
@@ -381,14 +393,10 @@ var regenerale= /.*/g;
 //  console.log("EDGES",edgesforCharts)
   //console.log(this.nodes[i]["_private"]["data"])
 
-  var resweig = nodesforCharts.map((n)=>{
-    return(
-      Math.round(Math.pow(n.data.weight,2),0)
-//      n.data.weight
-    )
-
-  }
-  )
+  // Build clean numeric arrays
+  const resweig = nodesforCharts
+    .map(n => Number.isFinite(n?.data?.weight) ? Math.round(Math.pow(n.data.weight, 2)) : null)
+    .filter(v => typeof v === 'number' && isFinite(v))
 
   console.log("NODE WEIGHT LIST/RESULT N",resweig);
 
@@ -452,13 +460,9 @@ ArrayValresweigUniquesPoids =Object.keys(resweigUniquesPoids)
 
 //===============================================================>
 
-  var resweigEdges = edgesforCharts.map((n)=>{
-    return(
-      n.data.weight
-    )
-
-  }
-  )
+  const resweigEdges = edgesforCharts
+    .map(n => Number.isFinite(n?.data?.weight) ? Number(n.data.weight) : null)
+    .filter(v => typeof v === 'number' && isFinite(v))
 
   console.log("EDGE WEIGHT LIST/RESULT N",resweigEdges);
 
@@ -528,28 +532,44 @@ console.log(ArrayresweigEdgesUniquesPoidsDATA);
 
   const statistical = require('statistical-js');
   try{
-    const summaryNodes = statistical.methods.summary(resweig);
-    const summaryEdges = statistical.methods.summary(resweigEdges);
+    // Guard against empty arrays
+    const safe = (arr) => Array.isArray(arr) && arr.length > 0 ? arr : [0]
+    const nodesArr = safe(resweig)
+    const edgesArr = safe(resweigEdges)
+
+    const summaryNodes = statistical.methods.summary(nodesArr);
+    const summaryEdges = statistical.methods.summary(edgesArr);
 
     console.log(" SUMMARY NODES  RESULTS",summaryNodes);
     console.log(" SUMMARY EDGES  RESULTS",summaryEdges);
-    const ttestN = statistical.methods.tTestOneSample(resweig, 4)
+  // If sample size is too small, t-test can be unstable; wrap in try
+  let ttestN = null
+  try { ttestN = statistical.methods.tTestOneSample(nodesArr, 4) } catch (_) {}
     console.log("Student NW",ttestN);
-    const ttestE = statistical.methods.tTestOneSample(resweigEdges, 4)
+  let ttestE = null
+  try { ttestE = statistical.methods.tTestOneSample(edgesArr, 4) } catch (_) {}
     console.log("Student EW",ttestE);
 
     const distributionType = statistical.methods.poisson;
     const distributionTypeEdges = statistical.methods.poisson;
 
-    const chiSquaredGoodnessOfFit = statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigUniquesPoids, distributionType, 0.005);
+    // Chi-squared expects observed counts per bin; ensure non-empty
+    const chiSquaredGoodnessOfFit = ArrayresweigUniquesPoids.length
+      ? statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigUniquesPoids, distributionType, 0.005)
+      : null;
     console.log("chi2 Nodes",chiSquaredGoodnessOfFit);
-    const chiSquaredGoodnessOfFitEdges = statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigEdgesUniquesPoids, distributionTypeEdges, 0.005);
+    const chiSquaredGoodnessOfFitEdges = ArrayresweigEdgesUniquesPoids.length
+      ? statistical.methods.chiSquaredGoodnessOfFit(ArrayresweigEdgesUniquesPoids, distributionTypeEdges, 0.005)
+      : null;
     console.log("chi2 Edges",chiSquaredGoodnessOfFitEdges);
 
     // Save a compact stats snapshot for rendering
     this._stats = {
       nodes: {
         mean: summaryNodes.mean,
+        median: Array.isArray(nodesArr) ? nodesArr.slice().sort((a,b)=>a-b)[Math.floor(nodesArr.length/2)] : undefined,
+        p25: Array.isArray(nodesArr) ? percentile(nodesArr, 0.25) : undefined,
+        p75: Array.isArray(nodesArr) ? percentile(nodesArr, 0.75) : undefined,
         stdev: summaryNodes.standardDeviation || summaryNodes.stddev || summaryNodes.sd,
         n: summaryNodes.count || summaryNodes.n,
         t: ttestN && (ttestN.t || ttestN.statistic),
@@ -557,6 +577,9 @@ console.log(ArrayresweigEdgesUniquesPoidsDATA);
       },
       edges: {
         mean: summaryEdges.mean,
+        median: Array.isArray(edgesArr) ? edgesArr.slice().sort((a,b)=>a-b)[Math.floor(edgesArr.length/2)] : undefined,
+        p25: Array.isArray(edgesArr) ? percentile(edgesArr, 0.25) : undefined,
+        p75: Array.isArray(edgesArr) ? percentile(edgesArr, 0.75) : undefined,
         stdev: summaryEdges.standardDeviation || summaryEdges.stddev || summaryEdges.sd,
         n: summaryEdges.count || summaryEdges.n,
         t: ttestE && (ttestE.t || ttestE.statistic),
@@ -774,6 +797,8 @@ return (
     key={`nodes-${this._nodesBinsKey || 'none'}`}
     legend={legendNodes}
     title={"nodes"}
+    tooltip={{ grouped: false }}
+    axis={{ x: { show: false }, y: { show: false } }}
     unselectAllElements={this.unselectAllElements}
     unselectElement={this.unselectElement}
     selectElement={this.selectElement}
@@ -792,6 +817,9 @@ return (
         <span style={{ marginLeft: 8 }}>n={this._stats.nodes.n}</span>
         <span style={{ marginLeft: 8 }}>mean={Number(this._stats.nodes.mean).toFixed(3)}</span>
         <span style={{ marginLeft: 8 }}>sd={Number(this._stats.nodes.stdev || 0).toFixed(3)}</span>
+        <span style={{ marginLeft: 8 }}>p25={this._stats.nodes.p25 != null ? Number(this._stats.nodes.p25).toFixed(2) : '—'}</span>
+        <span style={{ marginLeft: 8 }}>p50={this._stats.nodes.median != null ? Number(this._stats.nodes.median).toFixed(2) : '—'}</span>
+        <span style={{ marginLeft: 8 }}>p75={this._stats.nodes.p75 != null ? Number(this._stats.nodes.p75).toFixed(2) : '—'}</span>
         <span style={{ marginLeft: 8 }}>t≈{this._stats.nodes.t != null ? Number(this._stats.nodes.t).toFixed(3) : '—'}</span>
         <span style={{ marginLeft: 8 }}>p≈{this._stats.nodes.p != null ? Number(this._stats.nodes.p).toExponential(2) : '—'}</span>
         {this._stats.chi2 && this._stats.chi2.nodes ? (
@@ -814,6 +842,8 @@ return (
   key={`edges-${this._edgesBinsKey || 'none'}`}
   legend={legendEdges}
   title={"edges"}
+  tooltip={{ grouped: false }}
+  axis={{ x: { show: false }, y: { show: false } }}
   style={{
 
 
@@ -828,6 +858,9 @@ return (
       <span style={{ marginLeft: 8 }}>n={this._stats.edges.n}</span>
       <span style={{ marginLeft: 8 }}>mean={Number(this._stats.edges.mean).toFixed(3)}</span>
       <span style={{ marginLeft: 8 }}>sd={Number(this._stats.edges.stdev || 0).toFixed(3)}</span>
+      <span style={{ marginLeft: 8 }}>p25={this._stats.edges.p25 != null ? Number(this._stats.edges.p25).toFixed(2) : '—'}</span>
+      <span style={{ marginLeft: 8 }}>p50={this._stats.edges.median != null ? Number(this._stats.edges.median).toFixed(2) : '—'}</span>
+      <span style={{ marginLeft: 8 }}>p75={this._stats.edges.p75 != null ? Number(this._stats.edges.p75).toFixed(2) : '—'}</span>
       <span style={{ marginLeft: 8 }}>t≈{this._stats.edges.t != null ? Number(this._stats.edges.t).toFixed(3) : '—'}</span>
       <span style={{ marginLeft: 8 }}>p≈{this._stats.edges.p != null ? Number(this._stats.edges.p).toExponential(2) : '—'}</span>
       {this._stats.chi2 && this._stats.chi2.edges ? (

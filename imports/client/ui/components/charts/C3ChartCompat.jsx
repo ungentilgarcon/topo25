@@ -1,9 +1,34 @@
 import React, { useEffect, useRef } from 'react'
 import c3 from 'c3'
+import { buildC3Options } from './c3Options'
 
 // Lightweight React 18-compatible wrapper for c3
 // Props supported: data, color, legend, size, title, className, style, onReady
-export default function C3ChartCompat({ data, color, legend, size, title, className, style, onReady }) {
+export default function C3ChartCompat({
+  data,
+  color,
+  legend,
+  size,
+  title,
+  className,
+  style,
+  onReady,
+  // Additional c3 config passthroughs
+  axis,
+  tooltip,
+  grid,
+  interaction,
+  padding,
+  transition,
+  pie,
+  donut,
+  oninit,
+  onrender,
+  onmouseover,
+  onmouseout,
+  onresize,
+  onresized,
+}) {
   const ref = useRef(null)
   const chartRef = useRef(null)
 
@@ -29,18 +54,28 @@ export default function C3ChartCompat({ data, color, legend, size, title, classN
       chartRef.current = null
     }
 
-    const options = {
+    const options = buildC3Options({
       bindto: ref.current,
       data,
       color,
       legend,
       size,
-    }
-
-    // If donut chart, map title prop to c3's donut.title
-    if (data && (data.type === 'donut' || (Array.isArray(data.types) && data.types.includes('donut'))) && title) {
-      options.donut = Object.assign({}, options.donut, { title: String(title) })
-    }
+      title,
+      axis,
+      tooltip,
+      grid,
+      interaction,
+      padding,
+      transition,
+      pie,
+      donut,
+      oninit,
+      onrender,
+      onmouseover,
+      onmouseout,
+      onresize,
+      onresized,
+    })
 
     try {
       chartRef.current = c3.generate(options)
@@ -58,7 +93,7 @@ export default function C3ChartCompat({ data, color, legend, size, title, classN
       }
     }
     // Recreate chart whenever inputs change; objects are new most renders in caller
-  }, [data, color, legend, size])
+  }, [data, color, legend, size, title, axis, tooltip, grid, interaction, padding, transition, pie, donut, oninit, onrender, onmouseover, onmouseout, onresize, onresized])
 
   // Nudge chart on window resize in case container listener is unavailable
   useEffect(() => {
