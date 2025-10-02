@@ -17,12 +17,8 @@ function renderWithCreateRootOrFallback(tree) {
         // Direct file path fallback (exists in node_modules/react-dom)
         client = require('react-dom/client.js')
       } catch (e2) {
-        try {
-          // Development CJS fallback
-          client = require('react-dom/cjs/react-dom-client.development.js')
-        } catch (e3) {
-          client = null
-        }
+        // Avoid requiring react-dom internal CJS paths to prevent Meteor warnings
+        client = null
       }
     }
     if (client && typeof client.createRoot === 'function') {

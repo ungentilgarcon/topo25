@@ -23,7 +23,10 @@ export function uiReducer(state = {}, action) {
       // Only set defaults for keys that are currently undefined
       const next = { ...state }
       Object.keys(init).forEach((k) => {
-        if (typeof next[k] === 'undefined') next[k] = init[k]
+        if (typeof next[k] === 'undefined') {
+          const def = init[k]
+          next[k] = typeof def === 'function' ? def() : def
+        }
       })
       return next
     }
@@ -44,7 +47,17 @@ export default function ui(options = {}) {
         }
       }
       render() {
-        return <WrappedComponent {...this.props} />
+        // Overlay defaults on first render so consumers don't see undefined
+        const defaults = (options && options.state) || {}
+        const current = this.props.ui || {}
+        const safeUi = { ...current }
+        Object.keys(defaults).forEach((k) => {
+          if (typeof safeUi[k] === 'undefined') {
+            const def = defaults[k]
+            safeUi[k] = typeof def === 'function' ? def() : def
+          }
+        })
+        return <WrappedComponent {...this.props} ui={safeUi} />
       }
     }
 
