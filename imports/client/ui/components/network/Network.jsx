@@ -15,10 +15,13 @@ class Network extends React.Component {
   constructor(props) {
     super(props)
     this.state = { init : false }
+    this.graphRef = React.createRef()
   }
 
   setUpClickEvents() {
-    this.refs.graph.getCy()
+    const cy = this.graphRef.current && this.graphRef.current.getCy ? this.graphRef.current.getCy() : null
+    if (!cy) return
+    cy
       .off('grab', 'node')  // reset
       .off('free', 'node')  // reset
       .off('tapstart', 'edge')  // reset
@@ -48,7 +51,9 @@ class Network extends React.Component {
   }
 
   setUpGrabFreeEvents() {
-    this.refs.graph.getCy()
+    const cy = this.graphRef.current && this.graphRef.current.getCy ? this.graphRef.current.getCy() : null
+    if (!cy) return
+    cy
       .off('free', 'node')  // reset
       .off('free', 'edge')  // reset
       .off('tap', 'node')
@@ -59,8 +64,8 @@ class Network extends React.Component {
   }
 
   componentDidMount() {
-
-    const cy = this.refs.graph.getCy()
+    const cy = this.graphRef.current && this.graphRef.current.getCy ? this.graphRef.current.getCy() : null
+    if (!cy) return
 
     // set default events
     cy.on('mouseover', 'node', e => {
@@ -183,7 +188,9 @@ class Network extends React.Component {
   }
 
   componentDidUpdate() {
-    this.refs.graph.getCy().resize().fit()
+    const cy = this.graphRef.current && this.graphRef.current.getCy ? this.graphRef.current.getCy() : null
+    if (!cy) return
+    cy.resize().fit()
   }
 
   render() {
@@ -210,7 +217,7 @@ class Network extends React.Component {
     return (
       <div>
         <Cytoscape
-          ref = "graph"
+          ref={this.graphRef}
           elements ={elements}
           init={this.state.init}
           style = {NetworkDefaultStyle()}

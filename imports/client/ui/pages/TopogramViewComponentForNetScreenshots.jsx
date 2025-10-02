@@ -361,49 +361,45 @@ componentDidUpdate(prevProps) {
     maxWeight,
     minWeight,
   } = this.props
+  const init = {}
 
   if (
     hasTimeInfo &&
     (ui.minTime == null || ui.maxTime == null) &&
     (minTime != null && maxTime != null)
   ) {
-    // pass value to UI as default
-    this.props.updateUI('minTime', minTime)
-    this.props.updateUI('maxTime', maxTime)
-
+    init.minTime = minTime
+    init.maxTime = maxTime
   }
+
   if (
     hasTimeInfo &&
     Array.isArray(ui.valueRange) &&
     ui.valueRange.some((el) => el == null) &&
     (minTime != null && maxTime != null)
-  )
-
-  {
-    // pass value to UI as default
-    this.props.updateUI('valueRange', [Math.round(minTime),Math.round(maxTime)])
-
-
+  ) {
+    init.valueRange = [Math.round(minTime), Math.round(maxTime)]
   }
+
   if (
-    nodeCategories &&
     (ui.minWeight == null || ui.maxWeight == null) &&
     (typeof minWeight === 'number' && typeof maxWeight === 'number')
   ){
-    this.props.updateUI('minWeight', minWeight)
-    this.props.updateUI('maxWeight', maxWeight)
-
+    init.minWeight = minWeight
+    init.maxWeight = maxWeight
   }
 
-
-  // default value to all
   if (
     Array.isArray(nodeCategories) &&
     nodeCategories.length > 0 &&
     Array.isArray(ui.selectedNodeCategories) &&
     ui.selectedNodeCategories.length === 0
   ) {
-    this.props.updateUI('selectedNodeCategories', nodeCategories)
+    init.selectedNodeCategories = nodeCategories
+  }
+
+  if (Object.keys(init).length > 0) {
+    this.props.updateUI(init)
   }
 
 }
