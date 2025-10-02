@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 import { DrawerCompat as Drawer } from '/imports/startup/client/muiCompat'
 import ClearIcon from '@mui/icons-material/Clear'

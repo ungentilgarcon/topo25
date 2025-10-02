@@ -55,7 +55,7 @@
     "redux-logger": "^2.10.2",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.4.2",
-    "redux-ui": "^0.1.1",
+    
     "request": "^2.79.0",
     "simpl-schema": "^3.4.6",
     "statistical-js": "^2.1.0",

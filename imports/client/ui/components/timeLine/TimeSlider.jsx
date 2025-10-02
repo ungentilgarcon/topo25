@@ -3,7 +3,7 @@ import './timeline.css'
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import moment from 'moment'
 import Tooltip from 'rc-tooltip';
 import Slider from 'rc-slider';

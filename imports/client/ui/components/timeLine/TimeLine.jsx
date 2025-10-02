@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import moment from 'moment'
 
 import { CardCompat as Card, CardTextCompat as CardText, CardTitleCompat as CardHeader, DividerCompat as Divider, DatePickerCompat as DatePicker } from '/imports/startup/client/muiCompat'

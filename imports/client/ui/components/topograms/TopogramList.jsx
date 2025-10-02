@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import { defineMessages, injectIntl } from 'react-intl'
 import { SubheaderCompat as SubHeader, TextFieldCompat as TextField, CheckboxCompat as Toggle } from '/imports/startup/client/muiCompat'
 import MUIAutocomplete from '@mui/material/Autocomplete'

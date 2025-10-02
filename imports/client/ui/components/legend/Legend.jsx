@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import { DividerCompat as Divider } from '/imports/startup/client/muiCompat'
 import d3 from 'd3'
 import { CircleMarker } from 'react-leaflet'

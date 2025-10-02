@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import { CardCompat as Card, CardTitleCompat as CardTitle, CardActionsCompat as CardActions } from '/imports/startup/client/muiCompat'
 // FlatButton removed in favor of MUI v5 Button
 import Button from '@mui/material/Button'

@@ -1,5 +1,5 @@
 import React from 'react'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 import { MenuItemCompat as MenuItem } from '/imports/startup/client/muiCompat'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'

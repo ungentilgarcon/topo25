@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 import MainViz from '/imports/client/ui/components/mainViz/MainViz.jsx'
 //import TitleBox from '/imports/client/ui/components/titlebox/TitleBox.jsx'

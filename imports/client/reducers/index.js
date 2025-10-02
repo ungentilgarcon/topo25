@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { reducer as uiReducer } from 'redux-ui'
+import { uiReducer } from '/imports/client/legacyUi'
 import { topogramsPublic } from './topogramsPublic'
 import { topogram } from './topogram'
 import { topogramsPrivate } from './topogramsPrivate'

@@ -183,7 +183,6 @@ Video below shows the evolution of the sector over the 10 years between 2007 and
 <div>
 <p style={{ color: '#aa8dc6',fontSize : '38pt', lineHeight : '1em' }}>
    Evolution of the music tours sold on internet between 2007 and 2017</p>
-    <link rel="stylesheet" href="/css/video-react.css" />
     <Player
       playsInline
       poster="/evolution_poster.png"
@@ -199,7 +198,6 @@ Video below shows the evolution of the sector over the 10 years between 2007 and
    <p style={{ color: '#aa8dc6',fontSize : '8pt', lineHeight : '1em' }}>
    Shows clusters of tours that are similar according to 15 centroids using UMAP.
    </p>
-    <link rel="stylesheet" href="/css/video-react.css" />
     <Player
       playsInline
       poster="/cluster_poster.png"

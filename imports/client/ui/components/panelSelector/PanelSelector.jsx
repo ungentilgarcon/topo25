@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 
 // Render simple blocks; use CheckboxCompat for MUI v5
 import { CheckboxCompat as Checkbox } from '/imports/startup/client/muiCompat'

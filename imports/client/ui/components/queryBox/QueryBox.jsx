@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ui from 'redux-ui'
+import ui from '/imports/client/legacyUi'
 import { defineMessages, injectIntl } from 'react-intl'
 import MUIAutocomplete from '@mui/material/Autocomplete'
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
