@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 import React from 'react'
-import { createRoot } from 'react-dom/client'
+import { render } from 'react-dom'
 
 import { renderRoutes } from '/imports/startup/client/routes.jsx'
 
@@ -14,10 +14,6 @@ Meteor.startup(() => {
 
   const container = document.getElementById('app')
   if (!container) return
-
-  // Cache the root on window to avoid recreating it across hot reloads (Meteor HMR)
-  if (!window.__TOPOROOT__) {
-    window.__TOPOROOT__ = createRoot(container)
-  }
-  window.__TOPOROOT__.render(tree)
+  // Use legacy render under React 18 for Meteor compatibility; upgrade to createRoot once resolver supports 'react-dom/client'
+  render(tree, container)
 })
