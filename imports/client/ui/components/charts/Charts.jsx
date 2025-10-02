@@ -9,14 +9,10 @@ import Popup from '/imports/client/ui/components/common/Popup.jsx'
 
 
 import './c3.css';
-//import Tooltip from 'rc-tooltip';
-//import Slider from 'rc-slider';
 import d3  from 'd3/d3';
-//import { scaleLinear } from 'd3-scale'
-//import {schemeCategory10} from 'd3/d3'
 
-//math.sqrt(float(my_nodesdict[idd]["data"].get("weight"))+1) ,
-//import 'rc-slider/assets/index.css';
+
+
 /*APPLYS TO NODES AND EDGES SELECTED ON SCREEN, SO CY IS THE TARGET OF IMPLANT :)*/
 const CHARTS_DIV_ID = "charts"
 const divChartsStyle = {
@@ -24,10 +20,7 @@ const divChartsStyle = {
   top: '0',
   zIndex : -1
 }
-//const mountNode = document.getElementById('react-c3js');
 
-//const createSliderWithTooltip = Slider.createSliderWithTooltip;
-//const Range = createSliderWithTooltip(Slider.Range);
 
 // Robust percentile helper (0..1). Returns NaN for empty arrays.
 function percentile(arr, p) {
