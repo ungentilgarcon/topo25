@@ -56,7 +56,7 @@ class QueryBox extends React.Component {
       <MUIAutocomplete
         options={dataSource}
         getOptionLabel={(o) => o.text || ''}
-        isOptionEqualToValue={(opt, val) => opt.value === val.value}
+  isOptionEqualToValue={(opt, val) => (opt?.value ?? null) === (val?.value ?? null)}
         sx={{ width: '100%' }}
         onChange={(e, value) => value && this.handleNewRequest(value)}
         renderOption={(props, option) => (
