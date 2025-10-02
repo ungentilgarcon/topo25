@@ -144,5 +144,4 @@ body { background: #F5F5F5; }
 .home-create-section { margin: 0; width: 100%; background: white; text-align: center; }
 .home-public-list h5 { margin: 20px 20px 0; }
 
-/* Import prebuilt video-react styles */
-@import url('./video-react.css');
+/* video-react removed: no longer importing its styles */
