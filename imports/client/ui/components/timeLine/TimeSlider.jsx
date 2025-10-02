@@ -7,6 +7,7 @@ import ui from '/imports/client/legacyUi'
 import moment from 'moment'
 import Tooltip from 'rc-tooltip';
 import Slider from 'rc-slider';
+import debounce from 'lodash/debounce'
 
 
 import './indexRCSLIDER.css';
@@ -29,15 +30,16 @@ export default class TimeSlider extends React.Component {
     maxTime : PropTypes.number
   }
 
+  constructor(props) {
+    super(props)
+    // debounce UI updates to avoid thrashing during drags
+    this._debouncedUpdate = debounce((value) => {
+      this.props.updateUI({ valueRange: value })
+    }, 80)
+  }
+
   onSliderChange = (value) => {
-    this.props.updateUI({ //currentSliderTime : value[1],
-      //currentSliderTimeMin : value[0],
-      valueRange : value
-
-     })
-     console.log(this.props.ui.valueRange)
-     //console.log(value[1],value[0])
-
+    this._debouncedUpdate(value)
   }
 
 

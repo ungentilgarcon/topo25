@@ -445,21 +445,26 @@ render() {
   :
   true
 
-  const selectedIds = this.props.ui.selectedElements.map(d=>d.data.id)
-  //console.log("visible",timeLineVisible);
-  const nodes =  this.props.nodes.filter(n =>
-    //timeLineVisible?
-
-    filterTime(n)&& filterCategories(n)
-    // : filterCategories(n)
-
-  )
-  .map(n => {
-    let selected = selectedIds.includes(n.data.id)
-    let node = Object.assign( {}, n)
-    node.data.selected = selected
-    return node
+  const memoKey = JSON.stringify({
+    vr: this.props.ui.valueRange,
+    cats: this.props.ui.selectedNodeCategories,
+    len: this.props.nodes.length,
+    time: this.props.ui.minTime
   })
+  if (!this._memo) this._memo = {}
+  let nodes = this._memo[memoKey]
+  if (!nodes) {
+    const selectedIds = this.props.ui.selectedElements.map(d=>d.data.id)
+    nodes = this.props.nodes
+      .filter(n => filterTime(n) && filterCategories(n))
+      .map(n => {
+        const selected = selectedIds.includes(n.data.id)
+        const node = Object.assign({}, n)
+        node.data.selected = selected
+        return node
+      })
+    this._memo[memoKey] = nodes
+  }
   //      console.log(nodes);
 
   const nodeIds = nodes.map(n => n.data.id)
