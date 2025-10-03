@@ -23,6 +23,7 @@ import MUICheckbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import MUIChip from '@mui/material/Chip'
 import MUISnackbar from '@mui/material/Snackbar'
+import ChevronLeft from '@mui/icons-material/ChevronLeft'
 
 export function DialogCompat({ title, actions, modal, open, onRequestClose, style, children }) {
   // Normalize actions to an array and ensure keys to avoid React warnings
@@ -87,7 +88,8 @@ export function MenuItemCompat(props) {
     if (hasSubmenu) setAnchorEl(e.currentTarget)
   }
   const handleKeyDown = (e) => {
-    if (hasSubmenu && (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ')) {
+    // Open submenu toward the left on ArrowLeft / Enter / Space
+    if (hasSubmenu && (e.key === 'ArrowLeft' || e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault()
       setAnchorEl(e.currentTarget)
     }
@@ -110,6 +112,12 @@ export function MenuItemCompat(props) {
 
   const sx = style ? { ...sxProp, ...style } : sxProp
   const adornment = endAdornment || rightIcon
+  // For submenu items, show a left-facing arrow on the left of the text
+  const leftAdornment = hasSubmenu ? (
+    <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
+      <ChevronLeft fontSize="small" />
+    </ListItemIcon>
+  ) : (leftIcon ? <ListItemIcon>{leftIcon}</ListItemIcon> : null)
 
   return (
     <>
@@ -123,7 +131,7 @@ export function MenuItemCompat(props) {
         aria-expanded={hasSubmenu ? (open ? 'true' : 'false') : undefined}
         selected={!!selected}
       >
-        {leftIcon ? <ListItemIcon>{leftIcon}</ListItemIcon> : null}
+        {leftAdornment}
         <ListItemText primary={primaryText || children} secondary={secondaryText} />
         {adornment ? <Box sx={{ ml: 'auto' }}>{adornment}</Box> : null}
       </MenuItem>
@@ -140,7 +148,7 @@ export function MenuItemCompat(props) {
             onMouseEnter: cancelClose,
             onMouseLeave: scheduleClose
           }}
-          PaperProps={{ onMouseEnter: cancelClose, onMouseLeave: scheduleClose }}
+          PaperProps={{ onMouseEnter: cancelClose, onMouseLeave: scheduleClose, sx: { ml: -1 } }}
         >
           {React.Children.map(menuItems, (item) => {
             if (!React.isValidElement(item)) return item
