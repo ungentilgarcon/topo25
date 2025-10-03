@@ -16,7 +16,9 @@ const MAP_DIV_ID = 'map'
 const divMapStyle = {
   position: 'fixed',
   top: '0',
-  zIndex : -1
+  // Ensure the map can receive pointer events
+  zIndex : 0,
+  pointerEvents: 'auto'
 }
 
 @ui()

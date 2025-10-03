@@ -192,9 +192,11 @@ export default class GeoEdges extends React.Component {
               weight={weight}
               dashArray={dashArray}
               positions={seg}
-              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
-              onMouseDown={() => isolateMode ? onFocusElement(e) : null }
-              onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
+              eventHandlers={{
+                click: () => { if (!isolateMode) handleClickGeoElement({ group: 'edge', el: e }) },
+                mousedown: () => { if (isolateMode) onFocusElement(e) },
+                mouseup: () => { if (isolateMode) onUnfocusElement() }
+              }}
             />
           )
           // Invisible hit area: larger weight, nearly transparent
@@ -207,9 +209,11 @@ export default class GeoEdges extends React.Component {
               weight={hitWeight}
               bubblingMouseEvents={false}
               positions={seg}
-              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
-              onMouseDown={() => isolateMode ? onFocusElement(e) : null }
-              onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
+              eventHandlers={{
+                click: () => { if (!isolateMode) handleClickGeoElement({ group: 'edge', el: e }) },
+                mousedown: () => { if (isolateMode) onFocusElement(e) },
+                mouseup: () => { if (isolateMode) onUnfocusElement() }
+              }}
             />
           )
         })
@@ -230,8 +234,7 @@ export default class GeoEdges extends React.Component {
               key={`${ch.key}-${i}-${cIdx}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               position={[lat, lng]}
               icon={ch.icon}
-              interactive={true}
-              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
+              interactive={false}
             />
           )
         })
