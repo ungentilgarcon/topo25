@@ -1,4 +1,6 @@
 import { Meteor } from 'meteor/meteor'
+import { ValidatedMethod } from 'meteor/mdg:validated-method'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 export const updateUserName = new ValidatedMethod({
   name: 'user.updateUserName',

@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 import { Nodes } from '../nodes/Nodes.js'
 import { Meteor } from 'meteor/meteor'
@@ -40,6 +40,7 @@ Topograms.schema = new SimpleSchema({
   },
   userId: {
     type: String,
+    regEx: SimpleSchema.RegEx.Id,
     optional: true
   },
   createdAt: {

@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor'
 import { bulkCollectionUpdate } from '../../lib/bulkCollectionUpdate.js'
 
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 // import logger from '../../logger.js'
 
@@ -72,7 +72,8 @@ export const nodeCreateMany = new ValidatedMethod({
   name: 'node.createMany',
   validate: new SimpleSchema({
     'topogramId': { type: String },
-    'nodes' : { type : [ nodeSchema ], minCount: 1 }
+    'nodes': { type: Array, minCount: 1 },
+    'nodes.$': { type: Object, blackbox: true }
   }).validator(),
   async run({ topogramId, nodes }) {
     // TODO : use validated "batchInsert'
@@ -136,7 +137,8 @@ export const nodeDelete = new ValidatedMethod({
 export const nodeDeleteMany = new ValidatedMethod({
   name: 'node.deleteMany',
   validate: new SimpleSchema({
-    nodeIds: { type: [String], minCount: 1 }
+    nodeIds: { type: Array, minCount: 1 },
+    'nodeIds.$': { type: String }
   }).validator(), // TODO :check if ID exists,
   async run({ nodeIds }) {
     return await Nodes.removeAsync( { '_id' : { $in : nodeIds } } )
@@ -168,10 +170,10 @@ const nodeUpdateSchema = Nodes.schema.pick([
 
 export const nodeUpdate = new ValidatedMethod({
   name: 'node.update',
-  validate: new SimpleSchema([
-    nodeUpdateSchema,
-    { 'nodeId': { type: String } }
-  ]).validator(), // TODO :check if ID exists,
+  validate: new SimpleSchema({
+    ...nodeUpdateSchema._schema,
+    'nodeId': { type: String }
+  }).validator(), // TODO :check if ID exists,
   async run( { nodeId, data }) {
     const $set = {}
     Object.keys(data).map( d=> $set['data.'+d] = data[d])
@@ -192,6 +194,7 @@ export const nodeMove = new ValidatedMethod({
   validate: new SimpleSchema({
     'topogramId': { type: String },
     'nodeId'    : { type: String },
+    'position': { type: Object },
     'position.x': { type: Number },
     'position.y': { type: Number }
   }).validator(), // TODO :check if ID exists,

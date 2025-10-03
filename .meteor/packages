@@ -48,7 +48,6 @@ meteortesting:mocha
 
 
 dburles:factory
-aldeed:collection2
 johanbrook:publication-collector
 dburles:collection-helpers
 mdg:validated-method

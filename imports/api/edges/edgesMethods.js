@@ -2,7 +2,7 @@ import { Edges } from '../collections.js'
 import { Meteor } from 'meteor/meteor'
 
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 
 const EDGE_ID_ONLY = new SimpleSchema({
   edgeId: { type: String },
@@ -110,27 +110,13 @@ const edgeUpdateSchema = Edges.schema.pick([
 
 export const edgeUpdate = new ValidatedMethod({
   name: 'edge.update',
-  validate: new SimpleSchema([
-    edgeUpdateSchema,
-    { 'edgeId': {
-      type: String
-    }
-    },
-    {
-      'data.source': {
-        type: String,
-        label: 'The source of the edge',
-        optional :true
-      }
-    },
-    {
-      'data.target': {
-        type: String,
-        label: 'The target of the edge',
-        optional :true
-      }
-    }
-  ]).validator(), // TODO :check if ID exists,
+  validate: new SimpleSchema({
+    'data': { type: Object, optional: true },
+    ...edgeUpdateSchema._schema,
+    'edgeId': { type: String },
+    'data.source': { type: String, optional: true, label: 'The source of the edge' },
+    'data.target': { type: String, optional: true, label: 'The target of the edge' }
+  }).validator(), // TODO :check if ID exists,
   async run( { edgeId, data }) {
     const $set = {}
     Object.keys(data).map( d=> $set['data.'+d] = data[d])
@@ -149,7 +135,8 @@ export const edgeUpdate = new ValidatedMethod({
 export const edgeDeleteMany = new ValidatedMethod({
   name: 'edge.deleteMany',
   validate: new SimpleSchema({
-    edgeIds: { type: [String], minCount: 1 }
+    edgeIds: { type: Array, minCount: 1 },
+    'edgeIds.$': { type: String }
   }).validator(), // TODO :check if ID exists,
   async run({ edgeIds }) {
     return await Edges.removeAsync( { '_id' : { $in : edgeIds } } )

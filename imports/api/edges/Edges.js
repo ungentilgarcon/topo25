@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+import { SimpleSchema } from '/imports/schemas/SimpleSchema'
 import { Topograms } from '../topograms/Topograms.js'
 import { Meteor } from 'meteor/meteor'
 
@@ -19,6 +19,7 @@ Edges.deny({
 Edges.schema = new SimpleSchema({
   topogramId : {
     type: String,
+    regEx: SimpleSchema.RegEx.Id,
     label : 'The ID of the topogram the edge belongs to'
   },
   data: {
@@ -65,7 +66,6 @@ Edges.schema = new SimpleSchema({
   },
   'data.weight' : {
     type : Number,
-    decimal: true,
     label : 'Weight of the edge in the graph',
     optional : true
   },
@@ -95,6 +95,7 @@ Edges.schema = new SimpleSchema({
   },
   owner: {
     type: String,
+    regEx: SimpleSchema.RegEx.Id,
     optional: true
   },
   updatedAt: {
