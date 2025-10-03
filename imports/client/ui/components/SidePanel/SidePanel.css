@@ -2,12 +2,22 @@
 .sidepanel-toolbar {
 	background: transparent !important;
 	color: #aa8dc6; /* icon + text purple */
+	display: flex;
+	align-items: center;
+	gap: 12px; /* spacing between icons */
 }
 
 .sidepanel-toolbar button,
 .sidepanel-toolbar .mui-icon-button,
 .sidepanel-toolbar .MuiIconButton-root {
 	color: #aa8dc6 !important;
+	padding: 6px; /* compact touch target */
+}
+
+/* Selection highlight color: light text purple, not green */
+.sidepanel-toolbar .Mui-selected,
+.sidepanel-toolbar .MuiIconButton-root.Mui-selected {
+	color: #b999d6 !important;
 }
 
 /* Right panel readability improvements */

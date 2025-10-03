@@ -1,12 +1,12 @@
 [
   {
     "id": "queryBox.hint",
-    "defaultMessage": "Search for a Map",
+    "defaultMessage": "Search for a venue",
     "message": ""
   },
   {
     "id": "queryBox.label",
-    "defaultMessage": "Map search",
+    "defaultMessage": "Venue search",
     "message": ""
   }
 ]
