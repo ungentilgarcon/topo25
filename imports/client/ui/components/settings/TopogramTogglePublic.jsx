@@ -26,9 +26,9 @@ export default class TopogramTogglePublic extends React.Component {
           this.props.topogramSharedPublic ? <CheckIcon /> : null
         }
         style={
-          this.props.topogramSharedPublic ? {backgroundColor: 'rgba(69,90,100 ,0.9)',
-          color : '#BDBDBD'} : {backgroundColor: 'rgba(69,90,100 ,0.9)',
-          color:'#F2EFE9',}
+          this.props.topogramSharedPublic
+            ? { backgroundColor: 'rgba(69,90,100,0.9)', color: '#BDBDBD' }
+            : { backgroundColor: 'rgba(69,90,100,0.9)', color: '#F2EFE9' }
         }
         primaryText={this.props.topogramSharedPublic ? 'Is Visible Online' : 'Share Publicly'}
         onClick={this.handleOnClick}

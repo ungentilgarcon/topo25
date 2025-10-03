@@ -22,8 +22,16 @@ const PanelSettings = ({
   router
 }) => (
   <span>
-    <Subheader style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}
-    >Settings</Subheader>
+    <Subheader
+      style={{
+        backgroundColor: 'transparent',
+        color: '#F2EFE9',
+        fontWeight: 600,
+        letterSpacing: '0.3px'
+      }}
+    >
+      Settings
+    </Subheader>
 
     <PanelSelector
 
@@ -32,17 +40,13 @@ const PanelSettings = ({
       hasCharts={ hasCharts }
     />
 
-    { geoMapVisible ? <GeoMapOptions/> : null }
+  { geoMapVisible ? <GeoMapOptions/> : null }
     { chartsVisible ? <ChartsOptions/> : null }
-    <NetworkOptions
-    style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}
-
-    />
+  <NetworkOptions />
 
     {
       authorIsLoggedIn ?
       <Settings
-      style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}
         topogramId={topogramId}
         topogramTitle= {topogramTitle}
         topogramSharedPublic={topogramIsPublic}
@@ -52,9 +56,7 @@ const PanelSettings = ({
       null
     }
     {
-      <GraphicalTweaks
-      style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}
-      />
+      <GraphicalTweaks />
     }
   </span>
 )

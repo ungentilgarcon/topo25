@@ -49,7 +49,7 @@ function TopogramDelete({ topogramTitle = '', topogramId = '', router }) {
   return (
     <div>
       <MenuItem
-        style={{backgroundColor: 'rgba(69,90,100 ,0.9)', color:'#F2EFE9',}}
+        style={{ backgroundColor: 'rgba(69,90,100,0.9)', color: '#F2EFE9' }}
         primaryText={formatMessage(messages.delete)}
         onClick={handleOpen}
         leftIcon={<Delete sx={{ color: red[500] }} />}

@@ -16,7 +16,7 @@ const Settings = ({
   topogramSharedPublic
 }) => (
   <span>
-    <Subheader>Settings</Subheader>
+    <Subheader style={{ backgroundColor: 'transparent', color: '#F2EFE9', fontWeight: 600 }}>Settings</Subheader>
     <TopogramTogglePublic
       topogramId={topogramId}
       topogramSharedPublic={topogramSharedPublic}

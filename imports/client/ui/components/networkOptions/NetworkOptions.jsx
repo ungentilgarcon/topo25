@@ -58,16 +58,14 @@ export default class NetworkOptions extends React.Component {
     return (
       <div>
         <MenuItem
-        style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-        color:'#F2EFE9',}}
+          style={{ backgroundColor: 'rgba(69,90,100,0.9)', color: '#F2EFE9' }}
           primaryText="Network Layout"
           secondaryText={layoutName ? layoutName : undefined}
           endAdornment={<ArrowRightIcon />}
           menuItems={layoutMenuItems}
         />
         <MenuItem
-        style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-        color:'#F2EFE9',}}
+          style={{ backgroundColor: 'rgba(69,90,100,0.9)', color: '#F2EFE9' }}
           primaryText="Node Radius"
           secondaryText={nodeRadius ? nodeRadius : undefined}
           endAdornment={<ArrowRightIcon />}

@@ -60,16 +60,16 @@ this.state = {
     const {fontSizeNetwork}=this.props.ui
 
     return (
-      <div style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}>
-      <Subheader style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}>
-      Font Size and DB Settings
-        </Subheader>
-        <table>
+      <div style={{ backgroundColor: 'rgba(69,90,100,0.9)', color: '#F2EFE9', padding: '8px 12px', borderRadius: 4 }}>
+      <Subheader style={{ backgroundColor: 'transparent', color: '#F2EFE9', fontWeight: 600 }}>
+        Font Size and DB Settings
+      </Subheader>
+        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '8px 6px' }}>
           <tbody>
             <tr>
         <td>
       <TextField
-      style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)',width : '3em', margin: '0 2em'}}
+      style={{ backgroundColor: 'transparent', color:'#F2EFE9', width : '4.5em', margin: '0 1em' }}
         name='CytoscapeJsFontSizeSetter'
         type='number'
         className=''
@@ -78,7 +78,7 @@ this.state = {
         step={.5}
         autoComplete={'on'}
         floatingLabelFixed={true}
-        floatingLabelText='Network'
+        floatingLabelText='Network font size'
 
         value={this.state.fontSizeNetwork}
 
@@ -89,7 +89,7 @@ this.state = {
       <td>
         <Checkbox
           label={'Save\nGraph\nNodes\nMove\nToDB'}
-style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}
+          style={{ backgroundColor: 'transparent', color:'#F2EFE9' }}
           checked={this.props.ui.SaveNodeMovesToDB}
           //disabled={!SaveNodeMovesToDB}
           onClick={ () => this.toggleChangeSaveNodeMovesToDB()}

@@ -32,9 +32,10 @@ export default class GeoMapOptions extends React.Component {
       <MenuItem
         primaryText="Map Background"
         secondaryText={geoMapTile ? geoMapTile : undefined}
-        color="#D3E8E6"
-        style={{backgroundColor: 'rgba(69,90,100 ,0.9)',
-        color:'#F2EFE9',}}
+        style={{
+          backgroundColor: 'rgba(69,90,100,0.9)',
+          color: '#F2EFE9'
+        }}
         endAdornment={<ArrowRightIcon />}
         menuItems={mapTilesMenuItems}
       />
