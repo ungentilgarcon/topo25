@@ -234,8 +234,16 @@ class Cytoscape extends Component {
     if (elementsChanged) {
       const normalizeEl = (el) => {
         if (!el || !el.data) return el
+        // normalize node ids
         if (!el.data.id && el.data._id) {
-          return { ...el, data: { ...el.data, id: el.data._id } }
+          el = { ...el, data: { ...el.data, id: el.data._id } }
+        }
+        // normalize edge ids (stable across frames) if missing
+        if (!el.data.id && el.data.source !== undefined && el.data.target !== undefined) {
+          const sid = el.data.source
+          const tid = el.data.target
+          const eid = `${sid}|${tid}`
+          el = { ...el, data: { ...el.data, id: eid } }
         }
         return el
       }
@@ -248,7 +256,7 @@ class Cytoscape extends Component {
         : toArray(elements.edges).map(normalizeEl)
 
       const visibleNodeIds = new Set(nextNodeList.map(n => n && n.data && (n.data.id || n.data._id)).filter(Boolean))
-      const visibleEdgeIds = new Set(nextEdgeList.map(e => e && e.data && (e.data.id || e.data._id)).filter(Boolean))
+  const visibleEdgeIds = new Set(nextEdgeList.map(e => e && e.data && (e.data.id || (e.data.source !== undefined && e.data.target !== undefined ? `${e.data.source}|${e.data.target}` : undefined))).filter(Boolean))
 
       this.cy.batch(() => {
         // Ensure all visible nodes exist and are shown
@@ -285,9 +293,21 @@ class Cytoscape extends Component {
 
         // Ensure all visible edges exist and are shown
         nextEdgeList.forEach(e => {
-          const id = e && e.data && (e.data.id || e.data._id)
+          const id = e && e.data && (e.data.id || (e.data.source !== undefined && e.data.target !== undefined ? `${e.data.source}|${e.data.target}` : undefined))
           if (!id) return
-          const ele = this.cy.getElementById(id)
+          let ele = this.cy.getElementById(id)
+          if (!ele || ele.length === 0) {
+            // try find by source/target if existing edges were auto-assigned ids earlier
+            if (e.data && e.data.source !== undefined && e.data.target !== undefined) {
+              const s = String(e.data.source).replace(/"/g, '\\"')
+              const t = String(e.data.target).replace(/"/g, '\\"')
+              const sel = `edge[source = "${s}"][target = "${t}"]`
+              const found = this.cy.$(sel)
+              if (found && found.length > 0) {
+                ele = found
+              }
+            }
+          }
           if (ele && ele.length > 0) {
             try { ele.style('display', 'element') } catch (_) {}
             if (e.data) {
@@ -301,10 +321,13 @@ class Cytoscape extends Component {
           }
         })
 
-        // Hide edges that are not visible in this frame
+        // Hide edges that are not visible or whose endpoints are hidden
         this.cy.edges().forEach(ele => {
           const id = ele.id()
-          if (!visibleEdgeIds.has(id)) {
+          const src = ele.source()
+          const tgt = ele.target()
+          const endpointsVisible = src && tgt && src.style('display') !== 'none' && tgt.style('display') !== 'none'
+          if (!visibleEdgeIds.has(id) || !endpointsVisible) {
             try { ele.style('display', 'none') } catch (_) {}
           } else {
             try { ele.style('display', 'element') } catch (_) {}
