@@ -76,9 +76,28 @@ class QueryBox extends React.Component {
         getOptionLabel={(o) => o.text || ''}
   isOptionEqualToValue={(opt, val) => (opt?.value ?? null) === (val?.value ?? null)}
         sx={{ width: '100%' }}
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: 'rgba(69,90,100,0.98)',
+              color: '#F2EFE9',
+              border: '1px solid rgba(255,255,255,0.15)'
+            }
+          },
+          popper: {
+            sx: { zIndex: 2100 }
+          }
+        }}
         onChange={(e, value) => value && this.handleNewRequest(value)}
         renderOption={(props, option) => (
-          <li {...props} key={option.value}>
+          <li
+            {...props}
+            key={option.value}
+            style={{
+              color: '#F2EFE9',
+              padding: '8px 12px'
+            }}
+          >
             {option.text}
           </li>
         )}

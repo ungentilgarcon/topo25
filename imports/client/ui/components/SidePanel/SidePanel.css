@@ -22,6 +22,18 @@
 	background-color: rgba(170, 141, 198, 0.35) !important; /* ripple tint */
 }
 
+/* Autocomplete dropdown palette for side panel */
+.MuiAutocomplete-popper .MuiAutocomplete-paper {
+	background: rgba(69,90,100,0.98);
+	color: #F2EFE9;
+	border: 1px solid rgba(255,255,255,0.15);
+}
+.MuiAutocomplete-popper .MuiAutocomplete-option.Mui-focused,
+.MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected="true"] {
+	background: rgba(170,141,198,0.22);
+	color: #F2EFE9;
+}
+
 /* Selection highlight color: light text purple, not green */
 .sidepanel-toolbar .Mui-selected,
 .sidepanel-toolbar .MuiIconButton-root.Mui-selected {
