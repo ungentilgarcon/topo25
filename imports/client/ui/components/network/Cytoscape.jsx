@@ -232,19 +232,75 @@ class Cytoscape extends Component {
 
     const elementsChanged = elements !== prevProps.elements || prevNodes !== currNodes || prevEdges !== currEdges
     if (elementsChanged) {
-      // Replace elements safely to avoid cy.json() id warnings in v3
-      this.cy.batch(() => {
-        this.cy.elements().remove()
-        if (Array.isArray(elements)) {
-          this.cy.add(elements)
-        } else if (elements && (elements.nodes || elements.edges)) {
-          // v3 add() supports nodes/edges object
-          this.cy.add(elements)
+      const normalizeEl = (el) => {
+        if (!el || !el.data) return el
+        if (!el.data.id && el.data._id) {
+          return { ...el, data: { ...el.data, id: el.data._id } }
         }
+        return el
+      }
+      const toArray = (els) => Array.isArray(els) ? els : []
+      const nextNodeList = Array.isArray(elements)
+        ? elements.filter(e => (e.group === 'nodes' || (e.data && e.data.source === undefined && e.data.target === undefined))).map(normalizeEl)
+        : toArray(elements.nodes).map(normalizeEl)
+      const nextEdgeList = Array.isArray(elements)
+        ? elements.filter(e => (e.group === 'edges' || (e.data && e.data.source !== undefined && e.data.target !== undefined))).map(normalizeEl)
+        : toArray(elements.edges).map(normalizeEl)
+
+      const visibleNodeIds = new Set(nextNodeList.map(n => n && n.data && (n.data.id || n.data._id)).filter(Boolean))
+      const visibleEdgeIds = new Set(nextEdgeList.map(e => e && e.data && (e.data.id || e.data._id)).filter(Boolean))
+
+      this.cy.batch(() => {
+        // Ensure all visible nodes exist and are shown
+        nextNodeList.forEach(n => {
+          const id = n && n.data && (n.data.id || n.data._id)
+          if (!id) return
+          const ele = this.cy.getElementById(id)
+          if (ele && ele.nonempty()) {
+            try { ele.style('display', 'element') } catch (_) {}
+            // Optionally update position/data here if needed
+          } else {
+            try { this.cy.add(n) } catch (_) {}
+          }
+        })
+
+        // Hide nodes that are not visible in this frame instead of removing
+        this.cy.nodes().forEach(ele => {
+          const id = ele.id()
+          if (!visibleNodeIds.has(id)) {
+            try { ele.style('display', 'none') } catch (_) {}
+          } else {
+            try { ele.style('display', 'element') } catch (_) {}
+          }
+        })
+
+        // Ensure all visible edges exist and are shown
+        nextEdgeList.forEach(e => {
+          const id = e && e.data && (e.data.id || e.data._id)
+          if (!id) return
+          const ele = this.cy.getElementById(id)
+          if (ele && ele.nonempty()) {
+            try { ele.style('display', 'element') } catch (_) {}
+          } else {
+            try { this.cy.add(e) } catch (_) {}
+          }
+        })
+
+        // Hide edges that are not visible in this frame
+        this.cy.edges().forEach(ele => {
+          const id = ele.id()
+          if (!visibleEdgeIds.has(id)) {
+            try { ele.style('display', 'none') } catch (_) {}
+          } else {
+            try { ele.style('display', 'element') } catch (_) {}
+          }
+        })
       })
-      // Only re-run layout after init, and only if using a computed layout (not 'preset')
+
+      // Do not auto layout on visibility toggles; preserve current layout
       if (this.state.init && this.props.layoutName && this.props.layoutName !== 'preset') {
-        this.applyLayout(this.props.layoutName)
+        // Optional: re-run layout only if topology changed (new nodes/edges truly added)
+        // For now, skip to avoid animation during time filtering
       }
       this.updateRadius(this.props.nodeRadius)
     }
