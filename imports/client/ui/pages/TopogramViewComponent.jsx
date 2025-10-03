@@ -128,9 +128,9 @@ export class TopogramViewComponent extends React.Component {
       console.log("cy",{...cy})
       const selectedIds = selectedElements.map(e => e.data.id)
       console.log("selectedIds",selectedIds)
-      const focusedNodes = cy.filter((i, e) =>
-      selectedIds.includes(e.id())
-    )
+      const focusedNodes = cy.nodes().filter((e, i) =>
+        selectedIds.includes(e.id())
+      )
     console.log(focusedNodes)
 
     //console.log("nodeId",{...nodeIds}),
@@ -184,9 +184,9 @@ handleEnterIsolateMode = () => {
 
   // get my nodes/edges
   const selectedIds = selectedElements.map(e => e.data.id)
-  const focusedNodes = cy.filter((i, e) =>
-  selectedIds.includes(e.id())
-)
+  const focusedNodes = cy.nodes().filter((e, i) =>
+    selectedIds.includes(e.id())
+  )
 
 cy.nodes().style({ 'opacity': '0' });
 cy.edges().style({ 'opacity': '0' });
@@ -226,9 +226,9 @@ handleEnterExtractMode = () => {
 
   // get my nodes/edges
   const selectedIds = selectedElements.map(e => e.data.id)
-  const focusedNodes = cy.filter((i, e) =>
-  selectedIds.includes(e.id())
-)
+  const focusedNodes = cy.nodes().filter((e, i) =>
+    selectedIds.includes(e.id())
+  )
 
 cy.nodes().style({ 'opacity': '0' });
 cy.edges().style({ 'opacity': '0' });
@@ -268,8 +268,11 @@ handleExitIsolateMode = () => {
   cy.nodes().style({ 'opacity': '1' });
   cy.edges().style({ 'opacity': '1' });
 
-  // bring back positions
-  cy.nodes().positions((i,n) => prevPositions[n.id()])
+  // bring back positions (use correct callback signature: (node, index))
+  cy.nodes().positions((n, i) => {
+    const p = prevPositions ? prevPositions[n.id()] : undefined
+    return p ? p : n.position()
+  })
   this.props.updateUI('prevPositions', null)
 
   cy.fit()

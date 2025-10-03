@@ -138,6 +138,7 @@ export default class GeoEdges extends React.Component {
     const isChevronsOn = (this.state && typeof this.state.chevronsOn === 'boolean')
       ? this.state.chevronsOn
       : (!this.props.ui || this.props.ui.showChevrons !== false)
+    const chevKeyPart = isChevronsOn ? 'with' : 'no'
     const seamSlots = { '180': new Map(), '-180': new Map() }
     const getOffsetLat = (boundary, lat) => {
       const key = boundary === 180 ? '180' : '-180'
@@ -163,6 +164,9 @@ export default class GeoEdges extends React.Component {
         e.data.group.includes("DASHED-1")? "1,5,1,5,1":
         ""
       ) : ""
+      // Build a unique key root per rendered edge item to avoid duplicate keys
+      const edgeIdSafe = (e && e.data && e.data.id != null) ? String(e.data.id) : ''
+      const keyRoot = `edge-${edgeIdSafe}-${i}` // include index to ensure uniqueness even if ids repeat
       // Read UI toggle once per edge to drive splitting behavior
   const showChevrons = isChevronsOn
       let segments = []
@@ -186,7 +190,7 @@ export default class GeoEdges extends React.Component {
         segments.forEach((seg, sIdx) => {
           children.push(
             <Polyline
-              key={`edge-${e.data && e.data.id != null ? e.data.id : i}-seg-${sIdx}-${e.data && e.data.selected ? 1 : 0}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+              key={`${keyRoot}-seg-${sIdx}-${e.data && e.data.selected ? 1 : 0}-${chevKeyPart}-chev`}
               opacity={"0.8"}
               color={color}
               weight={weight}
@@ -204,7 +208,7 @@ export default class GeoEdges extends React.Component {
           const hitWeight = Math.max(weight, 24)
           children.push(
             <Polyline
-              key={`edge-${e.data && e.data.id != null ? e.data.id : i}-seg-${sIdx}-hit-${e.data && e.data.selected ? 1 : 0}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+              key={`${keyRoot}-seg-${sIdx}-hit-${e.data && e.data.selected ? 1 : 0}-${chevKeyPart}-chev`}
               opacity={0.001}
               color={color}
               weight={hitWeight}
@@ -232,7 +236,7 @@ export default class GeoEdges extends React.Component {
           }
           children.push(
             <Marker
-              key={`${ch.key}-${i}-${cIdx}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+              key={`${ch.key}-${i}-${cIdx}-${chevKeyPart}-chev`}
               position={[lat, lng]}
               icon={ch.icon}
               interactive={true}

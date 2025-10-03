@@ -194,7 +194,8 @@ class Network extends React.Component {
   componentDidUpdate() {
     const cy = this.graphRef.current && this.graphRef.current.getCy ? this.graphRef.current.getCy() : null
     if (!cy) return
-    cy.resize().fit()
+    // Avoid auto-fit on every update; it causes visible animations and extra work
+    cy.resize()
   }
 
   render() {

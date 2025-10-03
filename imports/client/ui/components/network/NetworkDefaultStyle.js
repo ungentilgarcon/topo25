@@ -7,8 +7,12 @@ let txt = ''
 const NetworkDefaultStyle = (cy) => {
   const s = cy.style()
 
+  const w = cy && cy.container() ? cy.container().clientWidth || 800 : 800
+  const baseFont = Math.max(9, Math.round(w / 140)) // ~13 at 1920 half-screen, not too big on small screens
+  const maxLabel = Math.max(40, Math.round(w / 40))
+
   s.selector('node').style({
-    'font-size': 8,
+    'font-size': baseFont,
     'text-valign'() {
       // alternate top/bottom label position
       txt = (alternate % 2 === 0) ? 'top' : 'bottom'
@@ -24,11 +28,11 @@ const NetworkDefaultStyle = (cy) => {
     },
     'text-outline-color': 'black',
     'text-outline-width': '.2px',
-    'text-max-width': 40,
+  'text-max-width': maxLabel,
     'text-wrap': 'wrap',
     // cytoscape uses 'autorotate' for edges; nodes text rotation uses angles only via data mappings.
     // The prior '100°' caused no effect; omit to avoid parser issues.
-  'min-zoomed-font-size': 3,
+  'min-zoomed-font-size': Math.max(3, Math.round(baseFont * 0.6)),
     'border-color': '#D84315',
     'background-color'(e) {
       let color = 'steelblue' // default

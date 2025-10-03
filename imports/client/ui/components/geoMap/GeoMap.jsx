@@ -43,18 +43,46 @@ class GeoMap extends React.Component {
     onUnfocusElement: PropTypes.func.isRequired
   }
 
-  handleClickGeoElement({group, el}) {
-    const {cy} = this.props.ui
-    console.log("group",`${group}`);
-    console.log("${el.data.id}",el.data.id);
-    const filter = `${group}[id='${el.data.id}']`
-    console.log(filter);
-    const cyEl = cy.filter(filter)
-    console.log(cyEl);
-    cyEl.data('selected') ?
-      this.props.unselectElement(cyEl.json())
-      :
-      this.props.selectElement(cyEl.json())
+  handleClickGeoElement({ group, el }) {
+    const { cy } = this.props.ui
+    if (!cy || !el || !el.data) return
+
+    // Helper to safely get first JSON from a collection
+    const firstJson = (col) => {
+      if (!col || col.length === 0) return undefined
+      try { return col[0] ? col[0].json() : (Array.isArray(col.json()) ? col.json()[0] : col.json()) } catch (_) { return undefined }
+    }
+
+    if (group === 'edge') {
+      const rawId = el.data.id != null ? String(el.data.id) : undefined
+      const sid = el.data.source != null ? String(el.data.source) : undefined
+      const tid = el.data.target != null ? String(el.data.target) : undefined
+      const stableId = rawId || (sid && tid ? `${sid}|${tid}` : undefined)
+      let cyEl = cy.collection()
+      if (stableId) {
+        const safe = stableId.replace(/'/g, "\\'")
+        cyEl = cy.filter(`edge[id='${safe}']`)
+      }
+      if (!cyEl || cyEl.length === 0) {
+        if (sid && tid) {
+          const s = sid.replace(/"/g, '\\"').replace(/'/g, "\\'")
+          const t = tid.replace(/"/g, '\\"').replace(/'/g, "\\'")
+          cyEl = cy.$(`edge[source = "${s}"][target = "${t}"]`)
+        }
+      }
+      const json = firstJson(cyEl)
+      if (!json) return
+      return cyEl.data('selected') ? this.props.unselectElement(json) : this.props.selectElement(json)
+    }
+
+    // nodes (default)
+    const id = el.data.id != null ? String(el.data.id) : undefined
+    if (!id) return
+    const safeId = id.replace(/'/g, "\\'")
+    const cyEl = cy.filter(`node[id='${safeId}']`)
+    const json = firstJson(cyEl)
+    if (!json) return
+    return cyEl.data('selected') ? this.props.unselectElement(json) : this.props.selectElement(json)
   }
 
   render() {
@@ -88,7 +116,14 @@ class GeoMap extends React.Component {
       selected.filter(e => e && e.group === 'nodes' && e.data && e.data.id != null).map(e => e.data.id)
     )
     const selectedEdgeIds = new Set(
-      selected.filter(e => e && e.group === 'edges' && e.data && e.data.id != null).map(e => e.data.id)
+      selected
+        .filter(e => e && e.group === 'edges' && e.data && e.data.id != null)
+        .map(e => String(e.data.id))
+    )
+    const selectedEdgePairs = new Set(
+      selected
+        .filter(e => e && e.group === 'edges' && e.data && e.data.source != null && e.data.target != null)
+        .map(e => `${String(e.data.source)}|${String(e.data.target)}`)
     )
 
     const nodes = (this.props.nodes || [])
@@ -112,8 +147,10 @@ class GeoMap extends React.Component {
         if (!source || !target) return null
         const coords = [source.coords, target.coords]
         // Same: compute selected from global UI first, fall back to data flag
-        const isSelected = selectedEdgeIds.has(e.data.id) || !!e.data.selected
-        return { ...e, source, target, coords, selected: isSelected, data: { ...e.data, selected: isSelected } }
+        const edgeId = e && e.data && e.data.id != null ? String(e.data.id) : undefined
+        const pairKey = `${String(e.data.source)}|${String(e.data.target)}`
+        const isSelected = (edgeId ? selectedEdgeIds.has(edgeId) : false) || selectedEdgePairs.has(pairKey) || !!e.data.selected
+        return { ...e, source, target, coords, selected: isSelected, data: { ...e.data, selected: isSelected, id: edgeId || pairKey } }
       })
       .filter(Boolean)
 

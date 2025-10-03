@@ -64,6 +64,8 @@ var defaults = {
 
 class Cytoscape extends Component {
   cy = null;
+  _fitDone = false;
+  _userMoved = false;
 
 
   // static propTypes = {
@@ -91,10 +93,17 @@ class Cytoscape extends Component {
     const cy = cytoscape({
       container: this._cyelement,
       layout: {
-        name: 'preset' // load saved positions
-        //  name: 'spread' // load saved positions
+        name: 'preset' // use saved positions; avoids animated relayouts on load
       },
-      elements
+      elements,
+      renderer: { name: 'canvas' },
+      wheelSensitivity: 0.2,
+      pixelRatio: 1,
+      textureOnViewport: true,
+      motionBlur: true,
+      motionBlurOpacity: 0.1,
+      hideEdgesOnViewport: true,
+      hideLabelsOnViewport: true
     })
 
     // Apply style after init. If style is a function (new applicator), call it.
@@ -106,6 +115,11 @@ class Cytoscape extends Component {
     cy.panzoom( defaults );
 
     this.cy = cy
+
+    // track user interactions to avoid auto-fitting after they move the view
+    try {
+      this.cy.on('pan zoom', () => { this._userMoved = true })
+    } catch (_) { /* noop */ }
 
     // console.log(cy);
   }
@@ -148,20 +162,11 @@ class Cytoscape extends Component {
       const extra = Math.min(140, Math.round(n / 40))
       layoutConfig.minDist = base + extra // Minimum distance between nodes
       layoutConfig.padding = 100
-      layoutConfig.randomize = true
+      layoutConfig.randomize = false
     }
 
     try {
-      const els = this.cy.elements()
-      // Hide during layout computation to avoid visible movement/jitter
-      els.style('opacity', 0)
-
       const layout = this.cy.layout(layoutConfig)
-      // Reveal after layout completes and fit view
-      this.cy.one('layoutstop', () => {
-        try { els.removeStyle('opacity') } catch (_) {}
-        try { this.cy.fit(undefined, 50) } catch (_) {}
-      })
       layout.run()
     } catch (_) {
       // no-op: layout plugin might not be available, keep preset
@@ -232,19 +237,118 @@ class Cytoscape extends Component {
     const currNodes = Array.isArray(currEls) ? currEls.filter(e => e.group === 'nodes').length : ((currEls.nodes || []).length)
     const currEdges = Array.isArray(currEls) ? currEls.filter(e => e.group === 'edges').length : ((currEls.edges || []).length)
 
-    if (elements !== prevProps.elements || prevNodes !== currNodes || prevEdges !== currEdges) {
-      // Replace elements safely to avoid cy.json() id warnings in v3
-      this.cy.batch(() => {
-        this.cy.elements().remove()
-        if (Array.isArray(elements)) {
-          this.cy.add(elements)
-        } else if (elements && (elements.nodes || elements.edges)) {
-          // v3 add() supports nodes/edges object
-          this.cy.add(elements)
+    const elementsChanged = elements !== prevProps.elements || prevNodes !== currNodes || prevEdges !== currEdges
+    if (elementsChanged) {
+      const normalizeEl = (el) => {
+        if (!el || !el.data) return el
+        // normalize node ids
+        if (!el.data.id && el.data._id) {
+          el = { ...el, data: { ...el.data, id: el.data._id } }
         }
+        // normalize edge ids (stable across frames) if missing
+        if (!el.data.id && el.data.source !== undefined && el.data.target !== undefined) {
+          const sid = el.data.source
+          const tid = el.data.target
+          const eid = `${sid}|${tid}`
+          el = { ...el, data: { ...el.data, id: eid } }
+        }
+        return el
+      }
+      const toArray = (els) => Array.isArray(els) ? els : []
+      const nextNodeList = Array.isArray(elements)
+        ? elements.filter(e => (e.group === 'nodes' || (e.data && e.data.source === undefined && e.data.target === undefined))).map(normalizeEl)
+        : toArray(elements.nodes).map(normalizeEl)
+      const nextEdgeList = Array.isArray(elements)
+        ? elements.filter(e => (e.group === 'edges' || (e.data && e.data.source !== undefined && e.data.target !== undefined))).map(normalizeEl)
+        : toArray(elements.edges).map(normalizeEl)
+
+      const visibleNodeIds = new Set(nextNodeList.map(n => n && n.data && (n.data.id || n.data._id)).filter(Boolean))
+  const visibleEdgeIds = new Set(nextEdgeList.map(e => e && e.data && (e.data.id || (e.data.source !== undefined && e.data.target !== undefined ? `${e.data.source}|${e.data.target}` : undefined))).filter(Boolean))
+
+      this.cy.batch(() => {
+        // Ensure all visible nodes exist and are shown
+        nextNodeList.forEach(n => {
+          const id = n && n.data && (n.data.id || n.data._id)
+          if (!id) return
+          const ele = this.cy.getElementById(id)
+          if (ele && ele.length > 0) {
+            try { ele.style('display', 'element') } catch (_) {}
+            // Update data fields (except id) and position if provided
+            if (n.data) {
+              Object.keys(n.data).forEach(k => {
+                if (k === 'id' || k === '_id') return
+                try { ele.data(k, n.data[k]) } catch (_) {}
+              })
+            }
+            if (n.position) {
+              try { ele.position(n.position) } catch (_) {}
+            }
+          } else {
+            try { this.cy.add(n) } catch (_) {}
+          }
+        })
+
+        // Hide nodes that are not visible in this frame instead of removing
+        this.cy.nodes().forEach(ele => {
+          const id = ele.id()
+          if (!visibleNodeIds.has(id)) {
+            try { ele.style('display', 'none') } catch (_) {}
+          } else {
+            try { ele.style('display', 'element') } catch (_) {}
+          }
+        })
+
+        // Ensure all visible edges exist and are shown
+        nextEdgeList.forEach(e => {
+          const id = e && e.data && (e.data.id || (e.data.source !== undefined && e.data.target !== undefined ? `${e.data.source}|${e.data.target}` : undefined))
+          if (!id) return
+          let ele = this.cy.getElementById(id)
+          if (!ele || ele.length === 0) {
+            // try find by source/target if existing edges were auto-assigned ids earlier
+            if (e.data && e.data.source !== undefined && e.data.target !== undefined) {
+              const s = String(e.data.source).replace(/"/g, '\\"')
+              const t = String(e.data.target).replace(/"/g, '\\"')
+              const sel = `edge[source = "${s}"][target = "${t}"]`
+              const found = this.cy.$(sel)
+              if (found && found.length > 0) {
+                ele = found
+              }
+            }
+          }
+          if (ele && ele.length > 0) {
+            try { ele.style('display', 'element') } catch (_) {}
+            if (e.data) {
+              Object.keys(e.data).forEach(k => {
+                if (k === 'id' || k === '_id') return
+                try { ele.data(k, e.data[k]) } catch (_) {}
+              })
+            }
+          } else {
+            try { this.cy.add(e) } catch (_) {}
+          }
+        })
+
+        // Hide edges that are not visible or whose endpoints are hidden
+        this.cy.edges().forEach(ele => {
+          const id = ele.id()
+          const src = ele.source()
+          const tgt = ele.target()
+          const endpointsVisible = src && tgt && src.style('display') !== 'none' && tgt.style('display') !== 'none'
+          if (!visibleEdgeIds.has(id) || !endpointsVisible) {
+            try { ele.style('display', 'none') } catch (_) {}
+          } else {
+            try { ele.style('display', 'element') } catch (_) {}
+          }
+        })
+        // Recompute style mappings after data changes (colors, widths)
+        try { this.cy.style().update() } catch (_) {}
       })
-      // Re-apply current layout after element changes
-      this.applyLayout(this.props.layoutName)
+
+      // Do not auto layout on visibility toggles; preserve current layout
+      if (this.state.init && this.props.layoutName && this.props.layoutName !== 'preset') {
+        // Optional: re-run layout only if topology changed (new nodes/edges truly added)
+        // For now, skip to avoid animation during time filtering
+      }
       this.updateRadius(this.props.nodeRadius)
     }
 
@@ -263,13 +367,42 @@ class Cytoscape extends Component {
     // apply new layout if any
     if (prevProps.layoutName !== layoutName) {
       this.applyLayout(layoutName)
-      if (this.cy) this.cy.fit(undefined, 50)
+      // do not auto-fit here; let the user keep current viewport
     }
 
     // init once when requested
     if (!this.state.init && this.props.init) {
-      this.applyLayout(layoutName)
-      if (this.cy) this.cy.fit(undefined, 50)
+      if (layoutName && layoutName !== 'preset') {
+        // First-time non-preset layout: hide elements to avoid visible movement
+        const layoutConfig = { name: layoutName, animate: false, fit: false }
+        if (layoutName === 'spread') {
+          const n = this.cy.nodes().length || 0
+          const w = this._cyelement ? this._cyelement.clientWidth : 800
+          const base = Math.max(40, Math.round((w / 1000) * 80))
+          const extra = Math.min(140, Math.round(n / 40))
+          layoutConfig.minDist = base + extra
+          layoutConfig.padding = 100
+          layoutConfig.randomize = false
+        }
+        try {
+          const els = this.cy.elements()
+          els.style('opacity', 0)
+          const layout = this.cy.layout(layoutConfig)
+          this.cy.one('layoutstop', () => {
+            try {
+              // center once with padding before showing, to avoid visible motion
+              if (!this._fitDone && !this._userMoved) { this.cy.fit(undefined, 60); this._fitDone = true }
+            } catch (_) {}
+            try { els.removeStyle('opacity') } catch (_) {}
+          })
+          layout.run()
+        } catch (_) { /* noop */ }
+      } else {
+        this.applyLayout(layoutName)
+        try {
+          if (!this._fitDone && !this._userMoved) { this.cy.fit(undefined, 60); this._fitDone = true }
+        } catch (_) {}
+      }
       this.setState({ init: true })
     }
 
@@ -281,6 +414,10 @@ class Cytoscape extends Component {
     // handle container size changes
     if (prevProps.width !== width || prevProps.height !== height) {
       this.cy.resize()
+      // keep centered while user hasn't interacted yet
+      try {
+        if (!this._fitDone && !this._userMoved) { this.cy.fit(undefined, 60); this._fitDone = true }
+      } catch (_) {}
     }
   }
 
