@@ -191,8 +191,10 @@ handleEnterIsolateMode = () => {
 cy.nodes().style({ 'opacity': '0' });
 cy.edges().style({ 'opacity': '0' });
 
-// select
-var subGraph = focusedNodes.openNeighborhood();
+// select: include the selected nodes + their neighbors
+var subGraph = focusedNodes.closedNeighborhood();
+// ensure layout is allowed to move nodes
+try { subGraph.nodes().unlock() } catch (_) {}
 focusedNodes.style({ 'opacity': '1' });
 subGraph.style({ 'opacity': '1'});
 
@@ -203,11 +205,15 @@ try {
     minDist: 30,
     padding: 50,
     animate: false,
-    fit: false
+    fit: false,
+    randomize: true
   })
   layout.run() // Cytoscape v3 requires .run()
   // center and zoom on the isolated subgraph once laid out
   try { cy.fit(subGraph, 60) } catch (_) {}
+  // Make sure only the laid-out subgraph remains visible
+  cy.elements().difference(subGraph).style({ 'opacity': '0' })
+  subGraph.style({ 'opacity': '1' })
 } catch (e) {
   // layout plugin might be unavailable; still keep isolation styles
   try { cy.fit(subGraph, 60) } catch (_) {}
