@@ -13,16 +13,22 @@ import UserMenu from '../UserMenu.jsx'
 const SidePanelActions = ({
   setPanelName,
   user,
-  router
+  router,
+  className,
+  style
 }) => (
 
   <Toolbar
+    className={className || 'sidepanel-toolbar'}
     style={{
-      position:'sticky',
-      width : '100%',
-      top : 0
+      position: 'sticky',
+      width: '100%',
+      top: 0,
+      background: 'transparent',
+      color: '#aa8dc6',
+      ...(style || {})
     }}
-    >
+  >
     <IconButton onClick={() => setPanelName('edit')}>
       <SettingsIcon />
     </IconButton>

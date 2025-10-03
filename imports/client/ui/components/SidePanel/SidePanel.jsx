@@ -89,19 +89,18 @@ export default class SidePanel extends React.Component {
 
         <IconButton
           onClick={this.handleExpandChange}
-          style={{ float:'right', zIndex : 20000 }}
-          >
-            <ClearIcon color='#F2EFE9' />
+          style={{ float:'right', zIndex : 20000, color: '#aa8dc6' }}
+        >
+          <ClearIcon />
         </IconButton>
 
         <SidePanelActions
-          className={"sidepandiv"}
-          style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}
-
+          className={"sidepanel-toolbar"}
+          style={{}}
           setPanelName={this.setPanelName}
           user={user}
           router={router}
-          />
+        />
 
         {
           panelName === 'main' ?

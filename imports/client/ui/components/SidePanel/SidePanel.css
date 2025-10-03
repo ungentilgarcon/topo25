@@ -1,4 +1,14 @@
-#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div:nth-child(2){background-color:#aa8dc6 !important }
+/* Side panel header styling */
+.sidepanel-toolbar {
+	background: transparent !important;
+	color: #aa8dc6; /* icon + text purple */
+}
+
+.sidepanel-toolbar button,
+.sidepanel-toolbar .mui-icon-button,
+.sidepanel-toolbar .MuiIconButton-root {
+	color: #aa8dc6 !important;
+}
 
 /* Right panel readability improvements */
 .right-panel {
