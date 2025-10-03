@@ -45,7 +45,7 @@ export default function RechartsDonutChart({
 
   return (
     <div ref={containerRef} className={className} style={style}>
-      {title ? <div className="c3-title" style={{ marginBottom: 6 }}>{String(title)}</div> : null}
+      {title ? <div className="chart-title" style={{ marginBottom: 6 }}>{String(title)}</div> : null}
       <ResponsiveContainer width="100%" height={height}>
         <PieChart>
           <Pie

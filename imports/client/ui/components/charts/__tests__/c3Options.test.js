@@ -36,3 +36,9 @@ describe('buildC3Options', () => {
     expect(opts.legend && opts.legend.position).to.equal('right')
   })
 })
+
+describe.skip('buildC3Options (deprecated)', () => {
+  it('is deprecated and throws', () => {
+    expect(() => buildC3Options({})).toThrow()
+  })
+})
