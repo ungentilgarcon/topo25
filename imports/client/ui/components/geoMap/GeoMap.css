@@ -1,34 +1,23 @@
 .leaflet-container {
-  height: 100vh;
-  width : 100vw;
-  margin: 0 auto;
-
-}
-div.leaflet-control-container{
-height: 50px!important;
-  width: 20px !important;
-
-}
-div.leaflet-control-zoom {
-  height: 50px!important;
-    width: 20px !important;
-
+  height: 100%;
+  width: 100%;
+  margin: 0;
 }
 
-a.leaflet-control-zoom-in{
-  height: 25px !important;
-  width: 20px !important;
-
+/* Allow controls to size naturally; avoid clipping them */
+.leaflet-control-container,
+.leaflet-control-zoom,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  height: auto !important;
+  width: auto !important;
 }
 
-a.leaflet-control-zoom-out{
-  height: 25px !important;
-  width: 20px !important;
-
+/* Keep controls on top of the map content */
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1000 !important;
 }
-div.leaflet-top:nth-child(1){  z-index: 10000 !important;
-  float: left;
-  }
 
 /* Small chevron markers indicating date-line crossing */
 .geo-chevron {

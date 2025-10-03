@@ -15,7 +15,7 @@ const MAP_DIV_ID = 'map'
 const divMapStyle = {
   position: 'fixed',
   top: '0',
-  zIndex : -1
+  zIndex : 0
 }
 
 @ui()
