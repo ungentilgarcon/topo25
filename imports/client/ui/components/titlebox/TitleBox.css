@@ -1,3 +1,9 @@
-#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > button:nth-child(1) > div:nth-child(1) > div:nth-child(1){background-color: #D3E8E6 !important};
+/* TitleBox scoped tweaks */
+.titlebox-root .MuiCard-root {
+	background: rgba(69,90,100,0.95);
+}
 
-div{ color: #D3E8E6 !important};
+.titlebox-root .titlebox-datas-btn {
+	background-color: #aa8dc6 !important;
+	color: #222 !important;
+}

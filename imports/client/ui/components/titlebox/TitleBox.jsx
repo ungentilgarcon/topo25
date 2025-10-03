@@ -85,6 +85,7 @@ var   Title2ForBox =this.props.topogramTitle.split("\n")[1]
 
 return(
   <Card
+    className="titlebox-root"
     style={{
       //bottom: 5,
       maxWidth : '20%',
@@ -95,21 +96,22 @@ return(
       borderBottomLeftRadius:"5px",
       boxShadow: '1px 1px 8px  #000',
       border: '1px solid #222',
-      backgroundColor: 'rgba(69,90,100,0.9)',
+  // Less transparent: halve previous transparency (~0.1 -> ~0.05)
+  backgroundColor: 'rgba(69,90,100,0.95)',
 
     }}
   >
   <div>
     <CardTitle
       title={
-        <div style={{fontSize:"8pt", color: '#D3E8E6',fontWeight:  'bold'}}>BandsTour v.2 GPLv3 by <a  href="mailto:bahdegregory@gmail.com">Gregory Bahdé</a></div>}
+        <div style={{fontSize:"8pt", color: '#D3E8E6',fontWeight:  'bold'}}>BandsTour 2025 Vv4 GPLv3 by <a  href="mailto:bahdegregory@gmail.com">Gregory Bahdé</a></div>}
       titleStyle={{ fontSize : '8pt', lineHeight : '1em',padding:"0px 2px 5px 2px",fontColor: "#D3E8E6  !important"}}
       subtitle={TitleForBox}
         subtitleStyle={{ fontSize : '12pt', color: '#aa8dc6', lineHeight : '1.3em',fontWeight:  'bold' }}
     />
 {this.state.isOpen?
   null:
-<Button variant="contained" onClick={this.toggleModal} sx={{ fontSize: '8pt', width: '15px', height: '15px', bgcolor: '#aa8dc6', fontWeight: 'bold', '&:hover': { bgcolor: '#9a7cb6' } }}>DATAS...</Button>
+<Button className="titlebox-datas-btn" variant="contained" onClick={this.toggleModal} sx={{ fontSize: '8pt', width: '15px', height: '15px', fontWeight: 'bold', '&:hover': { bgcolor: '#9a7cb6' } }}>DATAS...</Button>
 }
               <Modal style={{fontSize:"8pt"}}show={this.state.isOpen}
                 onClose={this.toggleModal}>
