@@ -52,6 +52,14 @@
 	text-shadow: 0 1px 1px rgba(0,0,0,0.3);
 }
 
+/* Scrollable area for side panel body to prevent overlap when zoomed */
+.sidepanel-scroll {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	padding-bottom: 12px;
+}
+
 .right-panel h1,
 .right-panel h2,
 .right-panel h3,

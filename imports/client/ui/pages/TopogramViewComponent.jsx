@@ -494,10 +494,10 @@ render() {
           position: 'fixed',
           right: '-22px',
           top: '-22px',
-          // scaleType:"center",
+          visibility: this.props.ui.filterPanelIsOpen ? 'hidden' : 'visible',
         }}
         onClick={this.handleToggleSelectionMode}
-        >
+      >
         <ExploreIcon />
       </Fab>
 

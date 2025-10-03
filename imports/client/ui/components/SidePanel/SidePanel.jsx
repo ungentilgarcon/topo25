@@ -144,6 +144,10 @@ export default class SidePanel extends React.Component {
           border: '1px solid #222',
           backgroundColor: 'rgba(69,90,100 ,0.9)',
           color:'#F2EFE9',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          overflow: 'hidden',
          //margin: '20px 2px',
 
          //align: 'left',
@@ -174,47 +178,48 @@ export default class SidePanel extends React.Component {
           router={router}
         />
 
-        {
-          panelName === 'main' ?
-            <span>
-              <PanelFilters
+        <div className="sidepanel-scroll">
+          {
+            panelName === 'main' ?
+              <span>
+                <PanelFilters
+                  nodes={nodes}
+                  nodeCategories={nodeCategories}
+                  selectElement={selectElement}
+                  />
+              </span>
+              :
+              null
+          }
 
-                nodes={nodes}
-                nodeCategories={nodeCategories}
-                selectElement={selectElement}
+          {
+            panelName === 'about' ?
+              <PanelDescription
+                topogram={topogram}
+                nodesCount={nodes.length}
+                edgesCount={edges.length}
                 />
-            </span>
-            :
-            null
-        }
+              :
+              null
+          }
 
-        {
-          panelName === 'about' ?
-            <PanelDescription
-              topogram={topogram}
-              nodesCount={nodes.length}
-              edgesCount={edges.length}
+          {
+            panelName === 'edit' ?
+              <PanelSettings
+                geoMapVisible={geoMapVisible}
+                hasCharts={hasCharts}
+                hasTimeInfo={hasTimeInfo}
+                hasGeoInfo={hasGeoInfo}
+                authorIsLoggedIn={authorIsLoggedIn}
+                topogramId={topogram._id}
+                topogramTitle={topogram.title}
+                topogramIsPublic={topogram.sharedPublic}
+                router={router}
               />
             :
-            null
-        }
-
-        {
-          panelName === 'edit' ?
-            <PanelSettings
-              geoMapVisible={geoMapVisible}
-              hasCharts={hasCharts}
-              hasTimeInfo={hasTimeInfo}
-              hasGeoInfo={hasGeoInfo}
-              authorIsLoggedIn={authorIsLoggedIn}
-              topogramId={topogram._id}
-              topogramTitle={topogram.title}
-              topogramIsPublic={topogram.sharedPublic}
-              router={router}
-            />
-          :
-            null
-        }
+              null
+          }
+        </div>
       </Drawer>
       </ThemeProvider>
     )

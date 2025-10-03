@@ -30,7 +30,7 @@ const PanelSettings = ({
         letterSpacing: '0.3px'
       }}
     >
-      Settings
+      Viz Options
     </Subheader>
 
     <PanelSelector
