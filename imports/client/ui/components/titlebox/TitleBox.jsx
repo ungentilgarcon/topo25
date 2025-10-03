@@ -12,36 +12,23 @@ import SelectedItem from '../selectionItem/SelectedItem.jsx'
 // SvgIcon not used anymore; using @mui/icons-material
 import Modal from './Modal';
 import './TitleBox.css'
-
 @ui()
 export default class TitleBox extends React.Component {
 
-static propTypes = {
-    topogramTitle : PropTypes.string,
-
+  static propTypes = {
+    topogramTitle: PropTypes.string
   }
-
-
-
 
   constructor(props) {
     super(props)
-
-    this.state = { isOpen: false };
+    this.state = { isOpen: false }
   }
-  toggleModal = () => {
-      this.setState({
-        isOpen: !this.state.isOpen
-      });
-    }
-//
-//    TitleForBox =(this.props.topogramTitle)=>{
-//     return(
-//       this.props.topogramTitle.split("/B")[0]
-// )
-//     }
 
-render(){
+  toggleModal = () => {
+    this.setState({ isOpen: !this.state.isOpen })
+  }
+
+  render() {
 
 const {
   cy,
@@ -73,41 +60,39 @@ const modalStyle = {
   padding: 30
 };
 
-if (this.props.topogramTitle){
+    if (!this.props.topogramTitle) {
+      return null
+    }
 
-var   TitleForBox =this.props.topogramTitle.split("\n")[0]
-var   Title2ForBox =this.props.topogramTitle.split("\n")[1]
- var   Title3ForBox =this.props.topogramTitle.split("\n")[2]
- var   Title4ForBox =this.props.topogramTitle.split("\n")[3]
- var   Title5ForBox =this.props.topogramTitle.split("\n")[4]
-//
+    const TitleForBox = this.props.topogramTitle.split("\n")[0]
+    const Title2ForBox = this.props.topogramTitle.split("\n")[1]
+    const Title3ForBox = this.props.topogramTitle.split("\n")[2]
+    const Title4ForBox = this.props.topogramTitle.split("\n")[3]
+    const Title5ForBox = this.props.topogramTitle.split("\n")[4]
 
 
-return(
-  <Card
-    className="titlebox-root"
-    style={{
-      //bottom: 5,
-      maxWidth : '20%',
-      minWidth : '15%',
-      float : 'left',
-      borderBottomRightRadius:"20px",
-      borderTopRightRadius:"5px",
-      borderBottomLeftRadius:"5px",
-      boxShadow: '1px 1px 8px  #000',
-      border: '1px solid #222',
-  // Less transparent: halve previous transparency (~0.1 -> ~0.05)
-  backgroundColor: 'rgba(69,90,100,0.95)',
-
-    }}
-  >
+    return (
+      <Card
+        className="titlebox-root"
+        style={{
+          maxWidth: '20%',
+          minWidth: '15%',
+          float: 'left',
+          borderBottomRightRadius: '16px',
+          borderTopRightRadius: '6px',
+          borderBottomLeftRadius: '6px',
+          boxShadow: '0 8px 18px rgba(0,0,0,0.35)',
+          border: '1px solid rgba(0,0,0,0.5)',
+          backgroundColor: 'rgba(69,90,100,0.92)'
+        }}
+      >
   <div>
     <CardTitle
       title={
-        <div style={{fontSize:"8pt", color: '#D3E8E6',fontWeight:  'bold'}}>BandsTour 2025 Vv4 GPLv3 by <a  href="mailto:bahdegregory@gmail.com">Gregory Bahdé</a></div>}
-      titleStyle={{ fontSize : '8pt', lineHeight : '1em',padding:"0px 2px 5px 2px",fontColor: "#D3E8E6  !important"}}
+        <div style={{fontSize:"8pt", color: '#F2EFE9', fontWeight: 'bold'}}>BandsTour 2025 v.4 GPLv3 by <a style={{ color: '#b999d6' }} href="mailto:bahdegregory@gmail.com">Gregory Bahdé</a></div>}
+      titleStyle={{ fontSize : '8pt', lineHeight : '1em', padding:"0px 2px 5px 2px", color: '#F2EFE9' }}
       subtitle={TitleForBox}
-        subtitleStyle={{ fontSize : '12pt', color: '#aa8dc6', lineHeight : '1.3em',fontWeight:  'bold' }}
+        subtitleStyle={{ fontSize : '12pt', color: '#F2EFE9', lineHeight : '1.3em', fontWeight:  'bold' }}
     />
 {this.state.isOpen?
   null:
@@ -215,11 +200,7 @@ return(
               </Modal>
     </div>
 
-  </Card>
-)
-}
-else {return(
-  null)
-}
-}
+      </Card>
+    )
+  }
 }
