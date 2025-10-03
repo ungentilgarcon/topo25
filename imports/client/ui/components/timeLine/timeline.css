@@ -1,1 +1,29 @@
-/* timeline.css cleaned: rc-slider tooltip styles removed; MUI Slider is used. */
+/* Timeline UI tweaks */
+
+.timeline-btn.MuiIconButton-root {
+	background: rgba(69, 90, 100, 0.85);
+	border: 1px solid #78909C;
+	color: #F2EFE9;
+	padding: 2px;
+	margin: 0 2px;
+	border-radius: 6px;
+}
+.timeline-btn.MuiIconButton-root:hover {
+	background: rgba(69, 90, 100, 0.95);
+}
+
+.timeline-speed-input .MuiInputBase-root {
+	background: rgba(69,90,100,0.9);
+	color: #F2EFE9;
+	border-radius: 6px;
+}
+.timeline-speed-input .MuiInputBase-input {
+	color: #F2EFE9;
+}
+.timeline-speed-input .MuiInputLabel-root {
+	color: #F2EFE9;
+}
+.timeline-speed-input .MuiInput-underline:before,
+.timeline-speed-input .MuiInput-underline:after {
+	border-bottom-color: #aa8dc6;
+}

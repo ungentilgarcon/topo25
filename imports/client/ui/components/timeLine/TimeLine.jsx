@@ -29,7 +29,7 @@ const styleTimeLine = {
   //marginBottom: '10px',
   borderTopRightRadius: '20px',
   borderBottomRightRadius: '5px',
-  padding:"2px 2px 15px 15px ",
+  padding:"6px 10px 14px 12px ",
   transitionEnabled: "true",
   //paddingBottom:"15px"
 
@@ -239,6 +239,7 @@ export default class TimeLine extends React.Component {
                     </span>
                     <Tooltip title="Play/Resume">
                       <IconButton
+                        className="timeline-btn"
                         size="small"
                         onClick={
                           this.state.playing ?
@@ -257,6 +258,7 @@ export default class TimeLine extends React.Component {
                       </IconButton>
                     </Tooltip>
                     <IconButton
+                      className="timeline-btn"
                       size="small"
                       onClick={() => this.next()}
                       alt="next year of tours"
@@ -267,6 +269,7 @@ export default class TimeLine extends React.Component {
                     </IconButton>
                     <Tooltip title="Stop/1st year of tour">
                       <IconButton
+                        className="timeline-btn"
                         size="small"
                         onClick={() => this.stop()}
                         alt="Stop/1st year of tour"
@@ -276,7 +279,7 @@ export default class TimeLine extends React.Component {
                     </Tooltip>
 
                     <TextField
-                      className= 'textFTime'
+                      className='timeline-speed-input textFTime'
                       name='stepSetter'
                       type='number'
                       min={0.1}
@@ -284,8 +287,8 @@ export default class TimeLine extends React.Component {
                       step={.1}
                       floatingLabelFixed={true}
                       floatingLabelText='Speed'
-                      floatingLabelStyle={{color: 'black'}}
-                      style={{width : '3em', margin: '0 2em',fontSize: "10pt"}}
+                      floatingLabelStyle={{color: '#F2EFE9'}}
+                      style={{width : '3.6em', margin: '0 1em',fontSize: "10pt"}}
                       value={this.state.step}
 
                       // columns={3}

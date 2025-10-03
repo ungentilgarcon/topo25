@@ -63,7 +63,37 @@ export default class TimeSlider extends React.Component {
           <div>
 
             <Slider
-              sx={{ zIndex: 1000 }}
+              sx={{
+                zIndex: 1000,
+                color: '#b999d6',
+                '& .MuiSlider-rail': { color: 'rgba(255,255,255,0.25)' },
+                '& .MuiSlider-track': { color: '#b999d6' },
+                '& .MuiSlider-thumb': {
+                  color: '#aa8dc6',
+                  border: '2px solid #F2EFE9',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                  '&:hover, &.Mui-focusVisible, &.Mui-active': {
+                    boxShadow: '0 0 0 6px rgba(170,141,198,0.20)'
+                  }
+                },
+                '& .MuiSlider-mark': {
+                  backgroundColor: '#b999d6',
+                  height: 3,
+                  width: 3,
+                  borderRadius: '50%'
+                },
+                '& .MuiSlider-markLabel': {
+                  color: '#F2EFE9',
+                  opacity: 0.9,
+                  fontSize: '10px',
+                  textShadow: '0 1px 1px rgba(0,0,0,0.5)'
+                },
+                '& .MuiSlider-valueLabel': {
+                  background: 'rgba(69,90,100,0.95)',
+                  color: '#F2EFE9',
+                  border: '1px solid #78909C'
+                }
+              }}
               value={currentRange}
               min={minTime}
               max={maxTime}
