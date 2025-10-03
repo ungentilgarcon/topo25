@@ -91,10 +91,17 @@ class Cytoscape extends Component {
     const cy = cytoscape({
       container: this._cyelement,
       layout: {
-        name: 'preset' // load saved positions
-        //  name: 'spread' // load saved positions
+        name: 'preset' // use saved positions; avoids animated relayouts on load
       },
-      elements
+      elements,
+      renderer: { name: 'canvas' },
+      wheelSensitivity: 0.2,
+      pixelRatio: 1,
+      textureOnViewport: true,
+      motionBlur: true,
+      motionBlurOpacity: 0.1,
+      hideEdgesOnViewport: true,
+      hideLabelsOnViewport: true
     })
 
     // Apply style after init. If style is a function (new applicator), call it.
@@ -152,16 +159,7 @@ class Cytoscape extends Component {
     }
 
     try {
-      const els = this.cy.elements()
-      // Hide during layout computation to avoid visible movement/jitter
-      els.style('opacity', 0)
-
       const layout = this.cy.layout(layoutConfig)
-      // Reveal after layout completes and fit view
-      this.cy.one('layoutstop', () => {
-        try { els.removeStyle('opacity') } catch (_) {}
-        try { this.cy.fit(undefined, 50) } catch (_) {}
-      })
       layout.run()
     } catch (_) {
       // no-op: layout plugin might not be available, keep preset
@@ -232,7 +230,8 @@ class Cytoscape extends Component {
     const currNodes = Array.isArray(currEls) ? currEls.filter(e => e.group === 'nodes').length : ((currEls.nodes || []).length)
     const currEdges = Array.isArray(currEls) ? currEls.filter(e => e.group === 'edges').length : ((currEls.edges || []).length)
 
-    if (elements !== prevProps.elements || prevNodes !== currNodes || prevEdges !== currEdges) {
+    const elementsChanged = elements !== prevProps.elements || prevNodes !== currNodes || prevEdges !== currEdges
+    if (elementsChanged) {
       // Replace elements safely to avoid cy.json() id warnings in v3
       this.cy.batch(() => {
         this.cy.elements().remove()
@@ -243,8 +242,10 @@ class Cytoscape extends Component {
           this.cy.add(elements)
         }
       })
-      // Re-apply current layout after element changes
-      this.applyLayout(this.props.layoutName)
+      // Only re-run layout automatically if using a computed layout (not 'preset')
+      if (this.props.layoutName && this.props.layoutName !== 'preset') {
+        this.applyLayout(this.props.layoutName)
+      }
       this.updateRadius(this.props.nodeRadius)
     }
 
@@ -263,13 +264,12 @@ class Cytoscape extends Component {
     // apply new layout if any
     if (prevProps.layoutName !== layoutName) {
       this.applyLayout(layoutName)
-      if (this.cy) this.cy.fit(undefined, 50)
+      // do not auto-fit here; let the user keep current viewport
     }
 
     // init once when requested
     if (!this.state.init && this.props.init) {
       this.applyLayout(layoutName)
-      if (this.cy) this.cy.fit(undefined, 50)
       this.setState({ init: true })
     }
 
