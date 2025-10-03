@@ -5,13 +5,17 @@
 /* eslint-disable global-require */
 let SimpleSchemaCompat
 try {
-	// Prefer npm package
-	const mod = require('simpl-schema')
-	SimpleSchemaCompat = mod.default || mod
-} catch (e) {
-	// Fallback to Atmosphere package
+	// Prefer Atmosphere package first to remain compatible with aldeed:collection2
 	const meteorMod = require('meteor/aldeed:simple-schema')
 	SimpleSchemaCompat = meteorMod.SimpleSchema
+} catch (e1) {
+	try {
+		// Fallback to npm package when Atmosphere is not present
+		const mod = require('simpl-schema')
+		SimpleSchemaCompat = mod.default || mod
+	} catch (e2) {
+		throw new Error('SimpleSchema not available: tried meteor/aldeed:simple-schema and simpl-schema')
+	}
 }
 
 export const SimpleSchema = SimpleSchemaCompat
