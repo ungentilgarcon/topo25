@@ -75,6 +75,13 @@ Check for ESlint compliance
 
     npm run lint
 
+### Node versions (Meteor vs. tooling)
+
+This repo uses two Node contexts:
+
+- Meteor runtime: Meteor bundles and runs with its own Node version; you do not need to manage it manually when running `meteor`.
+- Tooling: For npm scripts (lint, tests outside Meteor) and CI, we pin Node LTS via `.nvmrc` (currently v20). If you use `nvm`, run `nvm use` in `topogram/` before `npm install`/`npm run lint`.
+
 ### Deploy with Docker
 
 You can use Docker to run in production.
