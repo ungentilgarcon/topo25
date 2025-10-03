@@ -59,7 +59,7 @@
   },
   "scripts": {
     "start": "meteor",
-    "lint": "eslint --ext .jsx --ext .js --quiet .",
+    "lint": "eslint --ext .jsx --ext .js --quiet --no-error-on-unmatched-pattern .",
     "test": "mocha \"imports/**/__tests__/**/*.test.js\"",
     "test:meteor": "meteor test --driver-package=practicalmeteor:mocha --port=3010",
     "watch": "echo 'watch disabled (gulp removed)'; exit 0",
