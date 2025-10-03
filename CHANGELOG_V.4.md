@@ -110,3 +110,33 @@ Contributors: @ungentilgarcon, @gregory bahdé
 ---
 
 Generated from Git history and docs references across 2025 dates.
+
+---
+
+## Conventional-commit categories
+
+### Features (feat)
+- Charts: migrate C3 → Recharts; selection highlighting and pop-out enhancements
+- GeoMap: chevrons at antimeridian; UI toggles; compact controls and offsets
+- UI: draggable/resizable popups for Charts and Legend; improved panels and menus
+- Network: isolate “Focus and rearrange” workflow (closedNeighborhood + spread)
+
+### Fixes (fix)
+- SelectedItem: drop rehype-raw, convert anchors to Markdown to avoid ESM errors
+- Cytoscape: stable IDs for edges; visibility sync; avoid startup animation
+- GeoMap: robust selection rendering; guard invalid coords; attribution visibility
+- Timeline/Router: v6 migration fixes; slider initialization and value guards
+
+### Performance (perf)
+- Cytoscape: keep layout stable by toggling display rather than remove/add; canvas renderer; fewer relayouts
+
+### Refactors (refactor)
+- UI compat layers for MUI v5; redux-ui removal; createRef/string-ref migrations
+
+### Chore (chore)
+- Node 20 via .nvmrc; ESLint 8; CI bootstrap; dependency cleanup
+- Simpl-schema migration with shims and load-order fixes; Meteor package alignment
+
+### Documentation (docs)
+- Migration logs for React/MUI/Cytoscape/Charts; API and Quickstart updates
+- README updates with V4 changelog link
