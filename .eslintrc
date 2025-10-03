@@ -3,11 +3,10 @@
   "parserOptions": {
     "requireConfigFile": false,
     "babelOptions": {
-      "presets": [
-        ["@babel/preset-env", { "targets": { "esmodules": true } }],
-        "@babel/preset-react"
-      ],
-      "plugins": ["@babel/plugin-proposal-class-properties", ["@babel/plugin-proposal-decorators", { "legacy": true }]]
+      "plugins": [
+        "@babel/plugin-proposal-class-properties",
+        ["@babel/plugin-proposal-decorators", { "legacy": true }]
+      ]
     },
     "ecmaVersion": 2021,
     "sourceType": "module",
