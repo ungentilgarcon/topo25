@@ -128,9 +128,9 @@ export class TopogramViewComponent extends React.Component {
       console.log("cy",{...cy})
       const selectedIds = selectedElements.map(e => e.data.id)
       console.log("selectedIds",selectedIds)
-      const focusedNodes = cy.filter((i, e) =>
-      selectedIds.includes(e.id())
-    )
+      const focusedNodes = cy.nodes().filter((e, i) =>
+        selectedIds.includes(e.id())
+      )
     console.log(focusedNodes)
 
     //console.log("nodeId",{...nodeIds}),
@@ -184,9 +184,9 @@ handleEnterIsolateMode = () => {
 
   // get my nodes/edges
   const selectedIds = selectedElements.map(e => e.data.id)
-  const focusedNodes = cy.filter((i, e) =>
-  selectedIds.includes(e.id())
-)
+  const focusedNodes = cy.nodes().filter((e, i) =>
+    selectedIds.includes(e.id())
+  )
 
 cy.nodes().style({ 'opacity': '0' });
 cy.edges().style({ 'opacity': '0' });
@@ -226,9 +226,9 @@ handleEnterExtractMode = () => {
 
   // get my nodes/edges
   const selectedIds = selectedElements.map(e => e.data.id)
-  const focusedNodes = cy.filter((i, e) =>
-  selectedIds.includes(e.id())
-)
+  const focusedNodes = cy.nodes().filter((e, i) =>
+    selectedIds.includes(e.id())
+  )
 
 cy.nodes().style({ 'opacity': '0' });
 cy.edges().style({ 'opacity': '0' });
