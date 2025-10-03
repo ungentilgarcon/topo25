@@ -290,3 +290,26 @@ Next steps
 - Upgrade ESLint toolchain (eslint@8 + @babel/eslint-parser, updated plugins) to support modern syntax and progressively re-enable lint coverage by narrowing `.eslintignore`.
 - Regenerate lockfile and revert CI to `npm ci`.
 - Optionally add a CI badge to `README.md`.
+
+### Update 2025-10-03: Cytoscape v3 upgrade and charts migration
+
+Summary: Upgraded the network visualization stack to modern, supported libraries and resolved compatibility issues introduced by Cytoscape v3.
+
+Network visualization
+- Cytoscape upgraded to 3.29.2, with plugins:
+  - panzoom 2.5.3, spread 3.0.0, cola 2.5.0, cxtmenu 3.2.3, edgehandles 4.0.1.
+- Stopped using `cy.json({ elements })` for updates (v3 warns about implicit IDs). Switched to explicit remove/add pattern for nodes/edges.
+- Stylesheets: moved from serialized JSON to a function applicator that calls `cy.style()` so dynamic functions (e.g., color from data, selected highlights) are preserved under v3.
+- Layouts: switched to `layout.run()` everywhere; added a tuned `spread` preset (dynamic `minDist`, `padding`, and `randomize`) and call `cy.fit()` after layout. Initial layout “calculation” animation is now hidden by temporarily setting opacity to 0 and restoring on `layoutstop` for a snappier first paint.
+- Labels: reduced default font size and min-zoomed visibility to reduce clutter; hover/selection still reveals labels clearly.
+- React 18 portals: replaced unstable/deprecated APIs with `createPortal` to remove warnings.
+
+Charts migration
+- Replaced C3/d3 charts with Recharts (2.10.x). Removed legacy c3 assets and neutralized `.c3-*` CSS remnants.
+- Fixed Cytoscape v3 interactions by avoiding internal/private flags; charts now compute from `cy.filter('node'|'edge')` and synchronize selection through Cytoscape’s public APIs.
+
+Operational notes
+- App builds and runs on the modernization branch; JSON API remains enabled by default. No runtime dependencies on d3/c3 remain.
+
+Known follow-ups
+- Network UX needs a broader refresh (label gating by zoom, clearer presets for very large graphs, UI affordances like re-layout button and label size slider). This will be addressed in a dedicated UX pass.

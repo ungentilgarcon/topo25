@@ -22,9 +22,11 @@ export function edges(state = initialState, action) {
       edgesSubscriptionStopped: false,
     }
   case EDGES_SUBSCRIPTION_CHANGED:
+    // Convert from Minimongo Document to plain JS objects
+    // to avoid passing non-serializable data to Cytoscape
     return {
       ...state,
-      edges: action.payload,
+      edges: action.payload.map(d => JSON.parse(JSON.stringify(d))),
     }
   case STOP_SUBSCRIPTION:
     return action.payload === EDGES_SUB

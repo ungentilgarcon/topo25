@@ -10,20 +10,18 @@ class Portal extends React.Component {
     if (typeof document === 'undefined') return
     this.container = document.createElement('div')
     document.body.appendChild(this.container)
-    this._renderPortal()
+    this.forceUpdate()
   }
-  componentDidUpdate() { this._renderPortal() }
+  componentDidUpdate() { /* portal rerenders via render() */ }
   componentWillUnmount() {
     if (!this.container) return
-    ReactDOM.unmountComponentAtNode(this.container)
     document.body.removeChild(this.container)
     this.container = null
   }
-  _renderPortal() {
-    if (!this.container) return
-    ReactDOM.unstable_renderSubtreeIntoContainer(this, this.props.children, this.container)
+  render() {
+    if (!this.container) return null
+    return ReactDOM.createPortal(this.props.children, this.container)
   }
-  render() { return null }
 }
 
 class PanelDescription extends React.Component {

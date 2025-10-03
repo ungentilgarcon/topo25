@@ -18,7 +18,7 @@ const linearScale = (domain, range) => {
   return (x) => r0 + ((x - d0) / span) * outSpan
 }
 
-// register force layout
+// register extensions with cytoscape v3
 spread(cytoscape)
 panzoom(cytoscape)
 
@@ -81,18 +81,28 @@ class Cytoscape extends Component {
 
   componentDidMount() {
 
-    const { style, elements } = this.props
+  const { style, elements } = this.props
+
+    // Normalize style for v3: accept either stylesheet or JSON array
+    const styleDef = Array.isArray(style)
+      ? style
+      : (style && typeof style.json === 'function' ? style.json() : style)
 
     const cy = cytoscape({
       container: this._cyelement,
       layout: {
         name: 'preset' // load saved positions
-      //  name: 'spread' // load saved positions
-
+        //  name: 'spread' // load saved positions
       },
-      style,
       elements
     })
+
+    // Apply style after init. If style is a function (new applicator), call it.
+    if (typeof style === 'function') {
+      try { style(cy) } catch (e) { /* noop */ }
+    } else if (styleDef) {
+      try { cy.style().fromJson(styleDef).update() } catch (e) { /* noop */ }
+    }
     cy.panzoom( defaults );
 
     this.cy = cy
@@ -125,17 +135,37 @@ class Cytoscape extends Component {
 
   applyLayout(layoutName) {
     const layoutConfig = {
-      name : layoutName,
-      animate: false
+      name: layoutName,
+      animate: false,
+      fit: false
     }
 
-    if (layoutName == 'spread') {
-      layoutConfig.minDist= 50  // Minimum distance between nodes
-      layoutConfig.padding= 80
-      layoutConfig.fontSize= 11
+    if (layoutName === 'spread') {
+      const n = this.cy.nodes().length || 0
+      const w = this._cyelement ? this._cyelement.clientWidth : 800
+      // Dynamic spacing: more nodes => larger minDist; also scale with width
+      const base = Math.max(40, Math.round((w / 1000) * 80))
+      const extra = Math.min(140, Math.round(n / 40))
+      layoutConfig.minDist = base + extra // Minimum distance between nodes
+      layoutConfig.padding = 100
+      layoutConfig.randomize = true
     }
 
-    this.cy.layout(layoutConfig)
+    try {
+      const els = this.cy.elements()
+      // Hide during layout computation to avoid visible movement/jitter
+      els.style('opacity', 0)
+
+      const layout = this.cy.layout(layoutConfig)
+      // Reveal after layout completes and fit view
+      this.cy.one('layoutstop', () => {
+        try { els.removeStyle('opacity') } catch (_) {}
+        try { this.cy.fit(undefined, 50) } catch (_) {}
+      })
+      layout.run()
+    } catch (_) {
+      // no-op: layout plugin might not be available, keep preset
+    }
   }
 
   updateRadiusByWeight() {
@@ -202,8 +232,32 @@ class Cytoscape extends Component {
     const currNodes = Array.isArray(currEls) ? currEls.filter(e => e.group === 'nodes').length : ((currEls.nodes || []).length)
     const currEdges = Array.isArray(currEls) ? currEls.filter(e => e.group === 'edges').length : ((currEls.edges || []).length)
 
-    if (elements !== prevProps.elements || style !== prevProps.style || prevNodes !== currNodes || prevEdges !== currEdges) {
-      this.cy.json({ elements, style })
+    if (elements !== prevProps.elements || prevNodes !== currNodes || prevEdges !== currEdges) {
+      // Replace elements safely to avoid cy.json() id warnings in v3
+      this.cy.batch(() => {
+        this.cy.elements().remove()
+        if (Array.isArray(elements)) {
+          this.cy.add(elements)
+        } else if (elements && (elements.nodes || elements.edges)) {
+          // v3 add() supports nodes/edges object
+          this.cy.add(elements)
+        }
+      })
+      // Re-apply current layout after element changes
+      this.applyLayout(this.props.layoutName)
+      this.updateRadius(this.props.nodeRadius)
+    }
+
+    // Apply updated style if it changed
+    if (style !== prevProps.style && style) {
+      if (typeof style === 'function') {
+        try { style(this.cy) } catch (e) { /* noop */ }
+      } else {
+        const styleDef = Array.isArray(style)
+          ? style
+          : (typeof style.json === 'function' ? style.json() : style)
+        try { this.cy.style().fromJson(styleDef).update() } catch (e) { /* noop */ }
+      }
     }
 
     // apply new layout if any
@@ -255,7 +309,7 @@ Cytoscape.propTypes = {
   layoutName : PropTypes.string.isRequired,
   nodeRadius : PropTypes.string.isRequired,
   init : PropTypes.bool.isRequired,
-  style : PropTypes.object
+  style : PropTypes.oneOfType([PropTypes.object, PropTypes.func])
 }
 
 export default Cytoscape
