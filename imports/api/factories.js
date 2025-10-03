@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { Factory } from 'meteor/dburles:factory'
 
 import { Topograms } from './topograms/Topograms.js'
@@ -16,14 +16,14 @@ Factory.define('node', Nodes, {
   createdAt: () => new Date(),
   topogramId: Factory.get('topogram'),
   data : {
-    id : () => faker.random.uuid(),
+  id : () => faker.string.uuid(),
     name: () => faker.lorem.sentence(),
-    lat : () => faker.address.latitude(),
-    lon : () => faker.address.longitude(),
+  lat : () => faker.location.latitude(),
+  lon : () => faker.location.longitude(),
     start : () => faker.date.past(),
     end : () => faker.date.future(),
-    group : () => faker.hacker.noun(),
-    weight : () => faker.random.number()
+  group : () => faker.hacker.noun(),
+  weight : () => faker.number.int({ min: 1, max: 100 })
   }
 })
 
@@ -31,15 +31,15 @@ Factory.define('edge', Edges, {
   createdAt: () => new Date(),
   topogramId: Factory.get('topogram'),
   data : {
-    id : () => faker.random.uuid(),
+  id : () => faker.string.uuid(),
     source : Factory.get('node'),
     target : Factory.get('node'),
     name: () => faker.lorem.sentence(),
-    lat : () => faker.address.latitude(),
-    lon : () => faker.address.longitude(),
+  lat : () => faker.location.latitude(),
+  lon : () => faker.location.longitude(),
     start : () => faker.date.past(),
     end : () => faker.date.future(),
-    group : () => faker.hacker.noun(),
-    weight : () => faker.random.number()
+  group : () => faker.hacker.noun(),
+  weight : () => faker.number.int({ min: 1, max: 100 })
   }
 })

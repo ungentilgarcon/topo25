@@ -13,6 +13,5 @@ export const Users = Meteor.users
 export {
   Nodes,
   Edges,
-  Users,
   Topograms
 }

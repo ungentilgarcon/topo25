@@ -21,10 +21,8 @@ check@1.4.4
 # meteor++
 reactive-var@1.0.13
 
-# UI
+# UI (Blaze removed; React app)
 mobile-experience@1.1.2
-blaze-html-templates
-spacebars
 jquery
  
 
@@ -48,7 +46,6 @@ modules@0.20.3
 meteortesting:mocha
 
 
-react-template-helper
 dburles:factory
 aldeed:collection2
 johanbrook:publication-collector
