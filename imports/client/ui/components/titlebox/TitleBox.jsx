@@ -83,7 +83,7 @@ const modalStyle = {
           borderBottomLeftRadius: '6px',
           boxShadow: '0 8px 18px rgba(0,0,0,0.35)',
           border: '1px solid rgba(0,0,0,0.5)',
-          backgroundColor: 'rgba(69,90,100,0.92)'
+          backgroundColor: 'rgba(69,90,100,0.9)'
         }}
       >
   <div>
@@ -92,15 +92,15 @@ const modalStyle = {
         <div style={{fontSize:"8pt", color: '#F2EFE9', fontWeight: 'bold'}}>BandsTour 2025 v.4 GPLv3 by <a style={{ color: '#b999d6' }} href="mailto:bahdegregory@gmail.com">Gregory Bahdé</a></div>}
       titleStyle={{ fontSize : '8pt', lineHeight : '1em', padding:"0px 2px 5px 2px", color: '#F2EFE9' }}
       subtitle={TitleForBox}
-        subtitleStyle={{ fontSize : '12pt', color: '#F2EFE9', lineHeight : '1.3em', fontWeight:  'bold' }}
+        subtitleStyle={{ fontSize : '12pt', color: '#F2EFE9', lineHeight : '1.3em', fontWeight:  'bold', textShadow: '0 1px 1px rgba(0,0,0,0.6)' }}
     />
 {this.state.isOpen?
   null:
-<Button className="titlebox-datas-btn" variant="contained" onClick={this.toggleModal} sx={{ fontSize: '8pt', width: '15px', height: '15px', fontWeight: 'bold', '&:hover': { bgcolor: '#9a7cb6' } }}>DATAS...</Button>
+<Button className="titlebox-datas-btn titlebox-action-btn" variant="contained" onClick={this.toggleModal} sx={{ fontSize: '8pt', height: '20px', fontWeight: 'bold', '&:hover': { bgcolor: '#9a7cb6' } }}>DATAS...</Button>
 }
               <Modal style={{fontSize:"8pt"}}show={this.state.isOpen}
                 onClose={this.toggleModal}>
-<span style={{fontSize:"10pt"}}>
+<span className="titlebox-stats" style={{fontSize:"10pt"}}>
                 {Title2ForBox}<br/>
                 {Title3ForBox}<br/>
                 {Title4ForBox}<br/>
@@ -146,11 +146,11 @@ const modalStyle = {
       </div>
         :
         <div>
-        <Button variant="contained" onClick={handleEnterIsolateMode} sx={{ fontSize: '6pt', width: '15px', height: '15px', mr: 1 }}>
+        <Button className="titlebox-action-btn" variant="contained" onClick={handleEnterIsolateMode} sx={{ fontSize: '7pt', height: '22px', mr: 1 }}>
           Focus and rearrange
         </Button>
 
-          <Button variant="outlined" onClick={handleEnterExtractMode} sx={{ fontSize: '6pt', width: '15px', height: '15px' }}>
+          <Button className="titlebox-action-btn" variant="outlined" onClick={handleEnterExtractMode} sx={{ fontSize: '7pt', height: '22px' }}>
             Focus only
           </Button>
             {/* <RaisedButton style={{fontSize: "6pt" ,Width : "15px",height:"15px"}}
