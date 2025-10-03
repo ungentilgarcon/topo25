@@ -256,9 +256,18 @@ class Cytoscape extends Component {
           const id = n && n.data && (n.data.id || n.data._id)
           if (!id) return
           const ele = this.cy.getElementById(id)
-          if (ele && ele.nonempty()) {
+          if (ele && ele.length > 0) {
             try { ele.style('display', 'element') } catch (_) {}
-            // Optionally update position/data here if needed
+            // Update data fields (except id) and position if provided
+            if (n.data) {
+              Object.keys(n.data).forEach(k => {
+                if (k === 'id' || k === '_id') return
+                try { ele.data(k, n.data[k]) } catch (_) {}
+              })
+            }
+            if (n.position) {
+              try { ele.position(n.position) } catch (_) {}
+            }
           } else {
             try { this.cy.add(n) } catch (_) {}
           }
@@ -279,8 +288,14 @@ class Cytoscape extends Component {
           const id = e && e.data && (e.data.id || e.data._id)
           if (!id) return
           const ele = this.cy.getElementById(id)
-          if (ele && ele.nonempty()) {
+          if (ele && ele.length > 0) {
             try { ele.style('display', 'element') } catch (_) {}
+            if (e.data) {
+              Object.keys(e.data).forEach(k => {
+                if (k === 'id' || k === '_id') return
+                try { ele.data(k, e.data[k]) } catch (_) {}
+              })
+            }
           } else {
             try { this.cy.add(e) } catch (_) {}
           }
@@ -295,6 +310,8 @@ class Cytoscape extends Component {
             try { ele.style('display', 'element') } catch (_) {}
           }
         })
+        // Recompute style mappings after data changes (colors, widths)
+        try { this.cy.style().update() } catch (_) {}
       })
 
       // Do not auto layout on visibility toggles; preserve current layout
