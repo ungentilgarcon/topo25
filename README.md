@@ -33,9 +33,8 @@ Quick start (development):
 git clone https://github.com/ungentilgarcon/topo25.git
 cd topo25/topogram
 meteor npm install
-# Optional: use a local MongoDB and enable JSON API endpoints
+# Optional: use a local MongoDB (JSON API is enabled by default)
 export MONGO_URL='mongodb://localhost:27018/Bandstour_results_meteor'
-export USE_JSONROUTES=1
 export ROOT_URL='http://localhost:3020'
 meteor --port 3020
 ```
@@ -55,7 +54,7 @@ lsof -ti :3024 | xargs -r kill -9
 Then relaunch Meteor on the same port in one line:
 
 ```sh
-PORT=3024 ROOT_URL=http://localhost:3024 MONGO_URL='mongodb://127.0.0.1:27018/Bandstour_results_meteor' USE_JSONROUTES=1 UPGRADE_PROBE=0 meteor --port 3024
+PORT=3024 ROOT_URL=http://localhost:3024 MONGO_URL='mongodb://127.0.0.1:27018/Bandstour_results_meteor' meteor --port 3024
 ```
 
 
@@ -90,9 +89,9 @@ All the docs will be built in the `.docs/` folder.
 
     gulp doc
 
-### JSON API (optional)
+### JSON API
 
-This fork exposes a lightweight JSON API for basic operations (auth, listing public topograms, and CRUD for topograms/nodes/edges). The API is disabled by default and can be enabled by setting `USE_JSONROUTES=1` at runtime.
+This fork exposes a lightweight JSON API for basic operations (auth, listing public topograms, and CRUD for topograms/nodes/edges). The API is enabled by default. To temporarily disable all custom API wiring during upgrade probes, start with `UPGRADE_PROBE=1`.
 
 - Docs: docs/API.md
 - Quick probe: `curl http://localhost:3020/api/whoami`

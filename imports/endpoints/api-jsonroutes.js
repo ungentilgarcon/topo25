@@ -1,8 +1,6 @@
 /*
   WebApp-based API scaffold: Non-destructive alternative to Restivus/JsonRoutes
-  Enabled via:
-    - Meteor.settings.public.useJsonRoutes = true
-    - or env USE_JSONROUTES=1
+  Default: Enabled by default. To temporarily disable during upgrade probes, set env UPGRADE_PROBE=1.
   Note: Mirrors a subset of existing endpoints.
 */
 

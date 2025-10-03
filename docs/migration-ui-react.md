@@ -38,15 +38,15 @@ This document tracks the ongoing React + MUI modernization for the Meteor app.
 
 - App runs under React 18 + MUI v5 via the compat layer.
 - Legacy warnings from `react-router@3` and `react-intl@2` are expected and non-blocking.
-- UI init loops eliminated; startup under USE_JSONROUTES/MONGO_URL is stable.
+- UI init loops eliminated; startup with external Mongo is stable; JSON API is enabled by default.
 
 ## How to run (local Meteor; no Docker)
 
-- JSON routes dev (Mongo on port 27018, recommended):
-  - `USE_JSONROUTES=1 MONGO_URL=mongodb://127.0.0.1:27018/topogram ROOT_URL=http://localhost:3020 meteor --port 3020`
+- Default dev (JSON API is enabled by default; Mongo on port 27018 recommended):
+  - `MONGO_URL=mongodb://127.0.0.1:27018/topogram ROOT_URL=http://localhost:3020 meteor --port 3020`
 
-- Probe mode:
-  - `UPGRADE_PROBE=1 USE_JSONROUTES=0 MONGO_URL=mongodb://127.0.0.1:27018/topogram ROOT_URL=http://localhost:3020 meteor --port 3020`
+- Probe mode (minimal health-only API):
+  - `UPGRADE_PROBE=1 MONGO_URL=mongodb://127.0.0.1:27018/topogram ROOT_URL=http://localhost:3020 meteor --port 3020`
 
 ## Known issues / limitations
 

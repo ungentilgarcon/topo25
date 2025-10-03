@@ -186,30 +186,35 @@ export default class GeoEdges extends React.Component {
         segments.forEach((seg, sIdx) => {
           children.push(
             <Polyline
-              key={`edge-${i}-seg-${sIdx}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+              key={`edge-${e.data && e.data.id != null ? e.data.id : i}-seg-${sIdx}-${e.data && e.data.selected ? 1 : 0}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               opacity={"0.8"}
               color={color}
               weight={weight}
               dashArray={dashArray}
               positions={seg}
-              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
-              onMouseDown={() => isolateMode ? onFocusElement(e) : null }
-              onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
+              bubblingMouseEvents={false}
+              eventHandlers={{
+                click: () => { if (!isolateMode) handleClickGeoElement({ group: 'edge', el: e }) },
+                mousedown: () => { if (isolateMode) onFocusElement(e) },
+                mouseup: () => { if (isolateMode) onUnfocusElement() }
+              }}
             />
           )
           // Invisible hit area: larger weight, nearly transparent
           const hitWeight = Math.max(weight, 24)
           children.push(
             <Polyline
-              key={`edge-${i}-seg-${sIdx}-hit-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+              key={`edge-${e.data && e.data.id != null ? e.data.id : i}-seg-${sIdx}-hit-${e.data && e.data.selected ? 1 : 0}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               opacity={0.001}
               color={color}
               weight={hitWeight}
               bubblingMouseEvents={false}
               positions={seg}
-              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
-              onMouseDown={() => isolateMode ? onFocusElement(e) : null }
-              onMouseUp={()=> isolateMode ? onUnfocusElement() : null }
+              eventHandlers={{
+                click: () => { if (!isolateMode) handleClickGeoElement({ group: 'edge', el: e }) },
+                mousedown: () => { if (isolateMode) onFocusElement(e) },
+                mouseup: () => { if (isolateMode) onUnfocusElement() }
+              }}
             />
           )
         })
@@ -231,7 +236,9 @@ export default class GeoEdges extends React.Component {
               position={[lat, lng]}
               icon={ch.icon}
               interactive={true}
-              onClick={() => !isolateMode ? handleClickGeoElement({ group : 'edge', el: e }) : null }
+              eventHandlers={{
+                click: () => { if (!isolateMode) handleClickGeoElement({ group: 'edge', el: e }) }
+              }}
             />
           )
         })

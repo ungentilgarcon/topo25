@@ -31,24 +31,11 @@ export default class GeoNodes extends React.Component {
           center={n.coords}
           opacity={"0.8"}
           color={n.data.selected ? 'yellow' : n.data.color ? n.data.color : 'steelblue'}
-          onClick={() => !isolateMode ?
-            handleClickGeoElement({
-              group : 'node',
-              el: n
-            })
-            :
-            null
-          }
-          onMouseDown={() => isolateMode ?
-            onFocusElement(n)
-            :
-            null
-          }
-          onMouseUp={()=> isolateMode ?
-            onUnfocusElement()
-            :
-            null
-          }
+          eventHandlers={{
+            click: () => { if (!isolateMode) handleClickGeoElement({ group: 'node', el: n }) },
+            mousedown: () => { if (isolateMode) onFocusElement(n) },
+            mouseup: () => { if (isolateMode) onUnfocusElement() }
+          }}
         />
       )
     })

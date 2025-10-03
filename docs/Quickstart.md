@@ -23,11 +23,10 @@ meteor --port 3020
 
 Open http://localhost:3020
 
-## Run with JSON API enabled and external MongoDB
+## Run with external MongoDB (JSON API is enabled by default)
 
 ```
 export MONGO_URL='mongodb://localhost:27018/Bandstour_results_meteor'
-export USE_JSONROUTES=1
 export ROOT_URL='http://localhost:3020'
 meteor --port 3020
 ```
@@ -49,4 +48,4 @@ npm run lint
 
 ## Troubleshooting
 - If Meteor warns about peer deps, install the suggested packages or re-run `meteor npm install`.
-- If JSON API routes return 404, ensure `USE_JSONROUTES=1` is set and see `imports/endpoints/api-jsonroutes.js`.
+- If JSON API routes return 404, check logs for "Failed to initialize JSON API". During upgrade probes, the API is intentionally replaced by a minimal health route when `UPGRADE_PROBE=1` is set.

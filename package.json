@@ -69,8 +69,8 @@
     "i18n:extract": "formatjs extract 'imports/**/*.{js,jsx,ts,tsx}' --ignore='**/*.test.*' --out-file .i18n/extracted/messages.json --format simple",
     "i18n:merge": "node ./.scripts/merge-intl.js",
     "i18n:update": "npm run i18n:extract && npm run i18n:merge",
-    "dev:probe": "UPGRADE_PROBE=1 USE_JSONROUTES=0 MONGO_URL=mongodb://localhost:27018/Bandstour_results_meteor ROOT_URL=http://localhost:3020 meteor --port 3020",
-    "dev:jsonroutes": "UPGRADE_PROBE=0 USE_JSONROUTES=1 MONGO_URL=mongodb://localhost:27018/Bandstour_results_meteor ROOT_URL=http://localhost:3020 meteor --port 3020"
+    "dev": "MONGO_URL=mongodb://localhost:27018/Bandstour_results_meteor ROOT_URL=http://localhost:3020 meteor --port 3020",
+    "dev:probe": "UPGRADE_PROBE=1 MONGO_URL=mongodb://localhost:27018/Bandstour_results_meteor ROOT_URL=http://localhost:3020 meteor --port 3020"
   },
   "repository": {
     "type": "git",
