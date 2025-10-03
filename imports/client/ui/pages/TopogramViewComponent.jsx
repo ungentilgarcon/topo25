@@ -197,11 +197,21 @@ focusedNodes.style({ 'opacity': '1' });
 subGraph.style({ 'opacity': '1'});
 
 // apply focus layout
-subGraph.layout({
-  'name':"spread",
-  'minDist' : 30,
-  'padding' : 50
-})
+try {
+  const layout = subGraph.layout({
+    name: 'spread',
+    minDist: 30,
+    padding: 50,
+    animate: false,
+    fit: false
+  })
+  layout.run() // Cytoscape v3 requires .run()
+  // center and zoom on the isolated subgraph once laid out
+  try { cy.fit(subGraph, 60) } catch (_) {}
+} catch (e) {
+  // layout plugin might be unavailable; still keep isolation styles
+  try { cy.fit(subGraph, 60) } catch (_) {}
+}
 }
 
 handleEnterExtractMode = () => {
