@@ -89,12 +89,16 @@ Nodes.schema = new SimpleSchema({
   'data.notes' : {
     type : String,
     label : 'A Mardkdown-formatted text to store some more info about the node',
-    blackbox: true,
     optional : true
   },
   group : {
     type: String,
     defaultValue : 'nodes'
+  },
+  // Parent object for position.* keys (required by npm simpl-schema)
+  position: {
+    type: Object,
+    optional: true
   },
   'position.x' :  {
     type : Number,

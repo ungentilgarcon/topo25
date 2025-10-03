@@ -96,6 +96,11 @@ Edges.schema = new SimpleSchema({
     type: String,
     defaultValue : 'edges'
   },
+  // Parent object for potential position.* fields (consistency)
+  position: {
+    type: Object,
+    optional: true
+  },
   owner: {
     type: String,
     regEx: SimpleSchema.RegEx.Id,
