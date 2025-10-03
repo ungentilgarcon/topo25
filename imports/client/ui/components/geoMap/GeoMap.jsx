@@ -16,9 +16,7 @@ const MAP_DIV_ID = 'map'
 const divMapStyle = {
   position: 'fixed',
   top: '0',
-  // Ensure the map can receive pointer events
-  zIndex : 0,
-  pointerEvents: 'auto'
+  zIndex : -1
 }
 
 @ui()
@@ -85,13 +83,24 @@ class GeoMap extends React.Component {
   const left = width === '50vw' ? '50vw' : 0
   const containerStyle = Object.assign({}, divMapStyle, { left, height, width })
 
+    // Build quick lookup sets for selected nodes/edges from global UI so styling stays in sync
+    const selected = (this.props.ui && this.props.ui.selectedElements) ? this.props.ui.selectedElements : []
+    const selectedNodeIds = new Set(
+      selected.filter(e => e && e.group === 'nodes' && e.data && e.data.id != null).map(e => e.data.id)
+    )
+    const selectedEdgeIds = new Set(
+      selected.filter(e => e && e.group === 'edges' && e.data && e.data.id != null).map(e => e.data.id)
+    )
+
     const nodes = (this.props.nodes || [])
       .map( n => {
         const lat = parseFloat(n.data.lat)
         const lng = parseFloat(n.data.lng)
         if (!isFinite(lat) || !isFinite(lng)) return null
         const coords = [lat, lng]
-        const node = { ...n, coords }
+        // Reflect selection based on global UI state, not only on original data
+        const isSelected = selectedNodeIds.has(n.data.id) || !!n.data.selected
+        const node = { ...n, data: { ...n.data, selected: isSelected }, coords }
         nodesById[n.data.id] = node // store for edges
         return node
       })
@@ -103,8 +112,9 @@ class GeoMap extends React.Component {
         const target = nodesById[e.data.target]
         if (!source || !target) return null
         const coords = [source.coords, target.coords]
-        const selected = e.data.selected
-        return { ...e, source, target, coords, selected }
+        // Same: compute selected from global UI first, fall back to data flag
+        const isSelected = selectedEdgeIds.has(e.data.id) || !!e.data.selected
+        return { ...e, source, target, coords, selected: isSelected, data: { ...e.data, selected: isSelected } }
       })
       .filter(Boolean)
 

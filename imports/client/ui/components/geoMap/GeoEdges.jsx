@@ -192,6 +192,7 @@ export default class GeoEdges extends React.Component {
               weight={weight}
               dashArray={dashArray}
               positions={seg}
+              bubblingMouseEvents={false}
               eventHandlers={{
                 click: () => { if (!isolateMode) handleClickGeoElement({ group: 'edge', el: e }) },
                 mousedown: () => { if (isolateMode) onFocusElement(e) },
@@ -234,7 +235,10 @@ export default class GeoEdges extends React.Component {
               key={`${ch.key}-${i}-${cIdx}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               position={[lat, lng]}
               icon={ch.icon}
-              interactive={false}
+              interactive={true}
+              eventHandlers={{
+                click: () => { if (!isolateMode) handleClickGeoElement({ group: 'edge', el: e }) }
+              }}
             />
           )
         })
