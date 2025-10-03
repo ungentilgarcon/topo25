@@ -68,6 +68,16 @@ export default class MainViz extends React.Component {
         const lgH = lgRect ? Math.max(lgOverflowBottom, Math.min(80, lgRect.height)) : 0
         const offset = Math.round(Math.max(tlH, lgH) + base)
         root.style.setProperty('--timeline-offset', `${offset}px`)
+
+        // Position network panzoom analogous to Leaflet when side panel is open/closed
+        const panelOpen = !!(this.props.ui && this.props.ui.filterPanelIsOpen)
+        if (panelOpen) {
+          root.style.setProperty('--net-panzoom-left', 'auto')
+          root.style.setProperty('--net-panzoom-right', '10px')
+        } else {
+          root.style.setProperty('--net-panzoom-left', '10px')
+          root.style.setProperty('--net-panzoom-right', 'auto')
+        }
       }
       // Initial and next-frame calculation
       setOffset()

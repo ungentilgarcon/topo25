@@ -27,6 +27,11 @@
   bottom: var(--timeline-offset, 10px);
 }
 
+/* When side panel opens, we want the attribution to sit with the zoom/scale block on that side.
+   React-leaflet positions attribution automatically, but we swap margins to align it under the scale. */
+.leaflet-bottom.leaflet-left .leaflet-control-attribution { margin-left: 10px; margin-right: 0; }
+.leaflet-bottom.leaflet-right .leaflet-control-attribution { margin-right: 10px; margin-left: 0; }
+
 @media (max-height: 700px) {
   .leaflet-bottom.leaflet-left,
   .leaflet-bottom.leaflet-right {

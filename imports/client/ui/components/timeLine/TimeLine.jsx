@@ -287,11 +287,11 @@ export default class TimeLine extends React.Component {
                       step={.1}
                       floatingLabelFixed={true}
                       floatingLabelText='speed'
-                      floatingLabelStyle={{color: '#F2EFE9', fontSize: '11px'}}
+                      floatingLabelStyle={{color: '#F2EFE9', fontSize: '12px'}}
                       variant='standard'
                       size='small'
-                      style={{width : '3.4em', margin: '0 0.7em',fontSize: "11px"}}
-                      inputProps={{ style: { padding: '3px 4px', textAlign: 'center', fontSize: '11px' } }}
+                      style={{width : '3.6em', margin: '0 0.7em',fontSize: "12px"}}
+                      inputProps={{ style: { padding: '3px 4px', textAlign: 'center', fontSize: '12px' } }}
                       value={this.state.step}
 
                       // columns={3}
