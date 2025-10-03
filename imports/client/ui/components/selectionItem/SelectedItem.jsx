@@ -5,7 +5,6 @@ import ClearIcon from '@mui/icons-material/Clear'
 
 import ReactMarkdown from 'react-markdown'
 import gfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
 import 'github-markdown-css'
 import './SelectedItem.css'
 
@@ -22,6 +21,14 @@ const SelectedItem = ({
     el.data.name
     :
     `${source.data('name')} -> ${target.data('name')}`
+
+  // Transform raw HTML anchors to Markdown links to avoid needing rehype-raw
+  const toMarkdownLinks = (s) => {
+    if (!s || typeof s !== 'string') return s
+    // Replace <a href="URL" ...>TEXT</a> (or single quotes) with [TEXT](URL)
+    return s.replace(/<a\s+[^>]*href=['\"]([^'\"]+)['\"][^>]*>([\s\S]*?)<\/a>/gi, '[$2]($1)')
+  }
+  const notesMarkdown = toMarkdownLinks(el && el.data && el.data.notes)
 
   return (
     <Card
@@ -64,7 +71,6 @@ const SelectedItem = ({
           <div className="markdown-body">
             <ReactMarkdown
               remarkPlugins={[gfm]}
-              rehypePlugins={[rehypeRaw]}
               components={{
                 a: ({node, ...props}) => (
                   <a
@@ -79,7 +85,7 @@ const SelectedItem = ({
                 )
               }}
             >
-              {el.data.notes}
+              {notesMarkdown}
             </ReactMarkdown>
           </div>
         ) : null}
