@@ -79,4 +79,9 @@
     "url": "https://github.com/topogram/topogram/issues"
   },
   "homepage": "https://topogram.github.io"
+  ,
+  "engines": {
+    "node": ">=20 <21",
+    "npm": ">=10 <11"
+  }
 }
