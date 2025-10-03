@@ -48,7 +48,7 @@
 
 /* Scale control: compact labels, light background for visibility */
 .leaflet-control-scale {
-  margin: 0 10px 8px 10px;
+  margin: 0 10px 4px 10px;
 }
 .leaflet-control-scale-line {
   font-size: 9px;
@@ -66,7 +66,7 @@
   color: #2E3B4E;
   padding: 2px 6px;
   border-radius: 4px;
-  margin: 0 10px 8px 10px;
+  margin: 2px 10px 8px 10px;
 }
 
 /* Small chevron markers indicating date-line crossing */

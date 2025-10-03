@@ -91,7 +91,10 @@ export default class TimeSlider extends React.Component {
                 '& .MuiSlider-valueLabel': {
                   background: 'rgba(69,90,100,0.95)',
                   color: '#F2EFE9',
-                  border: '1px solid #78909C'
+                  border: '1px solid #78909C',
+                  fontSize: '10px',
+                  padding: '2px 6px',
+                  borderRadius: '4px'
                 }
               }}
               value={currentRange}

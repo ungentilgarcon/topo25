@@ -1,19 +1,16 @@
 .cy-panzoom {
 	position: fixed !important;
-   resize: both !important;
-  top:60%;
-  left: -14px;
-height:40% !important;
-width:40% !important;
+	left: 10px;
+	bottom: var(--timeline-offset, 10px);
+	width: auto !important;
+	height: auto !important;
 	color: #fff;
 	font-family: arial, helvetica, sans-serif;
 	line-height: 1;
 	color: #666;
 	font-size: 11px;
-	z-index: 99999;
-  opacity: 0.7;
-
-
+	z-index: 1999;
+	opacity: 0.85;
 }
 
 .cy-panzoom-zoom-button {

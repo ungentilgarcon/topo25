@@ -191,6 +191,7 @@ export class TextFieldCompat extends React.Component {
       hintText,
       errorText,
       multiLine,
+      InputLabelProps: InputLabelPropsProp,
       floatingLabelFixed, // eslint-disable-line no-unused-vars
       floatingLabelStyle, // legacy MUI 0.x label style
       underlineStyle, // legacy MUI 0.x underline style (ignored by default)
@@ -198,7 +199,7 @@ export class TextFieldCompat extends React.Component {
       ...rest
     } = this.props
     // Do not leak legacy style props onto DOM; map what we can to MUI v5
-    const InputLabelProps = floatingLabelStyle ? { sx: floatingLabelStyle } : undefined
+    const InputLabelProps = (floatingLabelStyle || InputLabelPropsProp) ? { ...(InputLabelPropsProp || {}), ...(floatingLabelStyle ? { sx: floatingLabelStyle } : {}) } : undefined
     // Optionally map underline style to standard variant underline selectors if provided
     // Keep variant unchanged; only apply underline styles if consumer sets variant='standard'
     const sx = underlineStyle ? {
