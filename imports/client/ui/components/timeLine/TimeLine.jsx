@@ -208,6 +208,7 @@ export default class TimeLine extends React.Component {
 
       return (
         <Card
+          id="timeline-panel"
           style={styleTimeLine}
           >
           { !hasTimeInfo ?

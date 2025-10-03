@@ -53,16 +53,28 @@ export default class MainViz extends React.Component {
     if (panelsCount === 3) width = '33vw'
 
     //console.log("logging",this.props.ui.chartsVisible,this.props.ui.hasCharts);
-    // Dynamically adjust Leaflet bottom control offset to clear timeline/legend
+    // Dynamically adjust Leaflet bottom control offset to clear timeline/legend by measuring actual DOM heights
     try {
-      const root = document.documentElement
-      const base = 10
-      const timelineH = timeLineVisible ? 120 : 0
-      const legendH = legendVisible ? 80 : 0
-      const viewport = Math.max(window.innerHeight || 0, 0)
-      const scale = viewport < 700 ? 0.75 : 1
-      const offset = Math.round((Math.max(timelineH, legendH) * scale) + base)
-      root.style.setProperty('--timeline-offset', `${offset}px`)
+      const setOffset = () => {
+        const root = document.documentElement
+        const base = 10
+        const tlEl = document.getElementById('timeline-panel')
+        const lgEl = document.getElementById('legend-popup')
+        const tlH = (timeLineVisible && tlEl) ? (tlEl.getBoundingClientRect().height || 0) : 0
+        const lgRect = (legendVisible && lgEl) ? lgEl.getBoundingClientRect() : null
+        const lgOverflowBottom = lgRect ? Math.max(0, (lgRect.top + lgRect.height) - (window.innerHeight || 0)) : 0
+        // For legend, prefer overlap into bottom edge if any; otherwise use small footprint
+        const lgH = (legendVisible && lgRect) ? Math.max(lgOverflowBottom, Math.min(80, lgRect.height)) : 0
+        const offset = Math.round(Math.max(tlH, lgH) + base)
+        root.style.setProperty('--timeline-offset', `${offset}px`)
+      }
+      setOffset()
+      // Update on resize to adapt to viewport changes
+      window.requestAnimationFrame(() => setOffset())
+      window.addEventListener('resize', setOffset, { passive: true })
+      // Schedule a micro reflow after menus/panels animate
+      setTimeout(setOffset, 50)
+      setTimeout(setOffset, 200)
     } catch (e) {
       // no-op if document/window not available
     }
