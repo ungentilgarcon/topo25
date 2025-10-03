@@ -116,7 +116,8 @@ class Charts extends React.Component {
     let resweig = []
     let resweigEdges = []
     try {
-      if (cy && cy._private && cy._private.initrender === false) {
+      // In Cytoscape v3, internal _private.initrender may not exist; compute whenever cy is available
+      if (cy && typeof cy.nodes === 'function' && typeof cy.filter === 'function') {
         const cyNodes = cy.filter('node')
         const cyEdges = cy.filter('edge')
         for (let i = 0; i < cyNodes.length; i++) {

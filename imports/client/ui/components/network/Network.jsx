@@ -26,18 +26,18 @@ class Network extends React.Component {
       .off('free', 'node')  // reset
       .off('tapstart', 'edge')  // reset
       .off('tapend', 'edge')  // reset
-      .on('tap', 'node', e => e.cyTarget.data('selected') ?
-        this.props.unselectElement(e.cyTarget.json())
+      .on('tap', 'node', e => e.target.data('selected') ?
+        this.props.unselectElement(e.target.json())
         :
-        this.props.selectElement(e.cyTarget.json())
+        this.props.selectElement(e.target.json())
       )
-      .on('tap', 'edge', e => e.cyTarget.data('selected') ?
-        this.props.unselectElement(e.cyTarget.json())
+      .on('tap', 'edge', e => e.target.data('selected') ?
+        this.props.unselectElement(e.target.json())
         :
-        this.props.selectElement(e.cyTarget.json())
+        this.props.selectElement(e.target.json())
       )
       .on('free','node', e => {
-        let node = e.cyTarget
+        let node = e.target
         let position = node.position()
         const topogramId = this.props.topogramId
 
@@ -57,9 +57,9 @@ class Network extends React.Component {
       .off('free', 'node')  // reset
       .off('free', 'edge')  // reset
       .off('tap', 'node')
-      .on('grab', 'node', e => this.props.onFocusElement(e.cyTarget.json()))
+  .on('grab', 'node', e => this.props.onFocusElement(e.target.json()))
       .on('free', 'node', () => this.props.onUnfocusElement())
-      .on('tapstart', 'edge', e => this.props.onFocusElement(e.cyTarget.json()))
+  .on('tapstart', 'edge', e => this.props.onFocusElement(e.target.json()))
       .on('tapend', 'edge', () => this.props.onUnfocusElement())
   }
 
@@ -70,7 +70,7 @@ class Network extends React.Component {
     // set default events
     cy.on('mouseover', 'node', e => {
 
-      const node = e.cyTarget
+      const node = e.target
       //console.log("WANT STATE?",this.state)
       //console.log("HERE PROPS:",this.props)
       node.style({
@@ -83,7 +83,7 @@ class Network extends React.Component {
         'z-index': 300000
       })
       if (!this.props.ui.isolateMode) {
-        const edges = e.cyTarget.connectedEdges()
+  const edges = e.target.connectedEdges()
         edges.css({
           // 'line-color' : function(d) {
           //     return d.style('line-color') == "#D84315" ? "#AAAAAA" : "#D84315"
@@ -95,12 +95,12 @@ class Network extends React.Component {
         })
       }
     })
-    .on('mouseout', 'node', e => {
-        e.cyTarget.style({
+  .on('mouseout', 'node', e => {
+    e.target.style({
           'border-width'(d) {
             return (d.data('group') == 'ghosts') ? 3 : 0
           },
-          'font-size' : this.props.ui.fontSizeNetwork ? this.props.ui.fontSizeNetwork : 40,
+          'font-size' : this.props.ui.fontSizeNetwork ? this.props.ui.fontSizeNetwork : 8,
           'color' : 'black',
           'text-wrap': 'ellipsis',
           'label'(d) {
@@ -224,7 +224,7 @@ class Network extends React.Component {
           ref={this.graphRef}
           elements ={elements}
           init={this.state.init}
-          style = {NetworkDefaultStyle()}
+          style = {NetworkDefaultStyle}
           layoutName = {layoutName}
           nodeRadius = {nodeRadius}
           width = {width}
