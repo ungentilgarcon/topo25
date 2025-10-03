@@ -186,7 +186,7 @@ export default class GeoEdges extends React.Component {
         segments.forEach((seg, sIdx) => {
           children.push(
             <Polyline
-              key={`edge-${i}-seg-${sIdx}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+              key={`edge-${e.data && e.data.id != null ? e.data.id : i}-seg-${sIdx}-${e.data && e.data.selected ? 1 : 0}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               opacity={"0.8"}
               color={color}
               weight={weight}
@@ -204,7 +204,7 @@ export default class GeoEdges extends React.Component {
           const hitWeight = Math.max(weight, 24)
           children.push(
             <Polyline
-              key={`edge-${i}-seg-${sIdx}-hit-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
+              key={`edge-${e.data && e.data.id != null ? e.data.id : i}-seg-${sIdx}-hit-${e.data && e.data.selected ? 1 : 0}-${(!this.props.ui || this.props.ui.showChevrons !== false) ? 'with' : 'no'}-chev`}
               opacity={0.001}
               color={color}
               weight={hitWeight}
