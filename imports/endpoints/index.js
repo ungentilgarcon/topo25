@@ -3,6 +3,7 @@ import { Accounts } from 'meteor/accounts-base'
 
 // Feature flags
 // - UPGRADE_PROBE: skip API wiring and expose only a minimal health endpoint
+//   JSON API is enabled by default when not in probe mode; no USE_JSONROUTES env is required.
 const upgradeProbe = (typeof process !== 'undefined' && process.env && process.env.UPGRADE_PROBE === '1')
 
 // In upgrade-probe mode, define only a tiny health route using WebApp and bail out

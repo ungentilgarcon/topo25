@@ -1,8 +1,6 @@
 # JSON API
 
-The BandsTour fork exposes optional JSON endpoints for simple automation (auth, listing public resources, and CRUD for topograms/nodes/edges).
-
-Enable by setting `USE_JSONROUTES=1` when starting Meteor.
+The BandsTour fork exposes JSON endpoints for simple automation (auth, listing public resources, and CRUD for topograms/nodes/edges). The JSON API is enabled by default; to temporarily disable all custom endpoints during upgrade probes, start the app with `UPGRADE_PROBE=1`.
 
 Base URL: `${ROOT_URL}/api`
 
