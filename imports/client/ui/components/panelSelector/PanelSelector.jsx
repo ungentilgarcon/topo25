@@ -7,8 +7,8 @@ import { CheckboxCompat as Checkbox } from '/imports/startup/client/muiCompat'
 import './PanelSelector.css'
 
 const buttonStyle = {
-  margin: 2,
-  padding: '10px 20px',
+  margin: '2px 8px',
+  padding: '6px 16px',
   backgroundColor: 'rgba(69,90,100 ,0.9)',
   color:'#F2EFE9'
 }
@@ -84,8 +84,8 @@ export default class PanelSelector extends React.Component {
     } = this.props
 
     return (
-      <div style={{ maxWidth: '100%', backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}>
-        <div style={buttonStyle}>
+  <div style={{ maxWidth: '100%', backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9', paddingTop: 4 }}>
+  <div style={{ ...buttonStyle, marginTop: 2 }}>
           <Checkbox
             label={'Graph'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
@@ -102,7 +102,7 @@ export default class PanelSelector extends React.Component {
             onClick={() => this.toggleGeo()}
           />
         </div>
-        <div style={{ ...buttonStyle, paddingLeft: 48, paddingTop: 0, paddingBottom: 0, marginBottom: -2 }}>
+  <div style={{ ...buttonStyle, paddingLeft: 48, paddingTop: 0, paddingBottom: 0, marginTop: 0, marginBottom: -2 }}>
           <Checkbox
             label={'Chevrons'}
             style={{ marginLeft: 0, marginTop: -6, marginBottom: -6 }}
@@ -117,7 +117,7 @@ export default class PanelSelector extends React.Component {
             onClick={() => this.toggleChevrons()}
           />
         </div>
-        <div style={{ ...buttonStyle, paddingTop: 0, marginTop: -2 }}>
+  <div style={{ ...buttonStyle, paddingTop: 0, marginTop: 2 }}>
           <Checkbox
             label={'Time'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
@@ -126,7 +126,7 @@ export default class PanelSelector extends React.Component {
             onClick={() => this.toggleTimeline()}
           />
         </div>
-        <div style={buttonStyle}>
+  <div style={{ ...buttonStyle, marginTop: 2 }}>
           <Checkbox
             label={'Charts'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
@@ -135,7 +135,7 @@ export default class PanelSelector extends React.Component {
             onClick={() => this.toggleCharts()}
           />
         </div>
-        <div style={buttonStyle}>
+  <div style={{ ...buttonStyle, marginTop: 2 }}>
           <Checkbox
             label={'Legend'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}

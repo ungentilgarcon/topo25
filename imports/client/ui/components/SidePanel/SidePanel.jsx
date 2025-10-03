@@ -14,6 +14,77 @@ import PanelSettings from './PanelSettings.jsx'
 import TitleBox from '../titlebox/TitleBox.jsx'
 import UserMenu from '../UserMenu.jsx'
 import './SidePanel.css'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+
+// Scoped theme for the SidePanel only
+const sidePanelTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#aa8dc6' },
+    text: { primary: '#F2EFE9' }
+  },
+  components: {
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: 'rgba(69,90,100,0.98)',
+          color: '#F2EFE9',
+          border: '1px solid rgba(255,255,255,0.15)'
+        }
+      }
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: '#F2EFE9',
+          '&.Mui-selected, &.Mui-selected.Mui-focusVisible': {
+            backgroundColor: 'rgba(170,141,198,0.22)'
+          },
+          '&.Mui-focusVisible, &:hover': {
+            backgroundColor: 'rgba(170,141,198,0.12)'
+          }
+        }
+      }
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: '#B0BEC5',
+          '&.Mui-checked': { color: '#aa8dc6' }
+        }
+      }
+    },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent',
+          color: '#F2EFE9',
+          fontWeight: 600,
+          fontSize: '13px',
+          lineHeight: 1.1,
+          paddingLeft: 16,
+          paddingRight: 16
+        }
+      }
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: 'rgba(69,90,100,0.95)',
+          color: '#F2EFE9'
+        }
+      }
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputLabel-root': { color: '#CFD8DC' },
+          '& .MuiInputBase-input': { color: '#F2EFE9' }
+        }
+      }
+    }
+  }
+})
 
 @ui()
 export default class SidePanel extends React.Component {
@@ -65,6 +136,7 @@ export default class SidePanel extends React.Component {
     } = this.props.ui
 
     return (
+      <ThemeProvider theme={sidePanelTheme}>
       <Drawer
         containerStyle={{
 
@@ -144,6 +216,7 @@ export default class SidePanel extends React.Component {
             null
         }
       </Drawer>
+      </ThemeProvider>
     )
   }
 }
