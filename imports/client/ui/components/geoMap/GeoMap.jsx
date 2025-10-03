@@ -116,7 +116,14 @@ class GeoMap extends React.Component {
       selected.filter(e => e && e.group === 'nodes' && e.data && e.data.id != null).map(e => e.data.id)
     )
     const selectedEdgeIds = new Set(
-      selected.filter(e => e && e.group === 'edges' && e.data && e.data.id != null).map(e => e.data.id)
+      selected
+        .filter(e => e && e.group === 'edges' && e.data && e.data.id != null)
+        .map(e => String(e.data.id))
+    )
+    const selectedEdgePairs = new Set(
+      selected
+        .filter(e => e && e.group === 'edges' && e.data && e.data.source != null && e.data.target != null)
+        .map(e => `${String(e.data.source)}|${String(e.data.target)}`)
     )
 
     const nodes = (this.props.nodes || [])
@@ -140,8 +147,10 @@ class GeoMap extends React.Component {
         if (!source || !target) return null
         const coords = [source.coords, target.coords]
         // Same: compute selected from global UI first, fall back to data flag
-        const isSelected = selectedEdgeIds.has(e.data.id) || !!e.data.selected
-        return { ...e, source, target, coords, selected: isSelected, data: { ...e.data, selected: isSelected } }
+        const edgeId = e && e.data && e.data.id != null ? String(e.data.id) : undefined
+        const pairKey = `${String(e.data.source)}|${String(e.data.target)}`
+        const isSelected = (edgeId ? selectedEdgeIds.has(edgeId) : false) || selectedEdgePairs.has(pairKey) || !!e.data.selected
+        return { ...e, source, target, coords, selected: isSelected, data: { ...e.data, selected: isSelected, id: edgeId || pairKey } }
       })
       .filter(Boolean)
 
