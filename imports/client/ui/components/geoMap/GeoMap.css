@@ -1,34 +1,78 @@
 .leaflet-container {
-  height: 100vh;
-  width : 100vw;
-  margin: 0 auto;
-
-}
-div.leaflet-control-container{
-height: 50px!important;
-  width: 20px !important;
-
-}
-div.leaflet-control-zoom {
-  height: 50px!important;
-    width: 20px !important;
-
+  height: 100%;
+  width: 100%;
+  margin: 0;
 }
 
-a.leaflet-control-zoom-in{
-  height: 25px !important;
-  width: 20px !important;
-
+/* Allow controls to size naturally; avoid clipping them */
+.leaflet-control-container,
+.leaflet-control-zoom,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  height: auto !important;
+  width: auto !important;
 }
 
-a.leaflet-control-zoom-out{
-  height: 25px !important;
-  width: 20px !important;
-
+/* Keep controls on top of the map content */
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 2000 !important; /* keep above overlays */
 }
-div.leaflet-top:nth-child(1){  z-index: 10000 !important;
-  float: left;
+
+/* Push bottom controls above the timeline/legend overlays */
+
+/* Dynamic offset to clear timeline/legend panels; set via JS on :root */
+.leaflet-bottom.leaflet-left,
+.leaflet-bottom.leaflet-right {
+  bottom: var(--timeline-offset, 10px);
+}
+
+/* When side panel opens, we want the attribution to sit with the zoom/scale block on that side.
+   React-leaflet positions attribution automatically, but we swap margins to align it under the scale. */
+.leaflet-bottom.leaflet-left .leaflet-control-attribution { margin-left: 10px; margin-right: 0; }
+.leaflet-bottom.leaflet-right .leaflet-control-attribution { margin-right: 10px; margin-left: 0; }
+
+@media (max-height: 700px) {
+  .leaflet-bottom.leaflet-left,
+  .leaflet-bottom.leaflet-right {
+    bottom: 90px;
   }
+}
+
+/* Zoom control: more squarish, compact buttons */
+.leaflet-control-zoom {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  border-radius: 6px;
+}
+.leaflet-control-zoom a {
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-size: 16px;
+}
+
+/* Scale control: compact labels, light background for visibility */
+.leaflet-control-scale {
+  margin: 0 10px 4px 10px;
+}
+.leaflet-control-scale-line {
+  font-size: 9px;
+  line-height: 1.1;
+  padding: 2px 4px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 4px;
+}
+
+/* Attribution: always visible, smaller text, readable background */
+.leaflet-control-attribution {
+  font-size: 9px !important;
+  line-height: 1.2;
+  background: rgba(255,255,255,0.82);
+  color: #2E3B4E;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 2px 10px 8px 10px;
+}
 
 /* Small chevron markers indicating date-line crossing */
 .geo-chevron {

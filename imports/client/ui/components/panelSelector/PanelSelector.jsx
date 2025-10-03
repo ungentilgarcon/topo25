@@ -7,10 +7,10 @@ import { CheckboxCompat as Checkbox } from '/imports/startup/client/muiCompat'
 import './PanelSelector.css'
 
 const buttonStyle = {
-  margin: 2,
-  padding: '10px 20px',
+  margin: '1px 8px',
+  padding: '4px 12px',
   backgroundColor: 'rgba(69,90,100 ,0.9)',
-  color:'#F2EFE9 !important'
+  color:'#F2EFE9'
 }
 
 @ui({ key: 'PanelSettings', state: { showChevrons: (typeof window !== 'undefined' && window.localStorage && window.localStorage.getItem('topo.showChevrons') !== null) ? JSON.parse(window.localStorage.getItem('topo.showChevrons')) : true } })
@@ -84,76 +84,70 @@ export default class PanelSelector extends React.Component {
     } = this.props
 
     return (
-      <div style={{ maxWidth: '100%', backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}>
-        <div style={buttonStyle}>
+      <div style={{ maxWidth: '100%', backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9', paddingTop: 4 }}>
+        <div style={{ ...buttonStyle, marginTop: 1 }}>
           <Checkbox
             label={'Graph'}
+            size={'small'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={graphVisible}
             onClick={() => this.toggleGraph()}
           />
         </div>
-        <div style={buttonStyle}>
+        <div style={{ ...buttonStyle, marginTop: 1 }}>
           <Checkbox
             label={'Geo'}
+            size={'small'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={geoMapVisible}
             disabled={!hasGeoInfo}
             onClick={() => this.toggleGeo()}
           />
         </div>
-        <div style={{ ...buttonStyle, paddingLeft: 48, paddingTop: 0, paddingBottom: 0, marginBottom: -2 }}>
+        <div style={{ ...buttonStyle, paddingLeft: 44, paddingTop: 0, paddingBottom: 0, marginTop: 0, marginBottom: -4 }}>
           <Checkbox
             label={'Chevrons'}
-            style={{ marginLeft: 0, marginTop: -6, marginBottom: -6 }}
+            size={'small'}
+            style={{ marginLeft: 0, marginTop: -8, marginBottom: -8, padding: 0 }}
             labelStyle={{
               backgroundColor: 'rgba(69,90,100 ,0.9)',
               color: '#F2EFE9',
-              fontSize: 11,
-              lineHeight: '14px'
+              fontSize: 10,
+              lineHeight: '12px'
             }}
-            iconStyle={{ transform: 'scale(0.8)', transformOrigin: 'left center' }}
+            iconStyle={{ transform: 'scale(0.75)', transformOrigin: 'left center' }}
             checked={showChevrons !== false}
             onClick={() => this.toggleChevrons()}
           />
         </div>
-        <div style={{ ...buttonStyle, paddingTop: 0, marginTop: -2 }}>
+        <div style={{ ...buttonStyle, paddingTop: 0, marginTop: 1 }}>
           <Checkbox
             label={'Time'}
+            size={'small'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={timeLineVisible}
             disabled={!hasTimeInfo}
             onClick={() => this.toggleTimeline()}
           />
         </div>
-        <div style={buttonStyle}>
+        <div style={{ ...buttonStyle, marginTop: 1 }}>
           <Checkbox
             label={'Charts'}
+            size={'small'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={chartsVisible}
-            //disabled={!chartsVisible}
             onClick={() => this.toggleCharts()}
           />
         </div>
-        <div style={buttonStyle}>
+        <div style={{ ...buttonStyle, marginTop: 1 }}>
           <Checkbox
             label={'Legend'}
+            size={'small'}
             labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
             checked={legendVisible}
-            //disabled={!legendVisible}
             onClick={() => this.toggleLegend()}
           />
         </div>
-        {/*
-        <div style={buttonStyle}>
-          <Checkbox
-            label={"Selection"}
-            labelStyle={{ backgroundColor: 'rgba(69,90,100 ,0.9)', color: '#F2EFE9' }}
-            checked={selectionPanelPinned}
-            onClick={() => this.toggleSelectionPanel()}
-          />
-        </div>
-        */}
       </div>
     )
   }

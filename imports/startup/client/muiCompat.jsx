@@ -23,6 +23,7 @@ import MUICheckbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import MUIChip from '@mui/material/Chip'
 import MUISnackbar from '@mui/material/Snackbar'
+import ChevronLeft from '@mui/icons-material/ChevronLeft'
 
 export function DialogCompat({ title, actions, modal, open, onRequestClose, style, children }) {
   // Normalize actions to an array and ensure keys to avoid React warnings
@@ -77,6 +78,7 @@ export function MenuItemCompat(props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const hasSubmenu = !!(menuItems && menuItems.length)
+  const closeTimerRef = React.useRef(null)
 
   const handleParentActivate = (e) => {
     if (hasSubmenu) setAnchorEl(e.currentTarget)
@@ -86,7 +88,8 @@ export function MenuItemCompat(props) {
     if (hasSubmenu) setAnchorEl(e.currentTarget)
   }
   const handleKeyDown = (e) => {
-    if (hasSubmenu && (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ')) {
+    // Open submenu toward the left on ArrowLeft / Enter / Space
+    if (hasSubmenu && (e.key === 'ArrowLeft' || e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault()
       setAnchorEl(e.currentTarget)
     }
@@ -96,9 +99,26 @@ export function MenuItemCompat(props) {
     }
   }
   const handleClose = () => setAnchorEl(null)
+  const scheduleClose = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    closeTimerRef.current = setTimeout(() => setAnchorEl(null), 2000)
+  }
+  const cancelClose = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
 
   const sx = style ? { ...sxProp, ...style } : sxProp
-  const adornment = endAdornment || rightIcon
+  // Only show a right-side adornment when not a submenu
+  const rightAdornment = !hasSubmenu ? (endAdornment || rightIcon) : null
+  // For submenu items, show a left-facing arrow on the left of the text
+  const leftAdornment = hasSubmenu ? (
+    <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
+      <ChevronLeft fontSize="small" />
+    </ListItemIcon>
+  ) : (leftIcon ? <ListItemIcon>{leftIcon}</ListItemIcon> : null)
 
   return (
     <>
@@ -112,19 +132,24 @@ export function MenuItemCompat(props) {
         aria-expanded={hasSubmenu ? (open ? 'true' : 'false') : undefined}
         selected={!!selected}
       >
-        {leftIcon ? <ListItemIcon>{leftIcon}</ListItemIcon> : null}
+        {leftAdornment}
         <ListItemText primary={primaryText || children} secondary={secondaryText} />
-        {adornment ? <Box sx={{ ml: 'auto' }}>{adornment}</Box> : null}
+        {rightAdornment ? <Box sx={{ ml: 'auto' }}>{rightAdornment}</Box> : null}
       </MenuItem>
       {hasSubmenu ? (
         <Menu
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           keepMounted
-          MenuListProps={{ autoFocusItem: open }}
+          MenuListProps={{
+            autoFocusItem: open,
+            onMouseEnter: cancelClose,
+            onMouseLeave: scheduleClose
+          }}
+          PaperProps={{ onMouseEnter: cancelClose, onMouseLeave: scheduleClose, sx: { ml: -1 } }}
         >
           {React.Children.map(menuItems, (item) => {
             if (!React.isValidElement(item)) return item
@@ -166,6 +191,7 @@ export class TextFieldCompat extends React.Component {
       hintText,
       errorText,
       multiLine,
+      InputLabelProps: InputLabelPropsProp,
       floatingLabelFixed, // eslint-disable-line no-unused-vars
       floatingLabelStyle, // legacy MUI 0.x label style
       underlineStyle, // legacy MUI 0.x underline style (ignored by default)
@@ -173,7 +199,7 @@ export class TextFieldCompat extends React.Component {
       ...rest
     } = this.props
     // Do not leak legacy style props onto DOM; map what we can to MUI v5
-    const InputLabelProps = floatingLabelStyle ? { sx: floatingLabelStyle } : undefined
+    const InputLabelProps = (floatingLabelStyle || InputLabelPropsProp) ? { ...(InputLabelPropsProp || {}), ...(floatingLabelStyle ? { sx: floatingLabelStyle } : {}) } : undefined
     // Optionally map underline style to standard variant underline selectors if provided
     // Keep variant unchanged; only apply underline styles if consumer sets variant='standard'
     const sx = underlineStyle ? {

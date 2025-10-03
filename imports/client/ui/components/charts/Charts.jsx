@@ -81,11 +81,9 @@ class Charts extends React.Component {
         const w = Number(cyEl && cyEl.data && cyEl.data('weight'))
         if (!isFinite(w)) continue
         const bin = String(Math.round(Math.pow(w, 2)))
-        if (bin === target) matches.push(cy.filter(`node[id='${cyEl.data('id')}']`))
+        if (bin === target) matches.push(cyEl.json())
       }
-      const allSelected = matches.length > 0 && matches.every(elc => !!(elc && elc.data && elc.data('selected')))
-      const run = () => { matches.forEach(elc => { allSelected ? this.unselectElement(elc.json()) : this.selectElement(elc.json()) }) }
-      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run); else setTimeout(run, 0)
+      this._toggleBatch(matches)
     } catch (_) {}
   }
 
@@ -99,12 +97,38 @@ class Charts extends React.Component {
       for (let i = 0; i < cyEdges.length; i++) {
         const cyEl = cyEdges[i]
         const w = String(cyEl && cyEl.data && cyEl.data('weight'))
-        if (w === target) matches.push(cy.filter(`edge[id='${cyEl.data('id')}']`))
+        if (w === target) matches.push(cyEl.json())
       }
-      const allSelected = matches.length > 0 && matches.every(elc => !!(elc && elc.data && elc.data('selected')))
-      const run = () => { matches.forEach(elc => { allSelected ? this.unselectElement(elc.json()) : this.selectElement(elc.json()) }) }
-      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run); else setTimeout(run, 0)
+      this._toggleBatch(matches)
     } catch (_) {}
+  }
+
+  // Toggle a batch of elements in a single state update so all chips appear
+  _toggleBatch = (elements) => {
+    if (!Array.isArray(elements) || elements.length === 0) return
+    const { cy } = this.props.ui
+    const curr = Array.isArray(this.props.ui.selectedElements) ? this.props.ui.selectedElements.slice() : []
+    const key = (e) => `${e.group}|${e.data && e.data.id}`
+    const currKeys = new Set(curr.map(key))
+    const matchKeys = elements.map(key)
+    const allSelected = matchKeys.length > 0 && matchKeys.every(k => currKeys.has(k))
+
+    if (allSelected) {
+      // Unselect all matches
+      const next = curr.filter(e => !matchKeys.includes(key(e)))
+      elements.forEach(el => {
+        try { cy.filter(`${el.group.slice(0,-1)}[id='${el.data.id}']`).data('selected', false) } catch (_) {}
+      })
+      this.props.updateUI('selectedElements', next)
+    } else {
+      // Select union without duplicates
+      const map = new Map(curr.map(e => [key(e), e]))
+      elements.forEach(el => {
+        map.set(key(el), el)
+        try { cy.filter(`${el.group.slice(0,-1)}[id='${el.data.id}']`).data('selected', true) } catch (_) {}
+      })
+      this.props.updateUI('selectedElements', Array.from(map.values()))
+    }
   }
 
   render() {

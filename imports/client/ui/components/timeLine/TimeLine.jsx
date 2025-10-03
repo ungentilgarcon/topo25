@@ -29,7 +29,7 @@ const styleTimeLine = {
   //marginBottom: '10px',
   borderTopRightRadius: '20px',
   borderBottomRightRadius: '5px',
-  padding:"2px 2px 15px 15px ",
+  padding:"4px 10px 10px 10px",
   transitionEnabled: "true",
   //paddingBottom:"15px"
 
@@ -208,6 +208,7 @@ export default class TimeLine extends React.Component {
 
       return (
         <Card
+          id="timeline-panel"
           style={styleTimeLine}
           >
           { !hasTimeInfo ?
@@ -221,7 +222,7 @@ export default class TimeLine extends React.Component {
                 <tbody>
 
                   <tr>
-                    <td style={{width: "30%",marginBottom: '0em',
+                    <td style={{width: "26%",marginBottom: '0em',
                       marginTop: '0em',whiteSpace: 'nowrap'}}>
                       <div style={{height: '0.5em',marginBottom: '0em',
                         marginTop: '0em'}}>
@@ -238,6 +239,7 @@ export default class TimeLine extends React.Component {
                     </span>
                     <Tooltip title="Play/Resume">
                       <IconButton
+                        className="timeline-btn"
                         size="small"
                         onClick={
                           this.state.playing ?
@@ -256,6 +258,7 @@ export default class TimeLine extends React.Component {
                       </IconButton>
                     </Tooltip>
                     <IconButton
+                      className="timeline-btn"
                       size="small"
                       onClick={() => this.next()}
                       alt="next year of tours"
@@ -266,6 +269,7 @@ export default class TimeLine extends React.Component {
                     </IconButton>
                     <Tooltip title="Stop/1st year of tour">
                       <IconButton
+                        className="timeline-btn"
                         size="small"
                         onClick={() => this.stop()}
                         alt="Stop/1st year of tour"
@@ -275,16 +279,19 @@ export default class TimeLine extends React.Component {
                     </Tooltip>
 
                     <TextField
-                      className= 'textFTime'
+                      className='timeline-speed-input textFTime'
                       name='stepSetter'
                       type='number'
                       min={0.1}
                       max={10}
                       step={.1}
                       floatingLabelFixed={true}
-                      floatingLabelText='Speed'
-                      floatingLabelStyle={{color: 'black'}}
-                      style={{width : '3em', margin: '0 2em',fontSize: "10pt"}}
+                      floatingLabelText='speed'
+                      floatingLabelStyle={{color: '#F2EFE9', fontSize: '12px'}}
+                      variant='standard'
+                      size='small'
+                      style={{width : '3.6em', margin: '0 0.7em',fontSize: "12px"}}
+                      inputProps={{ style: { padding: '3px 4px', textAlign: 'center', fontSize: '12px' } }}
                       value={this.state.step}
 
                       // columns={3}
@@ -294,10 +301,10 @@ export default class TimeLine extends React.Component {
 
                   </div>
                 </td>
-                <td style={{width: "7%"}}>
+                <td style={{width: "4%"}}>
 
                 </td>
-                <td style={{width: "60%", align:"right"}}>
+                <td style={{width: "70%", align:"right"}}>
 
                   <div>
                     <span>
@@ -317,7 +324,7 @@ export default class TimeLine extends React.Component {
                         floatingLabelText="Max Date"
                         value={maxTime}
                         />
-                      <CardText>
+                      <CardText style={{ paddingTop: 4, paddingBottom: 0 }}>
                         { minTime && maxTime ?
                           <TimeSlider
                             minTime={new Date(minTime).getTime()}

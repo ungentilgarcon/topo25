@@ -1,4 +1,44 @@
-#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div:nth-child(2){background-color:#aa8dc6 !important }
+/* Side panel header styling */
+.sidepanel-toolbar {
+	background: transparent !important;
+	color: #aa8dc6; /* icon + text purple */
+	display: flex;
+	align-items: center;
+	gap: 12px; /* spacing between icons */
+}
+
+.sidepanel-toolbar button,
+.sidepanel-toolbar .mui-icon-button,
+.sidepanel-toolbar .MuiIconButton-root {
+	color: #aa8dc6 !important;
+	padding: 6px; /* compact touch target */
+}
+
+.sidepanel-toolbar .MuiIconButton-root:hover {
+	background-color: rgba(170, 141, 198, 0.12); /* subtle purple hover */
+}
+
+.sidepanel-toolbar .MuiTouchRipple-root span {
+	background-color: rgba(170, 141, 198, 0.35) !important; /* ripple tint */
+}
+
+/* Autocomplete dropdown palette for side panel */
+.MuiAutocomplete-popper .MuiAutocomplete-paper {
+	background: rgba(69,90,100,0.98);
+	color: #F2EFE9;
+	border: 1px solid rgba(255,255,255,0.15);
+}
+.MuiAutocomplete-popper .MuiAutocomplete-option.Mui-focused,
+.MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected="true"] {
+	background: rgba(170,141,198,0.22);
+	color: #F2EFE9;
+}
+
+/* Selection highlight color: light text purple, not green */
+.sidepanel-toolbar .Mui-selected,
+.sidepanel-toolbar .MuiIconButton-root.Mui-selected {
+	color: #b999d6 !important;
+}
 
 /* Right panel readability improvements */
 .right-panel {
@@ -10,6 +50,14 @@
 	overflow-wrap: anywhere;
 	hyphens: auto;
 	text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+/* Scrollable area for side panel body to prevent overlap when zoomed */
+.sidepanel-scroll {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	padding-bottom: 12px;
 }
 
 .right-panel h1,

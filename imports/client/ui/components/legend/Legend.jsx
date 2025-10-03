@@ -73,6 +73,7 @@ return (
   <Popup
     show
     title={'Legend'}
+    domId={'legend-popup'}
     onClose={() => this.props.updateUI('legendVisible', false)}
     onPopOut={() => this.setState({ poppedOut: true })}
     width={460}

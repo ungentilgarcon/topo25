@@ -8,5 +8,15 @@
     "id": "queryBox.label",
     "defaultMessage": "Map search",
     "message": ""
+  },
+  {
+    "id": "queryBox.hint.venue",
+    "defaultMessage": "Search for a venue",
+    "message": ""
+  },
+  {
+    "id": "queryBox.label.venue",
+    "defaultMessage": "Venue search",
+    "message": ""
   }
 ]

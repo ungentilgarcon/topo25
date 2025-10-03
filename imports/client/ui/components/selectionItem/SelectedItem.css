@@ -1,0 +1,18 @@
+/* SelectedItem readability and link styles */
+.selected-item-card {
+  backdrop-filter: blur(1px);
+}
+.selected-item-notes {
+  color: #F2EFE9;
+}
+.selected-item-paragraph {
+  margin: 6px 0;
+  line-height: 1.35;
+}
+.selected-item-link {
+  color: #64B5F6;
+  text-decoration: underline;
+}
+.selected-item-link:hover {
+  color: #90CAF9;
+}

@@ -28,7 +28,6 @@ const cyStyle = {
   position: 'fixed',
   top: '0px',
   left: '0',
-  zIndex : -1,
   background : "rgba(168,221,207,0.4)"
 }
 //PANZOOM DEFAULTS

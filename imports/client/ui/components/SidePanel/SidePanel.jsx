@@ -14,6 +14,77 @@ import PanelSettings from './PanelSettings.jsx'
 import TitleBox from '../titlebox/TitleBox.jsx'
 import UserMenu from '../UserMenu.jsx'
 import './SidePanel.css'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+
+// Scoped theme for the SidePanel only
+const sidePanelTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#aa8dc6' },
+    text: { primary: '#F2EFE9' }
+  },
+  components: {
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: 'rgba(69,90,100,0.98)',
+          color: '#F2EFE9',
+          border: '1px solid rgba(255,255,255,0.15)'
+        }
+      }
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: '#F2EFE9',
+          '&.Mui-selected, &.Mui-selected.Mui-focusVisible': {
+            backgroundColor: 'rgba(170,141,198,0.22)'
+          },
+          '&.Mui-focusVisible, &:hover': {
+            backgroundColor: 'rgba(170,141,198,0.12)'
+          }
+        }
+      }
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: '#B0BEC5',
+          '&.Mui-checked': { color: '#aa8dc6' }
+        }
+      }
+    },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent',
+          color: '#F2EFE9',
+          fontWeight: 600,
+          fontSize: '13px',
+          lineHeight: 1.1,
+          paddingLeft: 16,
+          paddingRight: 16
+        }
+      }
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: 'rgba(69,90,100,0.95)',
+          color: '#F2EFE9'
+        }
+      }
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputLabel-root': { color: '#CFD8DC' },
+          '& .MuiInputBase-input': { color: '#F2EFE9' }
+        }
+      }
+    }
+  }
+})
 
 @ui()
 export default class SidePanel extends React.Component {
@@ -65,6 +136,7 @@ export default class SidePanel extends React.Component {
     } = this.props.ui
 
     return (
+      <ThemeProvider theme={sidePanelTheme}>
       <Drawer
         containerStyle={{
 
@@ -72,6 +144,10 @@ export default class SidePanel extends React.Component {
           border: '1px solid #222',
           backgroundColor: 'rgba(69,90,100 ,0.9)',
           color:'#F2EFE9',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          overflow: 'hidden',
          //margin: '20px 2px',
 
          //align: 'left',
@@ -89,62 +165,63 @@ export default class SidePanel extends React.Component {
 
         <IconButton
           onClick={this.handleExpandChange}
-          style={{ float:'right', zIndex : 20000 }}
-          >
-            <ClearIcon color='#F2EFE9' />
+          style={{ float:'right', zIndex : 20000, color: '#aa8dc6' }}
+        >
+          <ClearIcon />
         </IconButton>
 
         <SidePanelActions
-          className={"sidepandiv"}
-          style={{backgroundColor: '#D4E6CC!important', color:'rgb(242, 239, 233)'}}
-
+          className={"sidepanel-toolbar"}
+          style={{}}
           setPanelName={this.setPanelName}
           user={user}
           router={router}
-          />
+        />
 
-        {
-          panelName === 'main' ?
-            <span>
-              <PanelFilters
+        <div className="sidepanel-scroll">
+          {
+            panelName === 'main' ?
+              <span>
+                <PanelFilters
+                  nodes={nodes}
+                  nodeCategories={nodeCategories}
+                  selectElement={selectElement}
+                  />
+              </span>
+              :
+              null
+          }
 
-                nodes={nodes}
-                nodeCategories={nodeCategories}
-                selectElement={selectElement}
+          {
+            panelName === 'about' ?
+              <PanelDescription
+                topogram={topogram}
+                nodesCount={nodes.length}
+                edgesCount={edges.length}
                 />
-            </span>
-            :
-            null
-        }
+              :
+              null
+          }
 
-        {
-          panelName === 'about' ?
-            <PanelDescription
-              topogram={topogram}
-              nodesCount={nodes.length}
-              edgesCount={edges.length}
+          {
+            panelName === 'edit' ?
+              <PanelSettings
+                geoMapVisible={geoMapVisible}
+                hasCharts={hasCharts}
+                hasTimeInfo={hasTimeInfo}
+                hasGeoInfo={hasGeoInfo}
+                authorIsLoggedIn={authorIsLoggedIn}
+                topogramId={topogram._id}
+                topogramTitle={topogram.title}
+                topogramIsPublic={topogram.sharedPublic}
+                router={router}
               />
             :
-            null
-        }
-
-        {
-          panelName === 'edit' ?
-            <PanelSettings
-              geoMapVisible={geoMapVisible}
-              hasCharts={hasCharts}
-              hasTimeInfo={hasTimeInfo}
-              hasGeoInfo={hasGeoInfo}
-              authorIsLoggedIn={authorIsLoggedIn}
-              topogramId={topogram._id}
-              topogramTitle={topogram.title}
-              topogramIsPublic={topogram.sharedPublic}
-              router={router}
-            />
-          :
-            null
-        }
+              null
+          }
+        </div>
       </Drawer>
+      </ThemeProvider>
     )
   }
 }

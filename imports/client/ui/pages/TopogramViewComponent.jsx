@@ -191,17 +191,33 @@ handleEnterIsolateMode = () => {
 cy.nodes().style({ 'opacity': '0' });
 cy.edges().style({ 'opacity': '0' });
 
-// select
-var subGraph = focusedNodes.openNeighborhood();
+// select: include the selected nodes + their neighbors
+var subGraph = focusedNodes.closedNeighborhood();
+// ensure layout is allowed to move nodes
+try { subGraph.nodes().unlock() } catch (_) {}
 focusedNodes.style({ 'opacity': '1' });
 subGraph.style({ 'opacity': '1'});
 
 // apply focus layout
-subGraph.layout({
-  'name':"spread",
-  'minDist' : 30,
-  'padding' : 50
-})
+try {
+  const layout = subGraph.layout({
+    name: 'spread',
+    minDist: 30,
+    padding: 50,
+    animate: false,
+    fit: false,
+    randomize: true
+  })
+  layout.run() // Cytoscape v3 requires .run()
+  // center and zoom on the isolated subgraph once laid out
+  try { cy.fit(subGraph, 60) } catch (_) {}
+  // Make sure only the laid-out subgraph remains visible
+  cy.elements().difference(subGraph).style({ 'opacity': '0' })
+  subGraph.style({ 'opacity': '1' })
+} catch (e) {
+  // layout plugin might be unavailable; still keep isolation styles
+  try { cy.fit(subGraph, 60) } catch (_) {}
+}
 }
 
 handleEnterExtractMode = () => {
@@ -494,10 +510,10 @@ render() {
           position: 'fixed',
           right: '-22px',
           top: '-22px',
-          // scaleType:"center",
+          visibility: this.props.ui.filterPanelIsOpen ? 'hidden' : 'visible',
         }}
         onClick={this.handleToggleSelectionMode}
-        >
+      >
         <ExploreIcon />
       </Fab>
 

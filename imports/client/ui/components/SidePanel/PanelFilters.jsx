@@ -16,6 +16,18 @@ const PanelFilters = ({
     <QueryBox
       nodes={nodes}
       selectElement={selectElement}
+      labelMessageId="queryBox.label.venue"
+      hintMessageId="queryBox.hint.venue"
+      labelDefault="Venue search"
+      hintDefault="Search for a venue"
+      sx={{
+        '& .MuiInputLabel-root': { color: '#F2EFE9' },
+        '& .MuiInputLabel-root.Mui-focused': { color: '#F2EFE9' },
+        '& .MuiInputBase-input': { color: '#F2EFE9' },
+        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(242,239,233,0.6)' },
+        '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#b999d6' },
+        '& .MuiSvgIcon-root': { color: '#aa8dc6' }
+      }}
       />
     {
       !!nodeCategories.length ?

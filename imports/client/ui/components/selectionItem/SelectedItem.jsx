@@ -6,6 +6,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import ReactMarkdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import 'github-markdown-css'
+import './SelectedItem.css'
 
 const SelectedItem = ({
   el,
@@ -21,38 +22,45 @@ const SelectedItem = ({
     :
     `${source.data('name')} -> ${target.data('name')}`
 
+  // Transform raw HTML anchors to Markdown links to avoid needing rehype-raw
+  const toMarkdownLinks = (s) => {
+    if (!s || typeof s !== 'string') return s
+    // Replace <a href="URL" ...>TEXT</a> (or single quotes) with [TEXT](URL)
+    return s.replace(/<a\s+[^>]*href=['\"]([^'\"]+)['\"][^>]*>([\s\S]*?)<\/a>/gi, '[$2]($1)')
+  }
+  const notesMarkdown = toMarkdownLinks(el && el.data && el.data.notes)
+
   return (
     <Card
+      className="selected-item-card"
       style={{
-        //bottom: 5,
-
-        borderBottomRightRadius:"20px",
-        borderTopRightRadius:"5px",
-        borderBottomLeftRadius:"5px",
-        boxShadow: '1px 1px 8px  #000',
-        border: '1px solid #222',
-        backgroundColor: el.data.color? el.data.color : 'rgb(69,90,100)',
-        opacity: "0.7"
-
+        borderBottomRightRadius:"16px",
+        borderTopRightRadius:"6px",
+        borderBottomLeftRadius:"6px",
+        boxShadow: '0 8px 18px rgba(0,0,0,0.35)',
+        border: '1px solid rgba(0,0,0,0.5)',
+        backgroundColor: 'rgba(69,90,100,0.95)',
+        color: '#F2EFE9'
       }}
       >
       <CardTitle
 
 
-        style={{fontSize: "11pt", fontWeight: 'bold' }}
+        style={{fontSize: "11pt", fontWeight: 'bold', color: '#F2EFE9' }}
         title={title}
         titleStyle={{
           lineHeight :'1.2em',
-          fontSize:'0.8em'
+          fontSize:'0.8em',
+          color: '#F2EFE9'
         }}
         subtitle={el.group}
         action={
           <IconButton onClick={() => onUnfocusElement(el)}>
-            <ClearIcon />
+            <ClearIcon sx={{ color: '#b999d6' }} />
           </IconButton>
         }
       />
-    <CardText style={{fontSize: "9pt",color:"white"}}>
+    <CardText className="selected-item-notes" style={{fontSize: "10pt", color:'#F2EFE9'}}>
         {/* {
           el.group === 'nodes' ?
             <p>lat/lng : {`${lat}/${lng}`}</p>
@@ -61,7 +69,24 @@ const SelectedItem = ({
         } */}
         {el.data.notes ? (
           <div className="markdown-body">
-            <ReactMarkdown remarkPlugins={[gfm]}>{el.data.notes}</ReactMarkdown>
+            <ReactMarkdown
+              remarkPlugins={[gfm]}
+              components={{
+                a: ({node, ...props}) => (
+                  <a
+                    {...props}
+                    className="selected-item-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                ),
+                p: ({node, ...props}) => (
+                  <p {...props} className="selected-item-paragraph" />
+                )
+              }}
+            >
+              {notesMarkdown}
+            </ReactMarkdown>
           </div>
         ) : null}
       </CardText>
