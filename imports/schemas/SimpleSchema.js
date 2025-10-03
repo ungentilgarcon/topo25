@@ -31,5 +31,5 @@ if (!SimpleSchemaCompat.RegEx.Id) {
 
 	// Allow legacy schema options used in this codebase (no-ops in npm simpl-schema unless a plugin handles them)
 	if (typeof SimpleSchemaCompat.extendOptions === 'function') {
-		SimpleSchemaCompat.extendOptions(['denyUpdate'])
+		SimpleSchemaCompat.extendOptions(['denyUpdate', 'decimal'])
 	}
