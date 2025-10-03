@@ -268,8 +268,11 @@ handleExitIsolateMode = () => {
   cy.nodes().style({ 'opacity': '1' });
   cy.edges().style({ 'opacity': '1' });
 
-  // bring back positions
-  cy.nodes().positions((i,n) => prevPositions[n.id()])
+  // bring back positions (use correct callback signature: (node, index))
+  cy.nodes().positions((n, i) => {
+    const p = prevPositions ? prevPositions[n.id()] : undefined
+    return p ? p : n.position()
+  })
   this.props.updateUI('prevPositions', null)
 
   cy.fit()
