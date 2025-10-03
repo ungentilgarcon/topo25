@@ -160,6 +160,8 @@ class GeoMap extends React.Component {
       minZoom,
       maxZoom
     } = mapTiles[geoMapTile]
+    const fallbackAttribution = '© OpenStreetMap contributors'
+    const tileAttribution = attribution || fallbackAttribution
     const tileKey = `${geoMapTile}:${url || 'none'}`
     if (this._lastTileKey !== tileKey) {
       // Reset error counter when switching tile providers
@@ -212,7 +214,7 @@ class GeoMap extends React.Component {
           {url ? (
             <TileLayer
               url={url}
-              attribution={attribution}
+              attribution={tileAttribution}
               minZoom={minZoom}
               maxZoom={maxZoom}
               crossOrigin={'anonymous'}
