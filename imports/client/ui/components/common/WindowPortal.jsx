@@ -32,28 +32,22 @@ export default class WindowPortal extends React.Component {
         html, body.__popup_theme { background:#37474F; color:#F2EFE9; font-family:Arial,Helvetica,sans-serif; }
         /* Constrain content width for better readability in pop-outs */
         body.__popup_theme .__popup_content { max-width: 1100px; margin: 0 auto; }
-  /* Make C3 text readable on dark bg without overriding legend item colors */
-  body.__popup_theme .c3 .c3-title,
-  body.__popup_theme .c3 .c3-axis-x g.tick text,
-  body.__popup_theme .c3 .c3-axis-y g.tick text,
-  body.__popup_theme .c3 .c3-chart-arc text { fill: #F2EFE9 !important; }
-  /* Outline arc labels for contrast against bright slices (e.g., yellow) */
-  body.__popup_theme .c3 .c3-chart-arc text { stroke: rgba(38,50,56,0.65); stroke-width: 1.6px; paint-order: stroke fill; }
-  /* Preserve legend item text color (per-series) */
-  body.__popup_theme .c3 .c3-legend-item text { fill: inherit !important; }
-        /* Axes/lines contrast */
-  /* body.__popup_theme .c3 path, body.__popup_theme .c3 line { stroke: #B0BEC5 !important; } */
-        /* Tooltip styling for dark theme */
-        body.__popup_theme .c3-tooltip { background: rgba(33, 33, 33, 0.9) !important; color: #F2EFE9 !important; border: 1px solid #78909C !important; }
-        body.__popup_theme .c3-tooltip th, body.__popup_theme .c3-tooltip td { color: #F2EFE9 !important; }
-  /* Ensure legend tiles are visible on dark background */
-  /* body.__popup_theme .c3-legend-item-tile { stroke: #B0BEC5 !important; } */
-        /* Material RaisedButton tweaks inside pop-out */
-        body.__popup_theme .mui-raised-button, body.__popup_theme .mui-raised-button > button {
-          background: #546E7A !important; color: #F2EFE9 !important;
+
+        /* Generic chart readability on dark background (SVG text labels, axes, legends) */
+        body.__popup_theme svg text { fill: #F2EFE9; }
+        /* Outline arc/pie labels for contrast against bright slices */
+        body.__popup_theme .chart-arc-label, body.__popup_theme svg .arc-label, body.__popup_theme svg .recharts-text {
+          stroke: rgba(38,50,56,0.65); stroke-width: 1.6px; paint-order: stroke fill;
         }
+        /* Recharts tooltip container tweaks */
+        body.__popup_theme .recharts-default-tooltip { background: rgba(33, 33, 33, 0.9) !important; color: #F2EFE9 !important; border: 1px solid #78909C !important; }
+        body.__popup_theme .recharts-default-tooltip ul, body.__popup_theme .recharts-default-tooltip li { color: #F2EFE9 !important; }
+
+        /* Material button tweaks inside pop-out */
+        body.__popup_theme .mui-raised-button, body.__popup_theme .mui-raised-button > button { background: #546E7A !important; color: #F2EFE9 !important; }
         body.__popup_theme .mui-raised-button-label { color: #F2EFE9 !important; font-weight: 700; }
-        /* Slight font bump for typical text containers inside pop-outs (helps Legend) */
+
+        /* Slight font bump for typical text containers inside pop-outs (helps legends) */
         body.__popup_theme .__popup_content, body.__popup_theme .__popup_content a,
         body.__popup_theme .__popup_content td, body.__popup_theme .__popup_content tbody,
         body.__popup_theme .__popup_content div { font-size: 12pt !important; }

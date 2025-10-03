@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ui from '/imports/client/legacyUi'
-import d3 from 'd3'
 import { MapContainer, TileLayer, ScaleControl, ZoomControl, Pane } from 'react-leaflet'
 //import {smoothZoom} from 'leaflet.smoothzoom'
 
