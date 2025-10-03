@@ -93,11 +93,13 @@ export default class Popup extends React.Component {
     const width = Math.min(maxW, Math.max(minW, this.state.startWidth + dx))
     const height = Math.min(maxH, Math.max(minH, this.state.startHeight + dy))
     this.setState({ width, height })
+    try { window.dispatchEvent(new Event('topo:overlay-resize')) } catch (err) {}
   }
   handleResizeEnd = () => {
     this.setState({ resizing: false })
     window.removeEventListener('mousemove', this.handleResizeMove)
     window.removeEventListener('mouseup', this.handleResizeEnd)
+    try { window.dispatchEvent(new Event('topo:overlay-resize')) } catch (err) {}
   }
 
   renderHeader() {

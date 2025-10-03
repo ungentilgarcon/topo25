@@ -76,6 +76,7 @@ export default class MainViz extends React.Component {
         // Install a single resize listener globally
         if (!window.__topoOffsetListenerInstalled) {
           window.addEventListener('resize', setOffset, { passive: true })
+          window.addEventListener('topo:overlay-resize', setOffset, { passive: true })
           window.__topoOffsetListenerInstalled = true
         }
         // Nudge after tiny delay in case panels animate in
