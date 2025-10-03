@@ -37,6 +37,13 @@ class QueryBox extends React.Component {
 
   render() {
     const { formatMessage } = this.props.intl
+    const {
+      labelMessageId,
+      hintMessageId,
+      labelDefault,
+      hintDefault,
+      sx: sxProp
+    } = this.props
 
     // Map incoming nodes to options and dedupe by unique id to avoid duplicate keys
     const seen = new Set()
@@ -51,6 +58,17 @@ class QueryBox extends React.Component {
         node: n,
       })
     }
+
+    // Resolve label/hint via i18n with optional override IDs
+    const labelText = labelMessageId
+      ? formatMessage({ id: labelMessageId, defaultMessage: labelDefault || 'Venue search' })
+      : formatMessage(messages.label)
+    const hintText = hintMessageId
+      ? formatMessage({ id: hintMessageId, defaultMessage: hintDefault || 'Search for a venue' })
+      : formatMessage(messages.hint)
+
+    // Default ivory-on-dark styling if sx provided by parent; otherwise leave theme defaults
+    const sx = sxProp || undefined
 
     return (
       <MUIAutocomplete
@@ -67,8 +85,9 @@ class QueryBox extends React.Component {
         renderInput={(params) => (
           <TextField
             {...params}
-            floatingLabelText={formatMessage(messages.label)}
-            hintText={formatMessage(messages.hint)}
+            floatingLabelText={labelText}
+            hintText={hintText}
+            sx={sx}
           />
         )}
       />
@@ -84,7 +103,12 @@ QueryBox.propTypes = {
   // style : PropTypes.object,
   intl : PropTypes.shape({
     formatMessage : PropTypes.func
-  })
+  }),
+  labelMessageId: PropTypes.string,
+  hintMessageId: PropTypes.string,
+  labelDefault: PropTypes.string,
+  hintDefault: PropTypes.string,
+  sx: PropTypes.object
 }
 
 // default props removed; use safe fallbacks in render instead to avoid memo/defaultProps warning
