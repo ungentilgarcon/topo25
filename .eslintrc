@@ -1,32 +1,32 @@
 {
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
-    "ecmaVersion": 6,
+    "requireConfigFile": false,
+    "babelOptions": {
+      "plugins": [
+        "@babel/plugin-proposal-class-properties",
+        ["@babel/plugin-proposal-decorators", { "legacy": true }],
+        "@babel/plugin-syntax-jsx"
+      ]
+    },
+    "ecmaVersion": 2021,
     "sourceType": "module",
-    "ecmaFeatures": {
-        "jsx": true,
-        "modules": true,
-        "forOf": true
-    }
+    "ecmaFeatures": { "jsx": true }
   },
-  "parser": "babel-eslint",
-  "plugins": [
-    "meteor",
-    "react"
-  ],
+  "plugins": ["meteor", "react", "import"],
   "globals": {
     "React": true
   },
-  "env": {
-    "es6": true,
-    "browser": true,
-    "node": true,
-    "jasmine": true,
-    "meteor" : true
+  "env": { "es2021": true, "browser": true, "node": true, "jest": true, "meteor": true },
+  "settings": {
+    "react": { "version": "detect" },
+    "import/resolver": { "node": { "extensions": [".js", ".jsx"] } }
   },
   "extends": [
     "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings",
+    "plugin:import/warnings"
   ],
   "rules": {
     "no-console": 1,
@@ -54,22 +54,18 @@
     "jsx-quotes": 1,
     "react/prefer-es6-class": 2,
     "react/jsx-max-props-per-line": 1,
-    "react/display-name": 0, // Prevent missing displayName in a React component definition
-    "react/jsx-no-undef": 2, // Disallow undeclared variables in JSX
-    "react/jsx-sort-props": 0, // Enforce props alphabetical sorting
-    "react/jsx-uses-react": 2, // Prevent React to be incorrectly marked as unused
-    "react/jsx-uses-vars": 2, // Prevent variables used in JSX to be incorrectly marked as unused
-    "react/no-did-mount-set-state": 2, // Prevent usage of setState in componentDidMount
-    "react/no-did-update-set-state": 2, // Prevent usage of setState in componentDidUpdate
-    "react/no-multi-comp": 0, // Prevent multiple component definition per file
-    "react/prop-types": [
-        1,
-        { "ignore" : [ "ui", "updateUI"] }
-      ],
-    // Prevent missing props validation in a React component definition
-    "react/no-unknown-property": 2, // Prevent usage of unknown DOM property
-    "react/react-in-jsx-scope": 2, // Prevent missing React when using JSX
-    "react/self-closing-comp": 2, // Prevent extra closing tags for components without children
+    "react/display-name": 0,
+    "react/jsx-no-undef": 2,
+    "react/jsx-sort-props": 0,
+    "react/jsx-uses-react": 0,
+    "react/jsx-uses-vars": 2,
+    "react/no-did-mount-set-state": 2,
+    "react/no-did-update-set-state": 2,
+    "react/no-multi-comp": 0,
+    "react/prop-types": [1, { "ignore": ["ui", "updateUI"] }],
+    "react/no-unknown-property": 2,
+    "react/react-in-jsx-scope": 0,
+    "react/self-closing-comp": 2,
 
     "meteor/eventmap-params": [
       2,
