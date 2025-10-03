@@ -53,6 +53,19 @@ export default class MainViz extends React.Component {
     if (panelsCount === 3) width = '33vw'
 
     //console.log("logging",this.props.ui.chartsVisible,this.props.ui.hasCharts);
+    // Dynamically adjust Leaflet bottom control offset to clear timeline/legend
+    try {
+      const root = document.documentElement
+      const base = 10
+      const timelineH = timeLineVisible ? 120 : 0
+      const legendH = legendVisible ? 80 : 0
+      const viewport = Math.max(window.innerHeight || 0, 0)
+      const scale = viewport < 700 ? 0.75 : 1
+      const offset = Math.round((Math.max(timelineH, legendH) * scale) + base)
+      root.style.setProperty('--timeline-offset', `${offset}px`)
+    } catch (e) {
+      // no-op if document/window not available
+    }
     //console.log("logging",this.props)
 
     return (
