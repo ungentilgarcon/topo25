@@ -64,6 +64,8 @@ var defaults = {
 
 class Cytoscape extends Component {
   cy = null;
+  _fitDone = false;
+  _userMoved = false;
 
 
   // static propTypes = {
@@ -113,6 +115,11 @@ class Cytoscape extends Component {
     cy.panzoom( defaults );
 
     this.cy = cy
+
+    // track user interactions to avoid auto-fitting after they move the view
+    try {
+      this.cy.on('pan zoom', () => { this._userMoved = true })
+    } catch (_) { /* noop */ }
 
     // console.log(cy);
   }
@@ -381,11 +388,20 @@ class Cytoscape extends Component {
           const els = this.cy.elements()
           els.style('opacity', 0)
           const layout = this.cy.layout(layoutConfig)
-          this.cy.one('layoutstop', () => { try { els.removeStyle('opacity') } catch (_) {} })
+          this.cy.one('layoutstop', () => {
+            try {
+              // center once with padding before showing, to avoid visible motion
+              if (!this._fitDone && !this._userMoved) { this.cy.fit(undefined, 60); this._fitDone = true }
+            } catch (_) {}
+            try { els.removeStyle('opacity') } catch (_) {}
+          })
           layout.run()
         } catch (_) { /* noop */ }
       } else {
         this.applyLayout(layoutName)
+        try {
+          if (!this._fitDone && !this._userMoved) { this.cy.fit(undefined, 60); this._fitDone = true }
+        } catch (_) {}
       }
       this.setState({ init: true })
     }
@@ -398,6 +414,10 @@ class Cytoscape extends Component {
     // handle container size changes
     if (prevProps.width !== width || prevProps.height !== height) {
       this.cy.resize()
+      // keep centered while user hasn't interacted yet
+      try {
+        if (!this._fitDone && !this._userMoved) { this.cy.fit(undefined, 60); this._fitDone = true }
+      } catch (_) {}
     }
   }
 
