@@ -10,7 +10,7 @@ const buttonStyle = {
   margin: 2,
   padding: '10px 20px',
   backgroundColor: 'rgba(69,90,100 ,0.9)',
-  color:'#F2EFE9 !important'
+  color:'#F2EFE9'
 }
 
 @ui({ key: 'PanelSettings', state: { showChevrons: (typeof window !== 'undefined' && window.localStorage && window.localStorage.getItem('topo.showChevrons') !== null) ? JSON.parse(window.localStorage.getItem('topo.showChevrons')) : true } })
