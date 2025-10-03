@@ -77,6 +77,7 @@ export function MenuItemCompat(props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const hasSubmenu = !!(menuItems && menuItems.length)
+  const closeTimerRef = React.useRef(null)
 
   const handleParentActivate = (e) => {
     if (hasSubmenu) setAnchorEl(e.currentTarget)
@@ -96,6 +97,16 @@ export function MenuItemCompat(props) {
     }
   }
   const handleClose = () => setAnchorEl(null)
+  const scheduleClose = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    closeTimerRef.current = setTimeout(() => setAnchorEl(null), 2000)
+  }
+  const cancelClose = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
 
   const sx = style ? { ...sxProp, ...style } : sxProp
   const adornment = endAdornment || rightIcon
@@ -121,10 +132,15 @@ export function MenuItemCompat(props) {
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           keepMounted
-          MenuListProps={{ autoFocusItem: open }}
+          MenuListProps={{
+            autoFocusItem: open,
+            onMouseEnter: cancelClose,
+            onMouseLeave: scheduleClose
+          }}
+          PaperProps={{ onMouseEnter: cancelClose, onMouseLeave: scheduleClose }}
         >
           {React.Children.map(menuItems, (item) => {
             if (!React.isValidElement(item)) return item
