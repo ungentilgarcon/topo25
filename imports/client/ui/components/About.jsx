@@ -65,8 +65,8 @@ class About extends React.Component {
             Please feel free to get in touch at <a href="mailto:greg@grrrndzero.org"></a>.
           </p>
           <p><small>
-            BandsTour 2015-2025 (cc). Thanks to Grégory Bahde,Clément Renaud.
-            Topogram 2015-2017 (cc). Thanks to Clément Renaud, Grégory Bahde and Lionel Radisson.
+            BandsTour 2015-2025 (cc). Thanks to Grégory Bahdé, Clément Renaud.
+            Topogram 2015-2017 (cc). Thanks to Clément Renaud, Grégory Bahdé and Lionel Radisson.
           </small></p>
           <Version />
         </Dialog>

@@ -7,6 +7,7 @@ Topogram is a web app to visualize the evolution of networks over time and space
 
 - Current version: V0.3 (Meteor 2.13.x)
 - Highlights in V0.3: non-blocking, draggable help popup; JSON API endpoints; migration groundwork. See the [Changelog](./CHANGELOG.md).
+- V4 changes (2025): see [CHANGELOG_V.4.md](./CHANGELOG_V.4.md). Release notes will also summarize highlights.
 
 For background, see the original project: http://topogram.io
 
@@ -40,6 +41,13 @@ meteor --port 3020
 ```
 
 More details in docs/Quickstart.md.
+
+Additional documentation:
+
+- Project structure: [docs/STRUCTURE.md](./docs/STRUCTURE.md)
+- JSON API: [docs/API.md](./docs/API.md)
+- Conventional Commits: [docs/CONVENTIONAL_COMMITS.md](./docs/CONVENTIONAL_COMMITS.md)
+- Releasing: [docs/RELEASING.md](./docs/RELEASING.md)
 
 
 ### Troubleshooting
