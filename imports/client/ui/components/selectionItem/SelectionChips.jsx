@@ -11,7 +11,7 @@ import SelectedItem from '../selectionItem/SelectedItem.jsx'
 const styles = {
   chip: {
     margin: 2,
-    fontSize: "6px",
+    fontSize: "12px",
     //maxWidth:"10%",
    opacity: "0.9",
    textOpacity : 1
