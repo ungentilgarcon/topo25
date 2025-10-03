@@ -14,6 +14,14 @@
 	padding: 6px; /* compact touch target */
 }
 
+.sidepanel-toolbar .MuiIconButton-root:hover {
+	background-color: rgba(170, 141, 198, 0.12); /* subtle purple hover */
+}
+
+.sidepanel-toolbar .MuiTouchRipple-root span {
+	background-color: rgba(170, 141, 198, 0.35) !important; /* ripple tint */
+}
+
 /* Selection highlight color: light text purple, not green */
 .sidepanel-toolbar .Mui-selected,
 .sidepanel-toolbar .MuiIconButton-root.Mui-selected {
