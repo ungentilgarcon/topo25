@@ -1,5 +1,5 @@
 {
-  "name": "topogram",
+  "name": "bandstour",
   "version": "0.3.0",
   "description": "Real-time collaborative social network analysis toolkit",
   "main": "topogram.js",
@@ -75,14 +75,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/topogram/topogram.git"
+    "url": "https://github.com/ungentilgarcon/topo25.git"
   },
-  "author": "Clément Renaud <hi@clementrenaud.com> (http://clementrenaud.com/)",
+  "author": " Grégory Bahdé <bahdegregory@gmail.com> )",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/topogram/topogram/issues"
+    "url": "https://github.com/ungentilgarcon/topo25/issues"
   },
-  "homepage": "https://topogram.github.io",
+  "homepage": "https://bandstour.io(soon)",
   "engines": {
     "node": ">=20 <21",
     "npm": ">=10 <11"
