@@ -23,6 +23,7 @@ reactive-var@1.0.13
 
 # UI (Blaze removed; React app)
 mobile-experience@1.1.2
+static-html
 jquery
  
 
