@@ -160,12 +160,6 @@ class GeoMap extends React.Component {
       minZoom,
       maxZoom
     } = mapTiles[geoMapTile]
-    // Clamp zoom to integer to avoid 404s on providers that don't serve fractional zoom
-    const intZoom = Math.max(minZoom || 0, Math.min(maxZoom || 22, Math.round(this.state.zoom)))
-    if (intZoom !== this.state.zoom) {
-      // Update once to round zoom, avoiding render loops by only setting when different
-      this.state.zoom = intZoom
-    }
     const tileKey = `${geoMapTile}:${url || 'none'}`
     if (this._lastTileKey !== tileKey) {
       // Reset error counter when switching tile providers
@@ -174,14 +168,16 @@ class GeoMap extends React.Component {
     }
 
     const chevOn = (!this.props.ui || this.props.ui.showChevrons !== false)
+    const panelOpen = !!(this.props.ui && this.props.ui.filterPanelIsOpen)
+    const controlPos = panelOpen ? 'bottomleft' : 'bottomright'
     return (
   <div id={MAP_DIV_ID} style={containerStyle}>
         <MapContainer
           key={`map-${chevOn ? 'with' : 'no'}-chev`}
           center={position}
           zoom={zoom}
-          zoomSnap={1}
-          zoomDelta={1}
+          zoomSnap={0.25}
+          zoomDelta={0.25}
           zoomControl={false}
           whenCreated={(map) => { this._map = map }}
         >
@@ -236,13 +232,8 @@ class GeoMap extends React.Component {
               }}
             />
           ) : null}
-          <ScaleControl
-            position='bottomright'
-          />
-
-        <ZoomControl
-          position='bottomright'
-          />
+          <ScaleControl position={controlPos} />
+          <ZoomControl position={controlPos} />
         </MapContainer>
       </div>
     )
