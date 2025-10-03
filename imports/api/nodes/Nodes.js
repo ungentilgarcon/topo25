@@ -17,14 +17,9 @@ Nodes.deny({
 })
 
 Nodes.schema = new SimpleSchema({
-  _id : {
-    type: String,
-    regEx: SimpleSchema.RegEx.Id
-  },
   topogramId : {
     type: String,
     regEx: SimpleSchema.RegEx.Id,
-    denyUpdate: true,
     label : 'The ID of the topogram the node belongs to'
   },
   data: {
@@ -60,19 +55,16 @@ Nodes.schema = new SimpleSchema({
   },
   'data.lat' : {
     type : Number,
-    decimal: true,
     label : 'latitude',
     optional : true
   },
   'data.lng' : {
     type : Number,
-    decimal: true,
     label : 'longitude',
     optional : true
   },
   'data.weight' : {
     type : Number,
-    decimal: true,
     label : 'Weight of the node in the graph',
     optional : true
   },
@@ -82,33 +74,36 @@ Nodes.schema = new SimpleSchema({
     optional : true
   },
   'data.group' : {
-    type : String, // [String],
+    type : String,
     label : 'Types or groups of the node',
     optional : true
   },
   'data.notes' : {
     type : String,
     label : 'A Mardkdown-formatted text to store some more info about the node',
-    blackbox: true,
     optional : true
   },
   group : {
     type: String,
     defaultValue : 'nodes'
   },
+  position: {
+    type: Object,
+    optional: true
+  },
   'position.x' :  {
     type : Number,
     autoValue() {
       return (this.isInsert && ! this.value) ? Math.floor(Math.random() * 300) : this.value
     },
-    decimal: true
+    
   },
   'position.y' : {
     type : Number,
     autoValue() {
       return (this.isInsert && ! this.value) ? Math.floor(Math.random() * 300) : this.value
     },
-    decimal: true
+    
   },
   owner: {
     type: String,

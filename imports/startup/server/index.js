@@ -21,6 +21,7 @@ import '/imports/api/server/publications.js'
 
 // plugins
 import '/imports/version.js'
+import '/imports/startup/server/plugins/collection2-shim.js'
 
 // JSON API
 import '/imports/endpoints'

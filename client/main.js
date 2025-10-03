@@ -1,3 +1,4 @@
+import '/imports/startup/both/collection2-shim.js'
 import { Meteor } from 'meteor/meteor'
 import React from 'react'
 import { render } from 'react-dom'

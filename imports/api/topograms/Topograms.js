@@ -19,10 +19,6 @@ Topograms.deny({
 })
 
 Topograms.schema = new SimpleSchema({
-  _id : {
-    type: String,
-    regEx: SimpleSchema.RegEx.Id
-  },
   title : {
     type: String,
     label: 'The name of the topogram',
