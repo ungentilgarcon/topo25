@@ -111,7 +111,8 @@ export function MenuItemCompat(props) {
   }
 
   const sx = style ? { ...sxProp, ...style } : sxProp
-  const adornment = endAdornment || rightIcon
+  // Only show a right-side adornment when not a submenu
+  const rightAdornment = !hasSubmenu ? (endAdornment || rightIcon) : null
   // For submenu items, show a left-facing arrow on the left of the text
   const leftAdornment = hasSubmenu ? (
     <ListItemIcon sx={{ minWidth: 28, color: 'inherit' }}>
@@ -133,7 +134,7 @@ export function MenuItemCompat(props) {
       >
         {leftAdornment}
         <ListItemText primary={primaryText || children} secondary={secondaryText} />
-        {adornment ? <Box sx={{ ml: 'auto' }}>{adornment}</Box> : null}
+        {rightAdornment ? <Box sx={{ ml: 'auto' }}>{rightAdornment}</Box> : null}
       </MenuItem>
       {hasSubmenu ? (
         <Menu
