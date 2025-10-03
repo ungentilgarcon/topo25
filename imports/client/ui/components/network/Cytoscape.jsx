@@ -155,7 +155,7 @@ class Cytoscape extends Component {
       const extra = Math.min(140, Math.round(n / 40))
       layoutConfig.minDist = base + extra // Minimum distance between nodes
       layoutConfig.padding = 100
-      layoutConfig.randomize = true
+      layoutConfig.randomize = false
     }
 
     try {
@@ -242,8 +242,8 @@ class Cytoscape extends Component {
           this.cy.add(elements)
         }
       })
-      // Only re-run layout automatically if using a computed layout (not 'preset')
-      if (this.props.layoutName && this.props.layoutName !== 'preset') {
+      // Only re-run layout after init, and only if using a computed layout (not 'preset')
+      if (this.state.init && this.props.layoutName && this.props.layoutName !== 'preset') {
         this.applyLayout(this.props.layoutName)
       }
       this.updateRadius(this.props.nodeRadius)
@@ -269,7 +269,28 @@ class Cytoscape extends Component {
 
     // init once when requested
     if (!this.state.init && this.props.init) {
-      this.applyLayout(layoutName)
+      if (layoutName && layoutName !== 'preset') {
+        // First-time non-preset layout: hide elements to avoid visible movement
+        const layoutConfig = { name: layoutName, animate: false, fit: false }
+        if (layoutName === 'spread') {
+          const n = this.cy.nodes().length || 0
+          const w = this._cyelement ? this._cyelement.clientWidth : 800
+          const base = Math.max(40, Math.round((w / 1000) * 80))
+          const extra = Math.min(140, Math.round(n / 40))
+          layoutConfig.minDist = base + extra
+          layoutConfig.padding = 100
+          layoutConfig.randomize = false
+        }
+        try {
+          const els = this.cy.elements()
+          els.style('opacity', 0)
+          const layout = this.cy.layout(layoutConfig)
+          this.cy.one('layoutstop', () => { try { els.removeStyle('opacity') } catch (_) {} })
+          layout.run()
+        } catch (_) { /* noop */ }
+      } else {
+        this.applyLayout(layoutName)
+      }
       this.setState({ init: true })
     }
 
