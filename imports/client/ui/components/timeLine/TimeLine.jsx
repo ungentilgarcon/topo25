@@ -29,7 +29,7 @@ const styleTimeLine = {
   //marginBottom: '10px',
   borderTopRightRadius: '20px',
   borderBottomRightRadius: '5px',
-  padding:"6px 10px 14px 12px ",
+  padding:"4px 10px 10px 10px",
   transitionEnabled: "true",
   //paddingBottom:"15px"
 
@@ -222,7 +222,7 @@ export default class TimeLine extends React.Component {
                 <tbody>
 
                   <tr>
-                    <td style={{width: "30%",marginBottom: '0em',
+                    <td style={{width: "26%",marginBottom: '0em',
                       marginTop: '0em',whiteSpace: 'nowrap'}}>
                       <div style={{height: '0.5em',marginBottom: '0em',
                         marginTop: '0em'}}>
@@ -287,11 +287,11 @@ export default class TimeLine extends React.Component {
                       step={.1}
                       floatingLabelFixed={true}
                       floatingLabelText='speed'
-                      floatingLabelStyle={{color: '#F2EFE9'}}
+                      floatingLabelStyle={{color: '#F2EFE9', fontSize: '11px'}}
                       variant='standard'
                       size='small'
-                      style={{width : '3.2em', margin: '0 0.6em',fontSize: "10pt"}}
-                      inputProps={{ style: { padding: '2px 4px', textAlign: 'center' } }}
+                      style={{width : '3.4em', margin: '0 0.7em',fontSize: "11px"}}
+                      inputProps={{ style: { padding: '3px 4px', textAlign: 'center', fontSize: '11px' } }}
                       value={this.state.step}
 
                       // columns={3}
@@ -301,10 +301,10 @@ export default class TimeLine extends React.Component {
 
                   </div>
                 </td>
-                <td style={{width: "7%"}}>
+                <td style={{width: "4%"}}>
 
                 </td>
-                <td style={{width: "60%", align:"right"}}>
+                <td style={{width: "70%", align:"right"}}>
 
                   <div>
                     <span>
@@ -324,7 +324,7 @@ export default class TimeLine extends React.Component {
                         floatingLabelText="Max Date"
                         value={maxTime}
                         />
-                      <CardText>
+                      <CardText style={{ paddingTop: 4, paddingBottom: 0 }}>
                         { minTime && maxTime ?
                           <TimeSlider
                             minTime={new Date(minTime).getTime()}

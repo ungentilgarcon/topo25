@@ -85,7 +85,7 @@ export default class TimeSlider extends React.Component {
                 '& .MuiSlider-markLabel': {
                   color: '#F2EFE9',
                   opacity: 0.9,
-                  fontSize: '10px',
+                  fontSize: '9px',
                   textShadow: '0 1px 1px rgba(0,0,0,0.5)'
                 },
                 '& .MuiSlider-valueLabel': {
