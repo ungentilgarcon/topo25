@@ -1,12 +1,18 @@
-// Centralized SimpleSchema export.
-// Today: re-export from Atmosphere package 'meteor/aldeed:simple-schema'.
-// Future: flip this file to import from 'simpl-schema' (npm) without changing call sites.
-//   Example future change:
-//     import SimpleSchema from 'simpl-schema'
-//     export { SimpleSchema }
-//     export default SimpleSchema
+// Centralized SimpleSchema export with compatibility.
+// Prefers npm 'simpl-schema'; falls back to Atmosphere 'meteor/aldeed:simple-schema'.
+// This lets us migrate incrementally without touching call sites.
 
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
+/* eslint-disable global-require */
+let SimpleSchemaCompat
+try {
+	// Prefer npm package
+	const mod = require('simpl-schema')
+	SimpleSchemaCompat = mod.default || mod
+} catch (e) {
+	// Fallback to Atmosphere package
+	const meteorMod = require('meteor/aldeed:simple-schema')
+	SimpleSchemaCompat = meteorMod.SimpleSchema
+}
 
-export { SimpleSchema }
-export default SimpleSchema
+export const SimpleSchema = SimpleSchemaCompat
+export default SimpleSchemaCompat
