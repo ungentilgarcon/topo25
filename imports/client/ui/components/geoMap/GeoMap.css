@@ -66,3 +66,12 @@ div.leaflet-top:nth-child(1){  z-index: 10000 !important;
   transform: scale(1.25);
   transform-origin: center;
 }
+
+/* Force-selected node styling (higher precedence than inline updates) */
+.topo-node-selected.leaflet-interactive {
+  stroke: #EEFF41 !important;
+  stroke-opacity: 0.9 !important;
+  stroke-width: 3px !important;
+  fill: #EEFF41 !important;
+  fill-opacity: 0.85 !important;
+}

@@ -167,6 +167,7 @@ class GeoMap extends React.Component {
             nodes.length ? (
               <Pane name="nodesPane" style={{ zIndex: 650 }}>
                 <GeoNodes
+                  key={`geonodes-${selectedNodeIds.size}`}
                   nodes={nodes}
                   isolateMode={isolateMode}
                   handleClickGeoElement={(e) => this.handleClickGeoElement(e)}
