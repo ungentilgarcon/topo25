@@ -18,7 +18,7 @@ const linearScale = (domain, range) => {
   return (x) => r0 + ((x - d0) / span) * outSpan
 }
 
-// register force layout
+// register extensions with cytoscape v3
 spread(cytoscape)
 panzoom(cytoscape)
 
