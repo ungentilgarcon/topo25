@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor'
 import { bulkCollectionUpdate } from '../../lib/bulkCollectionUpdate.js'
 
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from '/imports/schemas/SimpleSchema'
+import { SimpleSchema } from 'meteor/aldeed:simple-schema'
 
 // import logger from '../../logger.js'
 

@@ -1,17 +1,17 @@
 import { slugify } from '../../helpers'
 import { Topograms, Nodes } from '../collections.js'
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from '/imports/schemas/SimpleSchema'
+import { SimpleSchema } from 'meteor/aldeed:simple-schema'
 
 import { buildErrorAnswer } from '/imports/api/responses'
 
 const TOPOGRAM_ID_ONLY = new SimpleSchema({
-  topogramId: Topograms.simpleSchema().schema('_id'),
+  topogramId: { type: String },
 }).validator({ clean: true, filter: false })
 
 const TOPOGRAM_ID_AND_TITLE = new SimpleSchema({
-  topogramId: Topograms.simpleSchema().schema('_id'),
-  title: Topograms.simpleSchema().schema('title'),
+  topogramId: { type: String },
+  title: { type: String },
 }).validator({ clean: true, filter: false })
 
 /**
@@ -24,8 +24,8 @@ const TOPOGRAM_ID_AND_TITLE = new SimpleSchema({
 export const topogramCreate = new ValidatedMethod({
   name: 'topogram.create',
   validate: new SimpleSchema({
-    title: Topograms.simpleSchema().schema('title'),
-    userId: Topograms.simpleSchema().schema('userId')
+    title: { type: String },
+    userId: { type: String, optional: true }
   }).validator({ clean: true, filter: false }),
   async run({ title, userId=this.userId }) {
 
@@ -80,9 +80,9 @@ export const topogramDelete = new ValidatedMethod({
 export const topogramUpdate = new ValidatedMethod({
   name: 'topogram.update',
   validate: new SimpleSchema({
-      topogramId: Topograms.simpleSchema().schema('_id'),
-      title: Topograms.simpleSchema().schema('title'),
-      description: Topograms.simpleSchema().schema('description')
+      topogramId: { type: String },
+      title: { type: String },
+      description: { type: String, optional: true }
     })
     .validator({ clean: true, filter: false }),
   async run({ topogramId, title, description }) {

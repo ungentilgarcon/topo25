@@ -2,10 +2,10 @@ import { Edges } from '../collections.js'
 import { Meteor } from 'meteor/meteor'
 
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import { SimpleSchema } from '/imports/schemas/SimpleSchema'
+import { SimpleSchema } from 'meteor/aldeed:simple-schema'
 
 const EDGE_ID_ONLY = new SimpleSchema({
-  edgeId: Edges.simpleSchema().schema('_id'),
+  edgeId: { type: String },
 }).validator({ clean: true, filter: false })
 
 
@@ -64,27 +64,14 @@ export const edgeDelete = new ValidatedMethod({
 * @return {Object} the edges as inserted in Mongo
 */
 
-const edgeSchema = Edges.schema.pick([
-  'data.id',
-  'data.name',
-  'data.color',
-  'data.group',
-  'data.notes',
-  'data.lat',
-  'data.lng',
-  'data.start',
-  'data.end',
-  'data.starred',
-  'data.weight',
-  'data.source',
-  'data.target'
-])
+// Use a minimal validator here; collection2 will validate on insert
 
 export const edgeCreateMany = new ValidatedMethod({
   name: 'edge.createMany',
   validate: new SimpleSchema({
     'topogramId': { type: String },
-    'edges' : { type : [ edgeSchema ], minCount: 1 }
+    'edges': { type: Array, minCount: 1 },
+    'edges.$': { type: Object, blackbox: true }
   }).validator(),
   async run({ topogramId, edges }) {
     const ok = edges.map( e =>  ({ ...e, topogramId }) )

@@ -32,8 +32,3 @@ if (!SimpleSchemaCompat.RegEx.Id) {
 	// This regex matches the common Random.id output
 	SimpleSchemaCompat.RegEx.Id = /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
 }
-
-	// Allow legacy schema options used in this codebase (no-ops in npm simpl-schema unless a plugin handles them)
-	if (typeof SimpleSchemaCompat.extendOptions === 'function') {
-		SimpleSchemaCompat.extendOptions(['denyUpdate', 'decimal'])
-	}
