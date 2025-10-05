@@ -17,13 +17,14 @@ async function seedIfEmpty() {
   const skip = process.env.METEOR_SKIP_SEED === '1'
   if (!allow || skip) return
 
-  const existing = Topograms.find().count()
+  // Meteor 3: count() removed on server; use async countAsync()
+  const existing = await Topograms.find().countAsync()
   if (existing > 0) return
 
   const now = new Date()
   const variant = (process.env.SEED_VARIANT || '').toLowerCase() // '', 'geo', 'time', 'large', 'tour'
   const title = variant ? `Sample Topogram (${variant})` : 'Sample Topogram'
-  const topogramId = Topograms.insert({
+  const topogramId = await Topograms.insertAsync({
     title,
     slug: slugify(title),
     sharedPublic: true,
@@ -63,7 +64,7 @@ async function seedIfEmpty() {
   }
 
   for (const n of nodeDefs) {
-    Nodes.insert({
+    await Nodes.insertAsync({
       topogramId,
       data: {
         id: n.id,
@@ -109,7 +110,7 @@ async function seedIfEmpty() {
   }
 
   for (const e of edgeDefs) {
-    Edges.insert({
+    await Edges.insertAsync({
       topogramId,
       data: {
         id: e.id,
