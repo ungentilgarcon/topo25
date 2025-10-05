@@ -46,6 +46,7 @@ Additional documentation:
 
 - Project structure: [docs/STRUCTURE.md](./docs/STRUCTURE.md)
 - JSON API: [docs/API.md](./docs/API.md)
+- Dataset model and usage: [docs/DATASET.md](./docs/DATASET.md)
 - Conventional Commits: [docs/CONVENTIONAL_COMMITS.md](./docs/CONVENTIONAL_COMMITS.md)
 - Releasing: [docs/RELEASING.md](./docs/RELEASING.md)
 
