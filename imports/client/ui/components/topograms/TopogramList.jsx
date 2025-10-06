@@ -19,7 +19,7 @@ const messages = defineMessages({
   }
 })
 
-class TopogramList extends React.Component {
+class TopogramList extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -62,20 +62,28 @@ class TopogramList extends React.Component {
     const { showFilters, title } = this.props
     const topograms = this.props.topograms || []
 
-    const dataSource = topograms
-      .filter((d) => (anonymousOnly ? d.userId === null : true))
-      // Coerce createdAt in case it comes from Mongo as a string
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .map((n) => ({
-        value: (n.title || '').substring(0, 20),
-        text: (n.title || '').substring(0, 20),
-        topogram: n
-      }))
+    // Build light-weight options for autocomplete, cap to avoid heavy rendering
+    const filteredForOpts = []
+    const cap = 1000
+    for (const d of topograms) {
+      if (anonymousOnly && d.userId !== null) continue
+      const title = (d.title || '')
+      filteredForOpts.push({
+        value: title.substring(0, 20),
+        text: title.substring(0, 20),
+        topogram: d
+      })
+      if (filteredForOpts.length >= cap) break
+    }
+    // Sort newest first for suggestions
+    filteredForOpts.sort((a, b) => new Date(b.topogram?.createdAt) - new Date(a.topogram?.createdAt))
+    const dataSource = filteredForOpts
 
-    const topogramItems = topograms
+    // Build the full list items, but in a single pass and after sort
+    const visible = topograms
       .filter((d) => (anonymousOnly ? d.userId === null : true))
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .map((topogram) => {
+    const topogramItems = visible.map((topogram) => {
         const title = topogram.title || ''
         // Safely derive title/desc/version if a "BETA" marker is present; otherwise fall back to plain title
         const titleParts = title.split(/\SBETA.*/gm)
@@ -99,7 +107,7 @@ class TopogramList extends React.Component {
         )
       })
 
-    const numbTopopages = Math.ceil(topogramItems.length / 128)
+  const numbTopopages = Math.ceil(topogramItems.length / 128) || 1
 
     return (
       <div style={{ backgroundColor: '#D6EBE6', color: '#000  !important' }}>
@@ -107,6 +115,7 @@ class TopogramList extends React.Component {
           options={dataSource}
           getOptionLabel={(o) => o.text || ''}
           onChange={(e, value) => value && this.handleNewRequest(value)}
+          filterOptions={(options) => options}
           renderInput={(params) => (
             <TextField
               {...params}
