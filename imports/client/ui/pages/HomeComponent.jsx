@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { SnackbarCompat as Snackbar } from '/imports/startup/client/muiCompat'
 
-import { FormattedMessage, defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from '/imports/i18n-shim.js'
 
 import TopogramsLayout from './TopogramsLayout.jsx'
 
@@ -29,20 +29,18 @@ const messages = defineMessages({
   }
 })
 
-const HomeHeader = () => (
-  <section
-    className="home-header"
-  >
-    <div>
-      <h1>Bands Tour</h1>
-
-      <h4>
-        <FormattedMessage {...messages.tagline} />
-      </h4>
-      <p><FormattedMessage {...messages.subtitle} /></p>
-    </div>
-  </section>
-)
+const HomeHeader = () => {
+  const { formatMessage } = useIntl()
+  return (
+    <section className="home-header">
+      <div>
+        <h1>Bands Tour</h1>
+        <h4>{formatMessage(messages.tagline)}</h4>
+        <p>{formatMessage(messages.subtitle)}</p>
+      </div>
+    </section>
+  )
+}
 
 // define and export our Welcome component
 export class HomeComponent extends React.Component {

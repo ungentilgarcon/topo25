@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ui from '/imports/client/legacyUi'
-import { defineMessages, injectIntl } from '../../../i18n-shim.js'
+import { defineMessages, injectIntl } from '/imports/i18n-shim.js'
 import MUIAutocomplete from '@mui/material/Autocomplete'
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { TextFieldCompat as TextField } from '/imports/startup/client/muiCompat'
 import Button from '@mui/material/Button'
-import { defineMessages, injectIntl } from '../../../i18n-shim.js'
+import { defineMessages, injectIntl } from '/imports/i18n-shim.js'
 
 import { topogramCreate } from '../../../../api/topograms/topogramsMethods.js'
 
