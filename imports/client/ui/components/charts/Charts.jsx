@@ -7,6 +7,8 @@ import { DEFAULT_COLORS } from '/imports/client/helpers/colors.js'
 import { buildSparklinePath } from './sparkline'
 import Button from '@mui/material/Button'
 import Popup from '/imports/client/ui/components/common/Popup.jsx'
+// Stats: replace deprecated statistical-js with simple-statistics
+import { mean as ssMean, sampleStandardDeviation as ssStdev, tTest as ssTTest } from 'simple-statistics'
 
 // Robust percentile helper (0..1). Returns NaN for empty arrays.
 function percentile(arr, p) {
@@ -164,39 +166,81 @@ class Charts extends React.Component {
         nodesDonutData = nodesEntries.map(([name, value]) => ({ name: String(name), value: Number(value) }))
         edgesDonutData = edgesEntries.map(([name, value]) => ({ name: String(name), value: Number(value) }))
 
-        const statistical = require('statistical-js')
+        // Helper: safe arrays
         const safe = (arr) => Array.isArray(arr) && arr.length > 0 ? arr : [0]
         const nodesArr = safe(resweig)
         const edgesArr = safe(resweigEdges)
-        const summaryNodes = statistical.methods.summary(nodesArr)
-        const summaryEdges = statistical.methods.summary(edgesArr)
+
+        // Summary stats using simple-statistics
+        const summaryNodes = {
+          mean: ssMean(nodesArr),
+          standardDeviation: ssStdev(nodesArr),
+          count: nodesArr.length
+        }
+        const summaryEdges = {
+          mean: ssMean(edgesArr),
+          standardDeviation: ssStdev(edgesArr),
+          count: edgesArr.length
+        }
+
+        // One-sample t-test (t statistic only; p-value omitted)
         let ttestN = null, ttestE = null
-        try { ttestN = statistical.methods.tTestOneSample(nodesArr, 4) } catch (_) {}
-        try { ttestE = statistical.methods.tTestOneSample(edgesArr, 4) } catch (_) {}
-        const distributionType = statistical.methods.poisson
-        const distributionTypeEdges = statistical.methods.poisson
-        const chi2Nodes = nodesDonutData.length ? statistical.methods.chiSquaredGoodnessOfFit(nodesDonutData.map(d => d.value), distributionType, this.state.alpha) : null
-        const chi2Edges = edgesDonutData.length ? statistical.methods.chiSquaredGoodnessOfFit(edgesDonutData.map(d => d.value), distributionTypeEdges, this.state.alpha) : null
+        try { ttestN = ssTTest(nodesArr, 4) } catch (_) {}
+        try { ttestE = ssTTest(edgesArr, 4) } catch (_) {}
+
+        // Chi-squared goodness-of-fit against Poisson(lambda = sample mean)
+        const poissonPMF = (k, lambda) => {
+          if (lambda <= 0) return 0
+          if (k < 0) return 0
+          // naive factorial for small k
+          let fact = 1
+          for (let i = 2; i <= k; i++) fact *= i
+          return Math.exp(-lambda) * Math.pow(lambda, k) / fact
+        }
+        const chi2Poisson = (bins, lambda) => {
+          try {
+            const N = bins.reduce((acc, d) => acc + (Number(d.value) || 0), 0)
+            if (!isFinite(N) || N <= 0 || !isFinite(lambda) || lambda <= 0) return null
+            let chi2 = 0
+            let df = 0
+            bins.forEach((d) => {
+              const k = Number(d.name)
+              const obs = Number(d.value)
+              if (!isFinite(k) || !isFinite(obs)) return
+              const expected = N * poissonPMF(Math.max(0, Math.round(k)), lambda)
+              if (expected > 0) {
+                chi2 += Math.pow(obs - expected, 2) / expected
+                df += 1
+              }
+            })
+            // subtract 1 for sum constraint, 1 for estimated lambda
+            df = Math.max(1, df - 2)
+            return { chi2, df, lambda }
+          } catch (_) { return null }
+        }
+
+        const chi2Nodes = nodesDonutData.length ? chi2Poisson(nodesDonutData, summaryNodes.mean) : null
+        const chi2Edges = edgesDonutData.length ? chi2Poisson(edgesDonutData, summaryEdges.mean) : null
         this._stats = {
           nodes: {
             mean: summaryNodes.mean,
             median: Array.isArray(nodesArr) ? nodesArr.slice().sort((a,b)=>a-b)[Math.floor(nodesArr.length/2)] : undefined,
             p25: Array.isArray(nodesArr) ? percentile(nodesArr, 0.25) : undefined,
             p75: Array.isArray(nodesArr) ? percentile(nodesArr, 0.75) : undefined,
-            stdev: summaryNodes.standardDeviation || summaryNodes.stddev || summaryNodes.sd,
-            n: summaryNodes.count || summaryNodes.n,
-            t: ttestN && (ttestN.t || ttestN.statistic),
-            p: ttestN && (ttestN.p || ttestN.pvalue || ttestN.pValue)
+            stdev: summaryNodes.standardDeviation,
+            n: summaryNodes.count,
+            t: (typeof ttestN === 'number') ? ttestN : undefined,
+            p: undefined
           },
           edges: {
             mean: summaryEdges.mean,
             median: Array.isArray(edgesArr) ? edgesArr.slice().sort((a,b)=>a-b)[Math.floor(edgesArr.length/2)] : undefined,
             p25: Array.isArray(edgesArr) ? percentile(edgesArr, 0.25) : undefined,
             p75: Array.isArray(edgesArr) ? percentile(edgesArr, 0.75) : undefined,
-            stdev: summaryEdges.standardDeviation || summaryEdges.stddev || summaryEdges.sd,
-            n: summaryEdges.count || summaryEdges.n,
-            t: ttestE && (ttestE.t || ttestE.statistic),
-            p: ttestE && (ttestE.p || ttestE.pvalue || ttestE.pValue)
+            stdev: summaryEdges.standardDeviation,
+            n: summaryEdges.count,
+            t: (typeof ttestE === 'number') ? ttestE : undefined,
+            p: undefined
           },
           chi2: { nodes: chi2Nodes, edges: chi2Edges }
         }
