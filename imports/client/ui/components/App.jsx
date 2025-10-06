@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import '/imports/css/topogram.css'
 
-import { IntlProvider } from 'react-intl'
+import { IntlProvider } from '../../../i18n-shim.js'
 import { messages as i18nMessages } from '../../../i18n.js'
 
 import MuiV5Provider from '/imports/startup/client/MuiV5Provider.jsx'
