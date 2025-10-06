@@ -41,35 +41,10 @@ export default class Legend extends React.Component {
 
 
 render() {
-  const {
-    topogramId,
-    nodes,
-    edges,
-    nodesforLegend,
-    edgesforLegend,
-    minWeight,
-    maxWeight,
-    minEdgesWeight,
-    maxEdgesWeight,
-    height,
-    width
-
-
-   } = this.props
-
-const right = width === '50vw' ? '50vw' : 0
-   const { cy } = this.props.ui
-
-  // if (this.props.ui.cy && !!this.props.ui.cy.initrender ){console.log("THISCY",this.props.ui.cy)}
-   if (this.props.ui.cy && (this.props.ui.cy._private.initrender == false)) {
-
-
-  const {
-    legendVisible
-  } = this.state
-
-
-return (
+  // Render legend popup unconditionally when component is mounted.
+  // Historically this was gated on a Cytoscape init flag, but that prevented
+  // the legend from opening in cases where cy was not yet set or the flag changed.
+  return (
   <Popup
     show
     title={'Legend'}
@@ -255,4 +230,4 @@ return (
 )
 }
 }
-}
+

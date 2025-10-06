@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { MenuItemCompat as MenuItem, DialogCompat as Dialog } from '/imports/startup/client/muiCompat'
 import Button from '@mui/material/Button'
 import Delete from '@mui/icons-material/Delete'
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl'
+import { defineMessages, useIntl } from '/imports/i18n-shim.js'
 import { red } from '@mui/material/colors'
 
 import { topogramDelete } from '../../../../api/topograms/topogramsMethods.js'
@@ -61,7 +61,7 @@ function TopogramDelete({ topogramTitle = '', topogramId = '', router }) {
         open={open}
         onRequestClose={handleClose}
       >
-        <FormattedMessage {...messages.confirmQuestion} />
+        {formatMessage(messages.confirmQuestion)}
       </Dialog>
     </div>
   )
