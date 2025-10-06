@@ -1,4 +1,131 @@
-# Meteor Upgrade Plan
+# Migration Log
+
+This document consolidates the historical Meteor upgrade notes and the newer UI/React modernization log into a single place.
+
+Last updated: 2025-10-06
+
+Contents:
+- UI/React Migration Log (2025-10-02)
+- Meteor Upgrade Plan
+
+## UI/React Migration Log (2025-10-02)
+
+This document tracks the ongoing React + MUI modernization for the Meteor app.
+
+### Completed work
+
+- React 18 upgrade with safe bootstrap
+  - Added a guarded createRoot shim in `client/main.js` that tries `react-dom/client` and falls back to legacy `ReactDOM.render` when unavailable.
+  - Removed requires to internal `react-dom` CJS paths to avoid Meteor unresolved module warnings.
+  - Optional StrictMode toggle via `window.__REACT_STRICT_MODE__` to surface legacy patterns when desired.
+
+- Material-UI (MUI) v5 adoption via a compatibility layer
+  - Introduced @mui/material v5 with Emotion.
+  - Added compat wrappers to bridge Material-UI 0.19 APIs: DialogCompat, MenuItemCompat, TextFieldCompat, SubheaderCompat, IconButtonCompat, CardCompat suite, DrawerCompat, ToolbarCompat, DividerCompat, CheckboxCompat, ChipCompat, DatePickerCompat, SnackbarCompat.
+  - Replaced most legacy svg-icons with @mui/icons-material.
+  - Migrated key UI surfaces: Auth screens, Side panel/actions, UserMenu (legacy IconMenu → MUI Menu), Charts/Legend/SelectionChips/PanelFilters, QueryBox (AutoComplete → Autocomplete), TopogramList (GridList/Toggle removed → CSS grid + CheckboxCompat), ChartOptions cleanup.
+  - Removed legacy MuiThemeProvider; using MUI v5 provider only.
+
+- Redux UI compatibility (redux-ui removal)
+  - Implemented a local legacy UI compatibility module `imports/client/legacyUi` exporting `uiReducer` and a `@ui()` HOC.
+  - The reducer supports: UI_MERGE, UI_SET, UI_INIT; evaluates function defaults during init.
+  - The HOC overlays defaults on first render and now only dispatches `__initUI` if any default key is missing in the current UI state.
+  - Wired `ui: uiReducer` in the root reducer and removed the old redux-ui dependency/provider.
+
+- Topogram views hardening (fix infinite update loop)
+  - Guarded componentDidUpdate across these components to only initialize once when source props are available:
+    - `TopogramViewComponent.jsx`
+    - `TopogramViewComponentForNetScreenshots.jsx`
+    - `TopogramViewComponentForMapScreenshots.jsx`
+    - `TopogramViewComponentForMapScreenshotsNoTiles.jsx`
+    - `TopogramViewComponentForMapScreenshotsNoTilesWithMainVenuesHighlighted.jsx`
+  - Time range guards: set `minTime`/`maxTime` only when they’re null in UI and the prop values exist; set `valueRange` only when any bound is null and times are present.
+  - Weight guards: set `minWeight`/`maxWeight` only when null and numeric props exist.
+  - Categories guard: set `selectedNodeCategories` only if `nodeCategories.length > 0` and the UI list is empty.
+  - Result: resolves “Maximum update depth exceeded” on `/topograms/:id` in React 18.
+
+### Current status
+
+- App runs under React 18 + MUI v5 via the compat layer.
+- Router v6 is now the only router; v3 has been fully removed. A minimal v3-like router shim is still injected for legacy class components via `AppV6`/`V6Compat`.
+- Legacy warnings from `react-intl@2` are expected and non-blocking.
+- UI init loops eliminated; startup with external Mongo is stable; JSON API is enabled by default.
+
+### How to run (local Meteor; no Docker)
+
+- Default dev (JSON API is enabled by default; Mongo on port 27018 recommended):
+  - `MONGO_URL=mongodb://127.0.0.1:27018/topogram ROOT_URL=http://localhost:3020 meteor --port 3020`
+
+- Probe mode (minimal health-only API):
+  - `UPGRADE_PROBE=1 MONGO_URL=mongodb://127.0.0.1:27018/topogram ROOT_URL=http://localhost:3020 meteor --port 3020`
+
+### Known issues / limitations
+
+- Legacy context warnings
+  - IntlProvider (react-intl v2) uses legacy childContextTypes and emits warnings under React 18.
+  - Plan to migrate to react-intl v5+ later; these are not runtime blockers.
+
+- Remaining legacy warnings
+  - RouterContext (react-router v3) and IntlProvider (react-intl v2) warnings remain until we upgrade those stacks.
+
+### Router v6 migration (finalized)
+
+- react-router v3 removed; `react-router-dom` v6 is the sole router.
+- Kept two small compatibility helpers until class components are refactored:
+  - `AppV6` wraps the legacy `App` container and injects a minimal v3-like router shim (`push`, `replace`, `go`, `location`, `params`) while rendering child routes via `<Outlet />`.
+  - `V6Compat` wraps legacy route components to inject `params`, a v3-like `router` prop, and `user` from Redux.
+- All Topogram routes (including map/net screenshot variants) run under v6 via `V6Compat`.
+
+### Popout reliability (done)
+
+- Rewrote `WindowPortal` to use React portals into an external window, replacing unstable imperative rendering.
+  - Copies styles into the new window, defers initialization until the document is ready, and triggers resize nudges for charts.
+  - Result: fixes intermittent blank popout windows (e.g., Legend) and improves readability with a dark theme baseline.
+
+### Next steps
+
+Short term
+1) Add a minimal ErrorBoundary around Topogram routes to present user-friendly errors without blank screens. (done)
+2) Memoize filtered nodes/edges by `[valueRange, selectedNodeCategories]` to reduce Cytoscape churn. (done)
+3) Debounce slider/option-driven updates to avoid rapid reflows. (done)
+
+Medium term
+4) Continue progressive refactors away from v3 shims toward idiomatic v6 patterns (hooks or wrapper adapters).
+5) react-intl v2 → v5+ migration; update polyfills and components.
+6) Sweep and remove remaining `material-ui` 0.x stray imports (if any) and the dependency once fully unused.
+
+Performance/UX
+7) UI polish under MUI v5: consistent typography, Drawer visuals, menu paper colors, submenu a11y.
+
+### Optional follow-ups for router migration
+
+- RequireAuth guard: add a small component (or wrapper route element) to protect private pages and redirect to `/login` when unauthenticated, preserving `location` in state for post-login return.
+- Scroll restoration: add a `useEffect` on route change to reset scroll, or use `ScrollRestoration` patterns for v6 so page transitions start at the top.
+- Route constants: centralize route path strings (e.g., `/topograms/:topogramId`) to avoid drift and make refactors safer.
+- Remove v6 shims: progressively convert class components that depend on `this.props.router`/`this.props.params` to hooks (`useNavigate`, `useParams`, `useLocation`) so `V6Compat` can be deleted.
+- Tests: add light navigation tests (Cypress/Playwright or Meteor test harness) for the main flows (home, login/signup redirect, open topogram, map/network variants).
+- 404/catch-all: confirm the v6 `*` route renders `Page404` and adjust if you want a stronger UX (e.g., link back home).
+- Analytics hooks (optional): if you track pageviews, attach listener to `useLocation()` changes instead of v3 history.
+
+### Verification checklist (router)
+
+- Anonymous home shows public topograms.
+- Login/Signup forms submit and navigate back to `/`.
+- Auth-only list at `/topograms` redirects to login (once RequireAuth is added) and returns after login.
+- Deep links: `/topograms/:topogramId`, `/topograms/:id/map`, `/topograms/:id/network`, screenshot variants render and subscriptions stop on unmount.
+- Delete flow: `Settings → Delete` removes and navigates home.
+
+### Change log highlights
+
+- React bootstrap: guarded createRoot with fallback; StrictMode opt-in flag.
+- Legacy UI replacement: new `imports/client/legacyUi` with reducer + HOC (init overlay; init only when needed).
+- Topogram guard fixes: null-safe checks, presence checks, categories length > 0; all variants aligned, and coalesced init into single `updateUI({ ... })` per component.
+- Network: migrated string ref to `createRef` and added null-safety when accessing Cytoscape instance.
+- Warnings addressed: removed internal `react-dom` requires; cut default init dispatches to reduce connect churn.
+
+---
+
+## Meteor Upgrade Plan
 
 Status: Baseline stabilized on Meteor 1.4.4.6 (branch: `chore/meteor-update-LATEST`). This document enumerates conflicts encountered when probing an update to Meteor 3.3.x and proposes a phased remediation plan.
 

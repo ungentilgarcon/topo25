@@ -21,7 +21,8 @@ if (!proto._c2ShimPatched) {
   function cleanAndValidate({ collection, docOrMod, isModifier }) {
     const schema = collection.simpleSchema()
     if (!schema) return
-    schema.clean(docOrMod, { mutate: true, modifier: !!isModifier })
+    // In newer simpl-schema, 'modifier' option is not supported in clean(); only pass mutate.
+    schema.clean(docOrMod, { mutate: true })
     schema.validate(docOrMod, { modifier: !!isModifier })
   }
 

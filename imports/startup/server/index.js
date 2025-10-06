@@ -22,6 +22,10 @@ import '/imports/api/server/publications.js'
 // plugins
 import '/imports/version.js'
 import '/imports/startup/server/plugins/collection2-shim.js'
+import '/imports/startup/server/indexes.js'
 
 // JSON API
 import '/imports/endpoints'
+
+// Dev-only seed data for local testing (no-op in prod unless METEOR_SEED=1)
+import '/imports/startup/server/seed.js'

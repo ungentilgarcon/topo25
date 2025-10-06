@@ -64,29 +64,40 @@ class TopogramList extends React.Component {
 
     const dataSource = topograms
       .filter((d) => (anonymousOnly ? d.userId === null : true))
-      .sort((a, b) => b.createdAt - a.createdAt)
+      // Coerce createdAt in case it comes from Mongo as a string
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .map((n) => ({
-        value: n.title.substr(0, 20),
-        text: n.title.substr(0, 20),
+        value: (n.title || '').substring(0, 20),
+        text: (n.title || '').substring(0, 20),
         topogram: n
       }))
 
     const topogramItems = topograms
       .filter((d) => (anonymousOnly ? d.userId === null : true))
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .map((topogram) => (
-        <TopogramListItem
-          key={topogram._id}
-          topogramId={topogram._id}
-          topogramTitle={topogram.title.split(/\SBETA.*/gm).slice(0)[0]}
-          topogramDesc={topogram.title.split(/\SBETA.*/gm).slice(1)[0]}
-          topogramVersion={topogram.title.match(/BETA..../gm).slice(0)[0]}
-          author={topogram.author && topogram.author.username ? topogram.author.username : null}
-          topogramSharedPublic={topogram.sharedPublic}
-          router={this.props.router}
-          lastModified={topogram.createdAt}
-        />
-      ))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map((topogram) => {
+        const title = topogram.title || ''
+        // Safely derive title/desc/version if a "BETA" marker is present; otherwise fall back to plain title
+        const titleParts = title.split(/\SBETA.*/gm)
+        const safeTitle = titleParts[0] || title
+        const safeDesc = titleParts[1] || ''
+        const versionMatch = title.match(/BETA..../)
+        const safeVersion = versionMatch ? versionMatch[0] : ''
+
+        return (
+          <TopogramListItem
+            key={topogram._id}
+            topogramId={topogram._id}
+            topogramTitle={safeTitle}
+            topogramDesc={safeDesc}
+            topogramVersion={safeVersion}
+            author={topogram.author && topogram.author.username ? topogram.author.username : null}
+            topogramSharedPublic={topogram.sharedPublic}
+            router={this.props.router}
+            lastModified={new Date(topogram.createdAt)}
+          />
+        )
+      })
 
     const numbTopopages = Math.ceil(topogramItems.length / 128)
 
