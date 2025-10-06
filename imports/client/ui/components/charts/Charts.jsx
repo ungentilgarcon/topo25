@@ -9,6 +9,7 @@ import Button from '@mui/material/Button'
 import Popup from '/imports/client/ui/components/common/Popup.jsx'
 // Stats: replace deprecated statistical-js with simple-statistics
 import { mean as ssMean, sampleStandardDeviation as ssStdev, tTest as ssTTest } from 'simple-statistics'
+import jStat from 'jstat'
 
 // Robust percentile helper (0..1). Returns NaN for empty arrays.
 function percentile(arr, p) {
@@ -185,8 +186,18 @@ class Charts extends React.Component {
 
         // One-sample t-test (t statistic only; p-value omitted)
         let ttestN = null, ttestE = null
-        try { ttestN = ssTTest(nodesArr, 4) } catch (_) {}
-        try { ttestE = ssTTest(edgesArr, 4) } catch (_) {}
+        let pvalN = undefined, pvalE = undefined
+        try {
+          ttestN = ssTTest(nodesArr, 4)
+          const dfN = Math.max(1, nodesArr.length - 1)
+          // two-sided p-value from t distribution
+          pvalN = 2 * (1 - jStat.studentt.cdf(Math.abs(ttestN), dfN))
+        } catch (_) {}
+        try {
+          ttestE = ssTTest(edgesArr, 4)
+          const dfE = Math.max(1, edgesArr.length - 1)
+          pvalE = 2 * (1 - jStat.studentt.cdf(Math.abs(ttestE), dfE))
+        } catch (_) {}
 
         // Chi-squared goodness-of-fit against Poisson(lambda = sample mean)
         const poissonPMF = (k, lambda) => {
@@ -215,7 +226,9 @@ class Charts extends React.Component {
             })
             // subtract 1 for sum constraint, 1 for estimated lambda
             df = Math.max(1, df - 2)
-            return { chi2, df, lambda }
+            let p = undefined
+            try { p = 1 - jStat.chisquare.cdf(chi2, df) } catch (_) {}
+            return { chi2, df, lambda, p }
           } catch (_) { return null }
         }
 
@@ -230,7 +243,7 @@ class Charts extends React.Component {
             stdev: summaryNodes.standardDeviation,
             n: summaryNodes.count,
             t: (typeof ttestN === 'number') ? ttestN : undefined,
-            p: undefined
+            p: (typeof pvalN === 'number') ? pvalN : undefined
           },
           edges: {
             mean: summaryEdges.mean,
@@ -240,7 +253,7 @@ class Charts extends React.Component {
             stdev: summaryEdges.standardDeviation,
             n: summaryEdges.count,
             t: (typeof ttestE === 'number') ? ttestE : undefined,
-            p: undefined
+            p: (typeof pvalE === 'number') ? pvalE : undefined
           },
           chi2: { nodes: chi2Nodes, edges: chi2Edges }
         }
