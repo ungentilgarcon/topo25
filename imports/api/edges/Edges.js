@@ -79,6 +79,11 @@ Edges.schema = new SimpleSchema({
     label : 'Type or group of the edge',
     optional : true
   },
+  'data.relationship': {
+    type: String,
+    label: 'Qualifier for the relationship (e.g., "parent", "influences", "collaborates-with")',
+    optional: true
+  },
   'data.notes' : {
     type : String,
     label : 'An additional text to store some more info about the edge',
